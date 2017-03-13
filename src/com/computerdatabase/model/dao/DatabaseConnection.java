@@ -20,12 +20,22 @@ public abstract class DatabaseConnection {
 	private static String user = "travis";
 	private static String pwd = "apql1161713";
 	private static Connection connect;
+	private static boolean isTestDatabase = true;
 
-	public static Connection getInstance(final boolean isTestDatabase) {
+	public static void close() {
+		if (DatabaseConnection.connect != null)
+			try {
+				DatabaseConnection.connect.close();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+	}
+
+	public static Connection getInstance() {
 		if (DatabaseConnection.connect == null)
 			try {
 				String url;
-				if (isTestDatabase)
+				if (DatabaseConnection.isTestDatabase)
 					url = DatabaseConnection.urlTest;
 				else
 					url = DatabaseConnection.urlProd;
