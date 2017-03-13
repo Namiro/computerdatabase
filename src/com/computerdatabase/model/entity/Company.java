@@ -1,9 +1,10 @@
 package com.computerdatabase.model.entity;
 
-public class Company {
+public class Company extends Entity {
 	private int id;
 	private String name;
 
+	@Override
 	public int getId() {
 		return this.id;
 	}
@@ -12,6 +13,7 @@ public class Company {
 		return this.name;
 	}
 
+	@Override
 	public void setId(final int id) {
 		this.id = id;
 	}

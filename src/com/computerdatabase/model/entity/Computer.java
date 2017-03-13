@@ -2,8 +2,13 @@ package com.computerdatabase.model.entity;
 
 import java.time.LocalDate;
 
-public class Computer {
-	private int id;
+/**
+ * This class represent a computer record
+ *
+ * @author Junior Burleon
+ *
+ */
+public class Computer extends Entity {
 	private String name;
 	private LocalDate introduced;
 	private LocalDate discontinued;
@@ -17,6 +22,7 @@ public class Computer {
 		return this.discontinued;
 	}
 
+	@Override
 	public int getId() {
 		return this.id;
 	}
@@ -37,6 +43,7 @@ public class Computer {
 		this.discontinued = discontinued;
 	}
 
+	@Override
 	public void setId(final int id) {
 		this.id = id;
 	}
