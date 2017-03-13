@@ -10,5 +10,7 @@ before_install:
   - mysql -u root --default-character-set=utf8 computer-database-db-test < scripts/2-PRIVILEGES.sql
   - mysql -u root --default-character-set=utf8 computer-database-db-test < scripts/3-ENTRIES.sql
 
+install: ant deps
+
 notifications:
   email:jburleon@excilys.com
