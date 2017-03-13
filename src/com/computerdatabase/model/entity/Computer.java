@@ -1,6 +1,6 @@
 package com.computerdatabase.model.entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * This class represent a computer record
@@ -8,26 +8,42 @@ import java.time.LocalDate;
  * @author Junior Burleon
  *
  */
-public class Computer extends Entity {
+public class Computer extends Entity implements IEntity {
 	private String name;
-	private LocalDate introduced;
-	private LocalDate discontinued;
-	private int companyId;
+	private LocalDateTime introduced;
+	private LocalDateTime discontinued;
+	private Integer companyId;
 
-	public int getCompanyId() {
+	public Computer() {
+
+	}
+
+	public Computer(final int id, final String name, final LocalDateTime introduced, final LocalDateTime discontinued,
+			final Integer companyId) {
+		super(id);
+		this.name = name;
+		this.introduced = introduced;
+		this.discontinued = discontinued;
+		this.companyId = companyId;
+	}
+
+	public Computer(final String name, final LocalDateTime introduced, final LocalDateTime discontinued,
+			final Integer companyId) {
+		this.name = name;
+		this.introduced = introduced;
+		this.discontinued = discontinued;
+		this.companyId = companyId;
+	}
+
+	public Integer getCompanyId() {
 		return this.companyId;
 	}
 
-	public LocalDate getDiscontinued() {
+	public LocalDateTime getDiscontinued() {
 		return this.discontinued;
 	}
 
-	@Override
-	public int getId() {
-		return this.id;
-	}
-
-	public LocalDate getIntroduced() {
+	public LocalDateTime getIntroduced() {
 		return this.introduced;
 	}
 
@@ -35,20 +51,15 @@ public class Computer extends Entity {
 		return this.name;
 	}
 
-	public void setCompanyId(final int companyId) {
+	public void setCompanyId(final Integer companyId) {
 		this.companyId = companyId;
 	}
 
-	public void setDiscontinued(final LocalDate discontinued) {
+	public void setDiscontinued(final LocalDateTime discontinued) {
 		this.discontinued = discontinued;
 	}
 
-	@Override
-	public void setId(final int id) {
-		this.id = id;
-	}
-
-	public void setIntroduced(final LocalDate introduced) {
+	public void setIntroduced(final LocalDateTime introduced) {
 		this.introduced = introduced;
 	}
 
