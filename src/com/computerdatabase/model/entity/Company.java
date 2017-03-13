@@ -1,21 +1,29 @@
 package com.computerdatabase.model.entity;
 
-public class Company extends Entity {
-	private int id;
+/**
+ * This class represent a company records
+ *
+ * @author Junior Burleon
+ *
+ */
+public class Company extends Entity implements IEntity {
 	private String name;
 
-	@Override
-	public int getId() {
-		return this.id;
+	public Company() {
+
+	}
+
+	public Company(final int id, final String name) {
+		super(id);
+		this.name = name;
+	}
+
+	public Company(final String name) {
+		this.name = name;
 	}
 
 	public String getName() {
 		return this.name;
-	}
-
-	@Override
-	public void setId(final int id) {
-		this.id = id;
 	}
 
 	public void setName(final String name) {

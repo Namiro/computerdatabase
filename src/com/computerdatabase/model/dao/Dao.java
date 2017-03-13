@@ -3,79 +3,133 @@
  */
 package com.computerdatabase.model.dao;
 
+import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.computerdatabase.model.entity.Entity;
+import com.computerdatabase.model.entity.IEntity;
+import com.computerdatabase.model.idao.IDao;
 
 /**
+ * This class allow to have some basic interactions with the table of specified
+ * entity
  *
  * @author Junior Burleon
  *
- * @param <T>
+ * @param <E>
  *            The entity type
  */
-public abstract class Dao<T> {
+public abstract class Dao<E> implements IDao<E> {
 
 	/**
 	 * The connection to the database
 	 */
 	protected Connection connection = null;
+	protected String tableName = null;
 
 	/**
 	 *
 	 * @param connection
 	 *            Connection to the database
 	 */
+	@SuppressWarnings("unchecked")
 	public Dao(final Connection connection) {
 		this.connection = connection;
+		this.tableName = ((Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass())
+				.getActualTypeArguments()[0]).getSimpleName().toLowerCase();
 	}
 
-	/**
-	 * Method to delete an element in the table of specified entity
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param obj
-	 *            Object to delete
-	 * @return boolean Success -> True else false
+	 * @see
+	 * com.computerdatabase.model.dao.IDao#create(com.computerdatabase.model.
+	 * entity.Entity)
 	 */
-	public abstract boolean delete(T obj);
+	@Override
+	public abstract E create(E entity);
 
-	/**
-	 * Method to research by id an element in the table of specified entity
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param id
-	 * @return T Object of type T
+	 * @see
+	 * com.computerdatabase.model.dao.IDao#delete(com.computerdatabase.model.
+	 * entity.Entity)
 	 */
-	public abstract T find(int id);
+	@Override
+	public boolean delete(final E obj) {
+		try {
+			final PreparedStatement prepare = this.connection.prepareStatement(
+					"DELETE FROM " + this.tableName + " WHERE id = " + ((IEntity) obj).getId(),
+					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-	/**
-	 * Method to insert an element in the table of specified entity
-	 *
-	 * @param obj
-	 *            Object of type T
-	 * @return boolean Success -> True else false
-	 */
-	public abstract boolean insert(T obj);
+			this.connection.setAutoCommit(false);
+			prepare.execute();
+			this.connection.commit();
+		} catch (final SQLException ex) {
+			try {
+				this.connection.rollback();
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+				return false;
+			} catch (final SQLException ex1) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex1);
+			}
+		}
+		return true;
+	}
 
-	/**
-	 * Method to know the number of element in the table of specified entity
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @return The number of records
+	 * @see com.computerdatabase.model.dao.IDao#find()
 	 */
-	public abstract int nbRecord();
+	@Override
+	public abstract ArrayList<E> find();
 
-	/**
-	 * Method to get all element from the database
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @return Une liste typé T avec tout les records
+	 * @see com.computerdatabase.model.dao.IDao#find(int)
 	 */
-	public abstract ArrayList<T> select();
+	@Override
+	public abstract E find(final int id);
 
-	/**
-	 * Method to update an element in the table of specified entity
+	/*
+	 * (non-Javadoc)
 	 *
-	 * @param obj
-	 *            Object of type T to update
-	 * @return boolean Success -> True else false
+	 * @see com.computerdatabase.model.dao.IDao#getNbRecords()
 	 */
-	public abstract boolean update(T obj);
+	@Override
+	public int getNbRecords() {
+		int nbTotal = 0;
+		try {
+			final ResultSet result = this.connection
+					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+					.executeQuery("SELECT count(*) as total FROM " + this.tableName);
+
+			if (result.first())
+				nbTotal = result.getInt("total");
+		} catch (final SQLException ex) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+		}
+
+		return nbTotal;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see
+	 * com.computerdatabase.model.dao.IDao#update(com.computerdatabase.model.
+	 * entity.Entity)
+	 */
+	@Override
+	public abstract Entity update(E entity);
 
 }
