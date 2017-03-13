@@ -1,2 +1,14 @@
 
 language: java
+
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS computer-database-db-test;'  
+  - mysql -u root --default-character-set=utf8 computer-database-db-test < scripts/1-SCHEMA.sql
+  - mysql -u root --default-character-set=utf8 computer-database-db-test < scripts/2-PRIVILEGES.sql
+  - mysql -u root --default-character-set=utf8 computer-database-db-test < scripts/3-ENTRIES.sql
+
+notifications:
+  email:jburleon@excilys.com

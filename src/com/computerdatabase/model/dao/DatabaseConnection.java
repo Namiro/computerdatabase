@@ -17,7 +17,7 @@ public abstract class DatabaseConnection {
 	private static String urlTest = "jdbc:mysql://localhost/computer-database-db-test";
 	private static String urlProd = "jdbc:mysql://localhost/computer-database-db";
 
-	private static String user = "root";
+	private static String user = "travis";
 	private static String pwd = "apql1161713";
 	private static Connection connect;
 
