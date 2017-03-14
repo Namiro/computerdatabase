@@ -67,4 +67,9 @@ public class Computer extends Entity implements IEntity {
 		this.name = name;
 	}
 
+	@Override
+	public String toString() {
+		return this.id + "\t" + this.name + "\t";
+	}
+
 }

@@ -29,4 +29,10 @@ public class Company extends Entity implements IEntity {
 	public void setName(final String name) {
 		this.name = name;
 	}
+
+	@Override
+	public String toString() {
+		return this.id + "\t" + this.name;
+	}
+
 }
