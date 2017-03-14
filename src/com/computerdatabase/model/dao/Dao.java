@@ -3,7 +3,6 @@
  */
 package com.computerdatabase.model.dao;
 
-import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -38,11 +37,9 @@ public abstract class Dao<E> implements IDao<E> {
 	 * @param connection
 	 *            Connection to the database
 	 */
-	@SuppressWarnings("unchecked")
-	public Dao(final Connection connection) {
-		this.connection = connection;
-		this.tableName = ((Class<E>) ((ParameterizedType) this.getClass().getGenericSuperclass())
-				.getActualTypeArguments()[0]).getSimpleName().toLowerCase();
+	public Dao() {
+
+		this.connection = DatabaseConnection.getInstance();
 	}
 
 	/*
@@ -53,7 +50,7 @@ public abstract class Dao<E> implements IDao<E> {
 	 * entity.Entity)
 	 */
 	@Override
-	public abstract E create(E entity);
+	public abstract E create(IEntity entity);
 
 	/*
 	 * (non-Javadoc)
@@ -63,11 +60,11 @@ public abstract class Dao<E> implements IDao<E> {
 	 * entity.Entity)
 	 */
 	@Override
-	public boolean delete(final E obj) {
+	public boolean delete(final IEntity obj) {
 		try {
 			final PreparedStatement prepare = this.connection.prepareStatement(
-					"DELETE FROM " + this.tableName + " WHERE id = " + ((IEntity) obj).getId(),
-					ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+					"DELETE FROM " + this.tableName + " WHERE id = " + obj.getId(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 
 			this.connection.setAutoCommit(false);
 			prepare.execute();
@@ -130,6 +127,5 @@ public abstract class Dao<E> implements IDao<E> {
 	 * entity.Entity)
 	 */
 	@Override
-	public abstract Entity update(E entity);
-
+	public abstract Entity update(IEntity entity);
 }

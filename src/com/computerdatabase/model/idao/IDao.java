@@ -2,7 +2,7 @@ package com.computerdatabase.model.idao;
 
 import java.util.ArrayList;
 
-import com.computerdatabase.model.entity.Entity;
+import com.computerdatabase.model.entity.IEntity;
 
 public interface IDao<E> {
 
@@ -13,21 +13,23 @@ public interface IDao<E> {
 	 *            Object of type T
 	 * @return Entity
 	 */
-	E create(E entity);
+	E create(IEntity entity);
 
 	/**
 	 * Method to delete an element in the table of specified entity
 	 *
-	 * @param obj
+	 * @param entity
 	 *            Object to delete
 	 * @return boolean Success -> True else false
 	 */
-	boolean delete(E obj);
+	boolean delete(IEntity entity);
 
 	/**
 	 * Method to get all element from the database
 	 *
-	 * @return Une liste typé T avec tout les records
+	 * @return A list with all records. Return null if there is a problem. Else
+	 *         a list (This list can be empty if there is nothing found by the
+	 *         request).
 	 */
 	ArrayList<E> find();
 
@@ -48,6 +50,6 @@ public interface IDao<E> {
 	 *            Object of type T to update
 	 * @return Entity
 	 */
-	Entity update(E entity);
+	IEntity update(IEntity entity);
 
 }

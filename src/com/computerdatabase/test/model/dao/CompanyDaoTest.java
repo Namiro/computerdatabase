@@ -26,7 +26,7 @@ public class CompanyDaoTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		CompanyDaoTest.companyDao = new CompanyDao(DatabaseConnection.getInstance());
+		CompanyDaoTest.companyDao = new CompanyDao();
 
 		final String[] queries = { "SET FOREIGN_KEY_CHECKS = 0", "TRUNCATE company", "SET FOREIGN_KEY_CHECKS = 1",
 				"INSERT INTO company (id,name) VALUES (  1,'Apple Inc.')",
