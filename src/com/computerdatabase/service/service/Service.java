@@ -23,12 +23,15 @@ public abstract class Service<E> implements IService<E> {
 
 	@Override
 	public E get(final int id) {
-		return this.dao.find(id);
+		if (id > 0)
+			return this.dao.find(id);
+		else
+			return null;
 	}
 
 	@Override
 	public List<E> getPage(final int pageNumber, final int recordsByPage) {
-		return this.dao.findRange((pageNumber - 1) * recordsByPage, pageNumber * recordsByPage);
+		return this.dao.findRange((pageNumber - 1) * recordsByPage, recordsByPage);
 	}
 
 	@Override

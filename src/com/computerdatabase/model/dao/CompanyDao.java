@@ -78,12 +78,12 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	}
 
 	@Override
-	public ArrayList<Company> findRange(final int first, final int last) {
+	public ArrayList<Company> findRange(final int first, final int nbRecord) {
 		ArrayList<Company> entities = null;
 		try {
 			final ResultSet resultQ = this.connection
 					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM " + this.tableName + "LIMIT " + first + "," + last);
+					.executeQuery("SELECT * FROM " + this.tableName + " LIMIT " + first + "," + nbRecord);
 
 			entities = new ArrayList<>();
 			while (resultQ.next())

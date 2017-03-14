@@ -11,15 +11,16 @@ import com.computerdatabase.service.iservice.IService;
  *
  */
 public class Page<E> {
-	static final int numberOfRecordsBypage = 30;
+	static final int numberOfRecordsBypage = 3;
 
 	private int number;
-	private List<E> pageRecords;
+	private List<E> records;
 	private final IService<E> service;
 
 	public Page(final IService<E> service) {
 		this.service = service;
 		this.number = 1;
+		this.records = this.service.getPage(1, Page.numberOfRecordsBypage);
 	}
 
 	public int getNumber() {
@@ -27,24 +28,45 @@ public class Page<E> {
 	}
 
 	public List<E> getPageRecords() {
-		return this.pageRecords;
+		return this.records;
 	}
 
 	public List<E> next() {
 		this.number++;
-		this.pageRecords = this.service.getPage(this.number, Page.numberOfRecordsBypage);
-		return this.pageRecords;
+		final List<E> records = this.service.getPage(this.number, Page.numberOfRecordsBypage);
+		if (records != null && !records.isEmpty())
+			this.records = records;
+		else
+			this.number--;
+		return this.records;
 	}
 
 	public List<E> page(final int pageNumber) {
-		this.number = pageNumber;
-		this.pageRecords = this.service.getPage(this.number, Page.numberOfRecordsBypage);
-		return this.pageRecords;
+		System.out.println(pageNumber);
+		if (pageNumber > 0) {
+			final List<E> records = this.service.getPage(pageNumber, Page.numberOfRecordsBypage);
+			if (records != null && !records.isEmpty()) {
+				this.records = records;
+				this.number = pageNumber;
+			}
+		}
+		return this.records;
 	}
 
 	public List<E> previous() {
-		this.number--;
-		this.pageRecords = this.service.getPage(this.number, Page.numberOfRecordsBypage);
-		return this.pageRecords;
+		if (this.number > 1) {
+			this.number--;
+			this.records = this.service.getPage(this.number, Page.numberOfRecordsBypage);
+		}
+		return this.records;
+	}
+
+	@Override
+	public String toString() {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("Current page : " + this.number + "\n");
+		for (final E record : this.records)
+			sb.append(record + "\n");
+		return sb.toString();
 	}
 }
