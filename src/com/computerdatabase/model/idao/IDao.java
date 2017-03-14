@@ -41,6 +41,14 @@ public interface IDao<E> {
 	 */
 	E find(int id);
 
+	/**
+	 * Method to get all element between in a limit from the database The limit
+	 * is based on the number of records found with a simple select.
+	 *
+	 * @return A list with the record comprise between first and last.
+	 */
+	ArrayList<E> findRange(int first, int last);
+
 	int getNbRecords();
 
 	/**

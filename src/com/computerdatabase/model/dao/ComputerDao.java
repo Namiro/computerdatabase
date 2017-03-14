@@ -83,7 +83,6 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
 		}
-
 		return entities;
 	}
 
@@ -105,8 +104,30 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
 		}
-
 		return entity;
+	}
+
+	@Override
+	public ArrayList<Computer> findRange(final int first, final int last) {
+		ArrayList<Computer> entities = null;
+		try {
+			final ResultSet resultQ = this.connection
+					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+					.executeQuery("SELECT * FROM " + this.tableName + "LIMIT " + first + "," + last);
+
+			entities = new ArrayList<>();
+			while (resultQ.next())
+				entities.add(new Computer(resultQ.getInt("id"), resultQ.getString("name"),
+						(resultQ.getTimestamp("introduced") != null)
+								? resultQ.getTimestamp("introduced").toLocalDateTime() : null,
+						(resultQ.getTimestamp("discontinued") != null)
+								? resultQ.getTimestamp("discontinued").toLocalDateTime() : null,
+						resultQ.getInt("company_id")));
+
+		} catch (final SQLException ex) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		}
+		return entities;
 	}
 
 	@Override

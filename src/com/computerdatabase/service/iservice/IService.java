@@ -37,6 +37,17 @@ public interface IService<E> {
 	public E get(int id);
 
 	/**
+	 * Return the records that are in a page
+	 *
+	 * @param pageNumber
+	 *            Number of page
+	 * @param recordsByPage
+	 *            Number of record by page
+	 * @return
+	 */
+	public List<E> getPage(final int pageNumber, final int recordsByPage);
+
+	/**
 	 * Remove the entity
 	 *
 	 * @param entity

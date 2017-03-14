@@ -58,7 +58,6 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
 		}
-
 		return entities;
 	}
 
@@ -75,8 +74,25 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
 		}
-
 		return entity;
+	}
+
+	@Override
+	public ArrayList<Company> findRange(final int first, final int last) {
+		ArrayList<Company> entities = null;
+		try {
+			final ResultSet resultQ = this.connection
+					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
+					.executeQuery("SELECT * FROM " + this.tableName + "LIMIT " + first + "," + last);
+
+			entities = new ArrayList<>();
+			while (resultQ.next())
+				entities.add(new Company(resultQ.getInt("id"), resultQ.getString("name")));
+
+		} catch (final SQLException ex) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		}
+		return entities;
 	}
 
 	@Override
