@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.computerdatabase.service.tool.PropertiesManager;
+
 /**
  *
  * @author Junior Burleon
@@ -14,13 +16,10 @@ import java.util.logging.Logger;
  */
 public abstract class DatabaseConnection {
 
-	private static String urlTest = "jdbc:mysql://localhost/computer-database-db-test";
-	private static String urlProd = "jdbc:mysql://localhost/computer-database-db";
-
-	private static String user = "travis";
-	private static String pwd = "apql1161713";
+	private static String url = "";
+	private static String user = "";
+	private static String pwd = "";
 	private static Connection connect;
-	private static boolean isTestDatabase = true;
 
 	public static void close() {
 		if (DatabaseConnection.connect != null)
@@ -34,15 +33,13 @@ public abstract class DatabaseConnection {
 	public static Connection getInstance() {
 		if (DatabaseConnection.connect == null)
 			try {
-				String url;
-				if (DatabaseConnection.isTestDatabase)
-					url = DatabaseConnection.urlTest;
-				else
-					url = DatabaseConnection.urlProd;
-
 				Class.forName("com.mysql.jdbc.Driver");
-				DatabaseConnection.connect = DriverManager.getConnection(url, DatabaseConnection.user,
-						DatabaseConnection.pwd);
+				PropertiesManager.load();
+				DatabaseConnection.url = PropertiesManager.prop.getProperty("database");
+				DatabaseConnection.user = PropertiesManager.prop.getProperty("dbuser");
+				DatabaseConnection.pwd = PropertiesManager.prop.getProperty("dbpassword");
+				DatabaseConnection.connect = DriverManager.getConnection(DatabaseConnection.url,
+						DatabaseConnection.user, DatabaseConnection.pwd);
 			}
 
 			catch (SQLException | ClassNotFoundException ex) {

@@ -17,11 +17,6 @@ public class PropertiesManager {
 			// load a properties file
 			PropertiesManager.prop.load(PropertiesManager.input);
 
-			// get the property value and print it out
-			System.out.println(PropertiesManager.prop.getProperty("database"));
-			System.out.println(PropertiesManager.prop.getProperty("dbuser"));
-			System.out.println(PropertiesManager.prop.getProperty("dbpassword"));
-
 		} catch (final IOException ex) {
 			ex.printStackTrace();
 		} finally {
