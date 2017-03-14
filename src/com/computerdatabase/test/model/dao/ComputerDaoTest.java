@@ -28,7 +28,7 @@ public class ComputerDaoTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		ComputerDaoTest.computerDao = new ComputerDao(DatabaseConnection.getInstance());
+		ComputerDaoTest.computerDao = new ComputerDao();
 
 		final String[] queries = { "SET FOREIGN_KEY_CHECKS = 0", "TRUNCATE company", "TRUNCATE computer",
 				"SET FOREIGN_KEY_CHECKS = 1", "INSERT INTO company (id,name) VALUES (  1,'Apple Inc.')",
@@ -77,6 +77,13 @@ public class ComputerDaoTest {
 	@Test
 	public void testFind() {
 		Assert.assertTrue(ComputerDaoTest.computerDao.find().size() == 10);
+	}
+
+	@Test
+	public void testFindWithBadId() {
+		final int id = 15;
+		final Computer computer = ComputerDaoTest.computerDao.find(id);
+		Assert.assertNull(computer);
 	}
 
 	@Test
