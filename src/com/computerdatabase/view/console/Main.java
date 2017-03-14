@@ -7,15 +7,15 @@ import java.util.regex.Pattern;
 
 import com.computerdatabase.model.entity.Company;
 import com.computerdatabase.model.entity.Computer;
-import com.computerdatabase.service.business.Page;
 import com.computerdatabase.service.service.CompanyService;
 import com.computerdatabase.service.service.ComputerService;
+import com.computerdatabase.service.service.PageService;
 
 public class Main {
 
 	private static final Scanner scan = new Scanner(System.in);
-	private static Page<Company> companyPage;
-	private static Page<Computer> computerPage;
+	private static PageService<Company> companyPage;
+	private static PageService<Computer> computerPage;
 	private static int choiceMainMenu;
 	private static final ComputerService computerService = new ComputerService();
 	private static final CompanyService companyService = new CompanyService();
@@ -24,6 +24,13 @@ public class Main {
 		// TODO;
 	}
 
+	/**
+	 * To display the menu and get the user choice
+	 *
+	 * @param menuToDisplay
+	 *            The menu shown to the user
+	 * @return
+	 */
 	public static int displayMenyAndGetUserChoice(final StringBuilder menuToDisplay) {
 		Main.clearConsole();
 		System.out.println(menuToDisplay);
@@ -44,8 +51,8 @@ public class Main {
 	}
 
 	public static void main(final String[] args) throws IOException {
-		Main.companyPage = new Page<>(Main.companyService);
-		Main.computerPage = new Page<>(Main.computerService);
+		Main.companyPage = new PageService<>(Main.companyService);
+		Main.computerPage = new PageService<>(Main.computerService);
 
 		boolean isContinue = true;
 		while (isContinue) {
@@ -61,15 +68,15 @@ public class Main {
 
 			switch (Main.choiceMainMenu) {
 			case 1:
-				Main.showListMenu();
+				Main.showListAndMenu();
 				break;
 			case 2:
-				Main.showListMenu();
+				Main.showListAndMenu();
 				break;
 			case 3:
 				sb = new StringBuilder();
 				sb.append("Computer ID :\n");
-				final Computer computer = Main.computerService
+				Computer computer = Main.computerService
 						.get(Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
 				if (computer != null) {
 					sb = new StringBuilder();
@@ -82,7 +89,6 @@ public class Main {
 						sb.append("Linked with the company : " + company.getName() + "\n\n");
 					System.out.println(sb);
 				}
-				;
 				break;
 			case 4:
 
@@ -91,7 +97,21 @@ public class Main {
 
 				break;
 			case 6:
+				sb = new StringBuilder();
+				sb.append("Remove computer ID :\n");
+				computer = Main.computerService.get(Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
+				if (computer != null) {
+					Main.computerService.remove(computer);
+					Main.companyPage.refresh();
+					sb = new StringBuilder();
+					sb.append("The computer has been deleted");
+					System.out.println(sb);
 
+				} else {
+					sb = new StringBuilder();
+					sb.append("The computer doens't exist\n");
+					System.out.println(sb);
+				}
 				break;
 			case 7:
 				isContinue = false;
@@ -103,7 +123,10 @@ public class Main {
 		}
 	}
 
-	public static void showListMenu() {
+	/**
+	 * To display List of Computer or Company and there menu
+	 */
+	public static void showListAndMenu() {
 		boolean isContinue = true;
 		while (isContinue) {
 			StringBuilder sb = new StringBuilder();
