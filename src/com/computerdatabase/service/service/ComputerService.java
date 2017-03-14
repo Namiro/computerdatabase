@@ -33,8 +33,7 @@ public class ComputerService extends Service<Computer> implements IComputerServi
 			throw new ServiceException("The name of company must be longer (More then 1 caracter)");
 		if (entity.getIntroduced().isBefore(LocalDateTime.now().minusMinutes(20)))
 			throw new ServiceException("The name of company must be shorter (Less then 50 caracter)");
-		if (entity.getCompanyId() != null && entity.getCompanyId() != 0
-				&& this.companyDao.find(entity.getCompanyId()) != null)
+		if (entity.getCompanyId() != null && this.companyDao.find(entity.getCompanyId()) == null)
 			throw new ServiceException("The company linked to the computer doesn't exist");
 	}
 }

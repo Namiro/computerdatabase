@@ -143,7 +143,8 @@ public class ComputerServiceTest {
 			Assert.assertTrue(computer.getCompanyId() == 2);
 			Assert.assertTrue(computer.getDiscontinued().equals(localDateTime.plusYears(1)));
 			Assert.assertTrue(computer.getIntroduced().equals(localDateTime.plusYears(2)));
-		} catch (final ServiceException e) {
+		} catch (final Exception e) {
+			Assert.fail();
 			System.out.println(e);
 		}
 	}
