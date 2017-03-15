@@ -3,7 +3,6 @@
  */
 package com.computerdatabase.model.dao;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,20 +25,10 @@ import com.computerdatabase.model.idao.IDao;
  */
 public abstract class Dao<E> implements IDao<E> {
 
-	/**
-	 * The connection to the database
-	 */
-	protected Connection connection = null;
 	protected String tableName = null;
 
-	/**
-	 *
-	 * @param connection
-	 *            Connection to the database
-	 */
 	public Dao() {
 
-		this.connection = DatabaseConnection.INSTANCE.getConnection();
 	}
 
 	/*
@@ -63,24 +52,20 @@ public abstract class Dao<E> implements IDao<E> {
 	public boolean delete(final IEntity obj) {
 		PreparedStatement statement = null;
 		try {
-			statement = this.connection.prepareStatement("DELETE FROM ? WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"DELETE FROM " + this.tableName + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.setLong(2, obj.getId());
+			statement.setLong(1, obj.getId());
 			statement.executeUpdate();
-			this.connection.setAutoCommit(false);
+			DatabaseConnection.INSTANCE.getConnection().setAutoCommit(false);
 			statement.execute();
-			this.connection.commit();
 		} catch (final SQLException ex) {
 			try {
-				this.connection.rollback();
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
 				return false;
-			} catch (final SQLException ex1) {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex1);
 			} finally {
 				DatabaseConnection.INSTANCE.closeStatement(statement);
-				DatabaseConnection.INSTANCE.closeConnection(this.connection);
+				DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 			}
 		}
 		return true;
@@ -113,9 +98,9 @@ public abstract class Dao<E> implements IDao<E> {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("SELECT count(*) as total FROM ?",
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"SELECT count(*) as total FROM " + this.tableName, ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			statement.executeUpdate();
 			resultSet = statement.getResultSet();
 			if (resultSet.first())
@@ -125,7 +110,7 @@ public abstract class Dao<E> implements IDao<E> {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 
 		return nbTotal;

@@ -35,25 +35,25 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement(
-					"INSERT INTO ? SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"INSERT INTO " + this.tableName
+							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
 					Statement.RETURN_GENERATED_KEYS);
-			statement.setString(1, this.tableName);
-			statement.setString(2, centity.getName());
+			statement.setString(1, centity.getName());
 			if (centity.getIntroduced() == null)
-				statement.setNull(3, java.sql.Types.TIMESTAMP);
+				statement.setNull(2, java.sql.Types.TIMESTAMP);
 			else
-				statement.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
+				statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
 
 			if (centity.getDiscontinued() == null)
-				statement.setNull(4, java.sql.Types.TIMESTAMP);
+				statement.setNull(3, java.sql.Types.TIMESTAMP);
 			else
-				statement.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
+				statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
 
 			if (centity.getCompanyId() == 0)
-				statement.setNull(5, java.sql.Types.INTEGER);
+				statement.setNull(4, java.sql.Types.INTEGER);
 			else
-				statement.setLong(5, centity.getCompanyId());
+				statement.setLong(4, centity.getCompanyId());
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
 			resultSet.next();
@@ -64,7 +64,7 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return _entity;
 	}
@@ -75,10 +75,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("SELECT * FROM ?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.executeUpdate();
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement("SELECT * FROM " + this.tableName,
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			statement.execute();
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
 			while (resultSet.next())
@@ -94,7 +93,7 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return entities;
 	}
@@ -105,11 +104,11 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("SELECT * FROM ? WHERE id = ?",
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.setLong(2, id);
-			statement.executeUpdate();
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"SELECT * FROM " + this.tableName + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			statement.setLong(1, id);
+			statement.execute();
 			resultSet = statement.getResultSet();
 			if (resultSet.first())
 				entity = new Computer(resultSet.getLong("id"), resultSet.getString("name"),
@@ -124,7 +123,7 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return entity;
 	}
@@ -135,12 +134,12 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("SELECT * FROM ? LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"SELECT * FROM " + this.tableName + " LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.setInt(2, first);
-			statement.setInt(3, nbRecord);
-			statement.executeUpdate();
+			statement.setInt(1, first);
+			statement.setInt(2, nbRecord);
+			statement.execute();
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
 			while (resultSet.next())
@@ -156,7 +155,7 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return entities;
 	}
@@ -167,34 +166,34 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		Computer _entity = null;
 		PreparedStatement statement = null;
 		try {
-			statement = this.connection.prepareStatement(
-					"UPDATE ? SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?",
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"UPDATE " + this.tableName
+							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.setString(2, centity.getName());
+			statement.setString(1, centity.getName());
 			if (centity.getIntroduced() == null)
-				statement.setNull(3, java.sql.Types.TIMESTAMP);
+				statement.setNull(2, java.sql.Types.TIMESTAMP);
 			else
-				statement.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
+				statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
 
 			if (centity.getDiscontinued() == null)
-				statement.setNull(4, java.sql.Types.TIMESTAMP);
+				statement.setNull(3, java.sql.Types.TIMESTAMP);
 			else
-				statement.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
+				statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
 
 			if (centity.getCompanyId() == 0)
-				statement.setNull(5, java.sql.Types.INTEGER);
+				statement.setNull(4, java.sql.Types.INTEGER);
 			else
-				statement.setLong(5, centity.getCompanyId());
+				statement.setLong(4, centity.getCompanyId());
 
-			statement.setLong(6, entity.getId());
+			statement.setLong(5, entity.getId());
 			statement.executeUpdate();
 			_entity = centity;
 		} catch (final Exception ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
 		} finally {
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return _entity;
 	}

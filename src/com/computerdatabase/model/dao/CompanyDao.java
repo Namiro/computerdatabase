@@ -29,8 +29,8 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("INSERT INTO " + this.tableName + " SET name = ?",
-					Statement.RETURN_GENERATED_KEYS);
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"INSERT INTO " + this.tableName + " SET name = ?", Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, centity.getName());
 			statement.executeUpdate();
 
@@ -43,7 +43,7 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return _entity;
 	}
@@ -54,10 +54,9 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("SELECT * FROM ?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.executeUpdate();
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement("SELECT * FROM " + this.tableName,
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			statement.execute();
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
 			while (resultSet.next())
@@ -68,7 +67,7 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return entities;
 	}
@@ -79,11 +78,11 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("SELECT * FROM ? WHERE id = ?",
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.setLong(2, id);
-			statement.executeUpdate();
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"SELECT * FROM " + this.tableName + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			statement.setLong(1, id);
+			statement.execute();
 			resultSet = statement.getResultSet();
 			if (resultSet.first())
 				entity = new Company(resultSet.getInt("id"), resultSet.getString("name"));
@@ -93,7 +92,7 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return entity;
 	}
@@ -104,12 +103,12 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = this.connection.prepareStatement("SELECT * FROM ? LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"SELECT * FROM " + this.tableName + " LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.setInt(2, first);
-			statement.setInt(3, nbRecord);
-			statement.executeUpdate();
+			statement.setInt(1, first);
+			statement.setInt(2, nbRecord);
+			statement.execute();
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
 			while (resultSet.next())
@@ -120,7 +119,7 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return entities;
 	}
@@ -131,18 +130,18 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		Company _entity = null;
 		PreparedStatement statement = null;
 		try {
-			statement = this.connection.prepareStatement("UPDATE ? SET name = ? WHERE id = ?",
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, this.tableName);
-			statement.setString(2, centity.getName());
-			statement.setLong(3, entity.getId());
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"UPDATE " + this.tableName + " SET name = ? WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			statement.setString(1, centity.getName());
+			statement.setLong(2, entity.getId());
 			statement.executeUpdate();
 			_entity = centity;
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
 		} finally {
 			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(this.connection);
+			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 		}
 		return _entity;
 	}
