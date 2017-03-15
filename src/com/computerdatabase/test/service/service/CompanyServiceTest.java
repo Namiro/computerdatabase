@@ -49,7 +49,7 @@ public class CompanyServiceTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		DatabaseConnection.INSTANCE.close();
+		DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 	}
 
 	@Rule

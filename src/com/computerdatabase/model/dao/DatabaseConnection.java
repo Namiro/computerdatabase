@@ -2,7 +2,9 @@ package com.computerdatabase.model.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,15 +36,33 @@ public enum DatabaseConnection {
 			this.user = PropertiesManager.prop.getProperty("dbuser");
 			this.pwd = PropertiesManager.prop.getProperty("dbpassword");
 			this.connection = DriverManager.getConnection(this.url, this.user, this.pwd);
-		} catch (SQLException | ClassNotFoundException ex) {
-			Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SQLException | ClassNotFoundException e) {
+			Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
 		}
 	}
 
-	public void close() {
-		if (this.connection != null)
+	public void closeConnection(final Connection connection) {
+		if (connection != null)
 			try {
-				this.connection.close();
+				connection.close();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+	}
+
+	public void closeResultSet(final ResultSet resultset) {
+		if (resultset != null)
+			try {
+				resultset.close();
+			} catch (final SQLException e) {
+				e.printStackTrace();
+			}
+	}
+
+	public void closeStatement(final Statement statement) {
+		if (statement != null)
+			try {
+				statement.close();
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}

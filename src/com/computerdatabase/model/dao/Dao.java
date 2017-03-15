@@ -61,13 +61,15 @@ public abstract class Dao<E> implements IDao<E> {
 	 */
 	@Override
 	public boolean delete(final IEntity obj) {
+		PreparedStatement statement = null;
 		try {
-			final PreparedStatement prepare = this.connection.prepareStatement(
-					"DELETE FROM " + this.tableName + " WHERE id = " + obj.getId(), ResultSet.TYPE_SCROLL_INSENSITIVE,
+			statement = this.connection.prepareStatement("DELETE FROM ? WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
-
+			statement.setString(1, this.tableName);
+			statement.setLong(2, obj.getId());
+			statement.executeUpdate();
 			this.connection.setAutoCommit(false);
-			prepare.execute();
+			statement.execute();
 			this.connection.commit();
 		} catch (final SQLException ex) {
 			try {
@@ -76,6 +78,9 @@ public abstract class Dao<E> implements IDao<E> {
 				return false;
 			} catch (final SQLException ex1) {
 				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex1);
+			} finally {
+				DatabaseConnection.INSTANCE.closeStatement(statement);
+				DatabaseConnection.INSTANCE.closeConnection(this.connection);
 			}
 		}
 		return true;
@@ -105,15 +110,22 @@ public abstract class Dao<E> implements IDao<E> {
 	@Override
 	public int getNbRecords() {
 		int nbTotal = 0;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		try {
-			final ResultSet result = this.connection
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT count(*) as total FROM " + this.tableName);
-
-			if (result.first())
-				nbTotal = result.getInt("total");
+			statement = this.connection.prepareStatement("SELECT count(*) as total FROM ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			statement.setString(1, this.tableName);
+			statement.executeUpdate();
+			resultSet = statement.getResultSet();
+			if (resultSet.first())
+				nbTotal = resultSet.getInt("total");
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+		} finally {
+			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+			DatabaseConnection.INSTANCE.closeStatement(statement);
+			DatabaseConnection.INSTANCE.closeConnection(this.connection);
 		}
 
 		return nbTotal;

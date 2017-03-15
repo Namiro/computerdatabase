@@ -32,33 +32,39 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 
 		final Computer centity = (Computer) entity;
 		Computer _entity = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		try {
-			final PreparedStatement prepare = this.connection.prepareStatement(
+			statement = this.connection.prepareStatement(
 					"INSERT INTO ? SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
 					Statement.RETURN_GENERATED_KEYS);
-			prepare.setString(1, this.tableName);
-			prepare.setString(2, centity.getName());
+			statement.setString(1, this.tableName);
+			statement.setString(2, centity.getName());
 			if (centity.getIntroduced() == null)
-				prepare.setNull(3, java.sql.Types.TIMESTAMP);
+				statement.setNull(3, java.sql.Types.TIMESTAMP);
 			else
-				prepare.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
+				statement.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
 
 			if (centity.getDiscontinued() == null)
-				prepare.setNull(4, java.sql.Types.TIMESTAMP);
+				statement.setNull(4, java.sql.Types.TIMESTAMP);
 			else
-				prepare.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
+				statement.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
 
 			if (centity.getCompanyId() == 0)
-				prepare.setNull(5, java.sql.Types.INTEGER);
+				statement.setNull(5, java.sql.Types.INTEGER);
 			else
-				prepare.setLong(5, centity.getCompanyId());
-			prepare.executeUpdate();
-			final ResultSet rs = prepare.getGeneratedKeys();
-			rs.next();
-			entity.setId(rs.getInt(1));
+				statement.setLong(5, centity.getCompanyId());
+			statement.executeUpdate();
+			resultSet = statement.getGeneratedKeys();
+			resultSet.next();
+			entity.setId(resultSet.getInt(1));
 			_entity = centity;
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} finally {
+			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+			DatabaseConnection.INSTANCE.closeStatement(statement);
+			DatabaseConnection.INSTANCE.closeConnection(this.connection);
 		}
 		return _entity;
 	}
@@ -66,23 +72,29 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	@Override
 	public ArrayList<Computer> find() {
 		ArrayList<Computer> entities = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		try {
-			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ?",
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			prepare.setString(1, this.tableName);
-			prepare.executeUpdate();
-			final ResultSet resultQ = prepare.getResultSet();
+			statement = this.connection.prepareStatement("SELECT * FROM ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			statement.setString(1, this.tableName);
+			statement.executeUpdate();
+			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
-			while (resultQ.next())
-				entities.add(new Computer(resultQ.getLong("id"), resultQ.getString("name"),
-						(resultQ.getTimestamp("introduced") != null)
-								? resultQ.getTimestamp("introduced").toLocalDateTime() : null,
-						(resultQ.getTimestamp("discontinued") != null)
-								? resultQ.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultQ.getLong("company_id")));
+			while (resultSet.next())
+				entities.add(new Computer(resultSet.getLong("id"), resultSet.getString("name"),
+						(resultSet.getTimestamp("introduced") != null)
+								? resultSet.getTimestamp("introduced").toLocalDateTime() : null,
+						(resultSet.getTimestamp("discontinued") != null)
+								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
+						resultSet.getLong("company_id")));
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} finally {
+			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+			DatabaseConnection.INSTANCE.closeStatement(statement);
+			DatabaseConnection.INSTANCE.closeConnection(this.connection);
 		}
 		return entities;
 	}
@@ -90,23 +102,29 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	@Override
 	public Computer find(final long id) {
 		Computer entity = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		try {
-			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ? WHERE id = ?",
+			statement = this.connection.prepareStatement("SELECT * FROM ? WHERE id = ?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			prepare.setString(1, this.tableName);
-			prepare.setLong(2, id);
-			prepare.executeUpdate();
-			final ResultSet resultQ = prepare.getResultSet();
-			if (resultQ.first())
-				entity = new Computer(resultQ.getLong("id"), resultQ.getString("name"),
-						(resultQ.getTimestamp("introduced") != null)
-								? resultQ.getTimestamp("introduced").toLocalDateTime() : null,
-						(resultQ.getTimestamp("discontinued") != null)
-								? resultQ.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultQ.getLong("company_id"));
+			statement.setString(1, this.tableName);
+			statement.setLong(2, id);
+			statement.executeUpdate();
+			resultSet = statement.getResultSet();
+			if (resultSet.first())
+				entity = new Computer(resultSet.getLong("id"), resultSet.getString("name"),
+						(resultSet.getTimestamp("introduced") != null)
+								? resultSet.getTimestamp("introduced").toLocalDateTime() : null,
+						(resultSet.getTimestamp("discontinued") != null)
+								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
+						resultSet.getLong("company_id"));
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} finally {
+			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+			DatabaseConnection.INSTANCE.closeStatement(statement);
+			DatabaseConnection.INSTANCE.closeConnection(this.connection);
 		}
 		return entity;
 	}
@@ -114,25 +132,31 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	@Override
 	public ArrayList<Computer> findRange(final int first, final int nbRecord) {
 		ArrayList<Computer> entities = null;
+		PreparedStatement statement = null;
+		ResultSet resultSet = null;
 		try {
-			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ? LIMIT ?,?",
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			prepare.setString(1, this.tableName);
-			prepare.setInt(2, first);
-			prepare.setInt(3, nbRecord);
-			prepare.executeUpdate();
-			final ResultSet resultQ = prepare.getResultSet();
+			statement = this.connection.prepareStatement("SELECT * FROM ? LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
+			statement.setString(1, this.tableName);
+			statement.setInt(2, first);
+			statement.setInt(3, nbRecord);
+			statement.executeUpdate();
+			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
-			while (resultQ.next())
-				entities.add(new Computer(resultQ.getLong("id"), resultQ.getString("name"),
-						(resultQ.getTimestamp("introduced") != null)
-								? resultQ.getTimestamp("introduced").toLocalDateTime() : null,
-						(resultQ.getTimestamp("discontinued") != null)
-								? resultQ.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultQ.getLong("company_id")));
+			while (resultSet.next())
+				entities.add(new Computer(resultSet.getLong("id"), resultSet.getString("name"),
+						(resultSet.getTimestamp("introduced") != null)
+								? resultSet.getTimestamp("introduced").toLocalDateTime() : null,
+						(resultSet.getTimestamp("discontinued") != null)
+								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
+						resultSet.getLong("company_id")));
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} finally {
+			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+			DatabaseConnection.INSTANCE.closeStatement(statement);
+			DatabaseConnection.INSTANCE.closeConnection(this.connection);
 		}
 		return entities;
 	}
@@ -141,32 +165,36 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	public Entity update(final IEntity entity) {
 		final Computer centity = (Computer) entity;
 		Computer _entity = null;
+		PreparedStatement statement = null;
 		try {
-			final PreparedStatement prepare = this.connection.prepareStatement(
+			statement = this.connection.prepareStatement(
 					"UPDATE ? SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			prepare.setString(1, this.tableName);
-			prepare.setString(2, centity.getName());
+			statement.setString(1, this.tableName);
+			statement.setString(2, centity.getName());
 			if (centity.getIntroduced() == null)
-				prepare.setNull(3, java.sql.Types.TIMESTAMP);
+				statement.setNull(3, java.sql.Types.TIMESTAMP);
 			else
-				prepare.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
+				statement.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
 
 			if (centity.getDiscontinued() == null)
-				prepare.setNull(4, java.sql.Types.TIMESTAMP);
+				statement.setNull(4, java.sql.Types.TIMESTAMP);
 			else
-				prepare.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
+				statement.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
 
 			if (centity.getCompanyId() == 0)
-				prepare.setNull(5, java.sql.Types.INTEGER);
+				statement.setNull(5, java.sql.Types.INTEGER);
 			else
-				prepare.setLong(5, centity.getCompanyId());
+				statement.setLong(5, centity.getCompanyId());
 
-			prepare.setLong(6, entity.getId());
-			prepare.executeUpdate();
+			statement.setLong(6, entity.getId());
+			statement.executeUpdate();
 			_entity = centity;
 		} catch (final Exception ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} finally {
+			DatabaseConnection.INSTANCE.closeStatement(statement);
+			DatabaseConnection.INSTANCE.closeConnection(this.connection);
 		}
 		return _entity;
 	}
