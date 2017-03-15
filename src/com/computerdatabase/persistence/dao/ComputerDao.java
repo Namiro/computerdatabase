@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import com.computerdatabase.persistence.exception.PersistenceException;
 import com.computerdatabase.persistence.idao.IComputerDao;
+import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.persistence.model.Computer;
 import com.computerdatabase.persistence.model.Entity;
 import com.computerdatabase.persistence.model.IEntity;
@@ -51,10 +52,10 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 			else
 				statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
 
-			if (centity.getCompanyId() == 0)
+			if (centity.getCompany() == null)
 				statement.setNull(4, java.sql.Types.INTEGER);
 			else
-				statement.setLong(4, centity.getCompanyId());
+				statement.setLong(4, centity.getCompany().getId());
 			statement.executeUpdate();
 			resultSet = statement.getGeneratedKeys();
 			resultSet.next();
@@ -77,7 +78,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement("SELECT * FROM " + this.tableName,
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"SELECT computer.id, computer.name, introduced, discontinued, company_id, company.name as cName FROM "
+							+ this.tableName + " LEFT JOIN company ON computer.company_id=company.id",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.execute();
 			resultSet = statement.getResultSet();
@@ -89,7 +92,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 										? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
 								.discontinued((resultSet.getTimestamp("discontinued") != null)
 										? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
-								.companyId(resultSet.getLong("company_id")).build());
+								.company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
+										.id(resultSet.getLong("company_id")).build())
+								.build());
 
 		} catch (final SQLException e) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
@@ -109,18 +114,22 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"SELECT * FROM " + this.tableName + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
+					"SELECT computer.id, computer.name, introduced, discontinued, company_id, company.name as cName FROM "
+							+ this.tableName
+							+ " LEFT JOIN company ON computer.company_id=company.id WHERE computer.id = ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.setLong(1, id);
 			statement.execute();
 			resultSet = statement.getResultSet();
 			if (resultSet.first())
-				entity = new Computer(resultSet.getLong("id"), resultSet.getString("name"),
-						(resultSet.getTimestamp("introduced") != null)
-								? resultSet.getTimestamp("introduced").toLocalDateTime() : null,
-						(resultSet.getTimestamp("discontinued") != null)
-								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultSet.getLong("company_id"));
+				entity = new Computer.ComputerBuilder().name(resultSet.getString("name")).id(resultSet.getLong("id"))
+						.introduced((resultSet.getTimestamp("introduced") != null)
+								? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
+						.discontinued((resultSet.getTimestamp("discontinued") != null)
+								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
+						.company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
+								.id(resultSet.getLong("company_id")).build())
+						.build();
 
 		} catch (final SQLException e) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
@@ -140,20 +149,24 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"SELECT * FROM " + this.tableName + " LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
+					"SELECT computer.id, computer.name, introduced, discontinued, company_id, company.name as cName FROM "
+							+ this.tableName + " LEFT JOIN company ON computer.company_id=company.id LIMIT ?,?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.setInt(1, first);
 			statement.setInt(2, nbRecord);
 			statement.execute();
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
 			while (resultSet.next())
-				entities.add(new Computer(resultSet.getLong("id"), resultSet.getString("name"),
-						(resultSet.getTimestamp("introduced") != null)
-								? resultSet.getTimestamp("introduced").toLocalDateTime() : null,
-						(resultSet.getTimestamp("discontinued") != null)
-								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultSet.getLong("company_id")));
+				entities.add(
+						new Computer.ComputerBuilder().name(resultSet.getString("name")).id(resultSet.getLong("id"))
+								.introduced((resultSet.getTimestamp("introduced") != null)
+										? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
+								.discontinued((resultSet.getTimestamp("discontinued") != null)
+										? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
+								.company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
+										.id(resultSet.getLong("company_id")).build())
+								.build());
 
 		} catch (final SQLException e) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
@@ -174,7 +187,7 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
 					"UPDATE " + this.tableName
-							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?",
+							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE computer.id = ?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.setString(1, centity.getName());
 			if (centity.getIntroduced() == null)
@@ -187,10 +200,10 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 			else
 				statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
 
-			if (centity.getCompanyId() == 0)
+			if (centity.getCompany() == null)
 				statement.setNull(4, java.sql.Types.INTEGER);
 			else
-				statement.setLong(4, centity.getCompanyId());
+				statement.setLong(4, centity.getCompany().getId());
 
 			statement.setLong(5, entity.getId());
 			statement.executeUpdate();

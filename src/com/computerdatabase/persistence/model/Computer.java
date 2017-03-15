@@ -13,15 +13,15 @@ public class Computer extends Entity implements IEntity {
 		private String name;
 		private LocalDateTime introduced;
 		private LocalDateTime discontinued;
-		private long companyId;
+		private Company company;
 
 		@Override
 		public Computer build() {
-			return new Computer(this.id, this.name, this.introduced, this.discontinued, this.companyId);
+			return new Computer(this.id, this.name, this.introduced, this.discontinued, this.company);
 		}
 
-		public ComputerBuilder companyId(final long companyId) {
-			this.companyId = companyId;
+		public ComputerBuilder company(final Company company) {
+			this.company = company;
 			return this;
 		}
 
@@ -44,20 +44,19 @@ public class Computer extends Entity implements IEntity {
 	private String name;
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;
-
-	private long companyId;
+	private Company company;
 
 	public Computer() {
 
 	}
 
 	public Computer(final long id, final String name, final LocalDateTime introduced, final LocalDateTime discontinued,
-			final long companyId) {
+			final Company company) {
 		super(id);
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.companyId = companyId;
+		this.company = company;
 	}
 
 	/*
@@ -74,7 +73,7 @@ public class Computer extends Entity implements IEntity {
 		if (this.getClass() != obj.getClass())
 			return false;
 		final Computer other = (Computer) obj;
-		if (this.companyId != other.companyId)
+		if (this.company != other.company)
 			return false;
 		if (this.discontinued == null) {
 			if (other.discontinued != null)
@@ -94,8 +93,8 @@ public class Computer extends Entity implements IEntity {
 		return true;
 	}
 
-	public long getCompanyId() {
-		return this.companyId;
+	public Company getCompany() {
+		return this.company;
 	}
 
 	public LocalDateTime getDiscontinued() {
@@ -119,15 +118,15 @@ public class Computer extends Entity implements IEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + (int) (this.companyId ^ (this.companyId >>> 32));
+		result = prime * result + ((this.company == null) ? 0 : this.company.hashCode());
 		result = prime * result + ((this.discontinued == null) ? 0 : this.discontinued.hashCode());
 		result = prime * result + ((this.introduced == null) ? 0 : this.introduced.hashCode());
 		result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
 		return result;
 	}
 
-	public void setCompanyId(final long l) {
-		this.companyId = l;
+	public void setCompany(final Company company) {
+		this.company = company;
 	}
 
 	public void setDiscontinued(final LocalDateTime discontinued) {

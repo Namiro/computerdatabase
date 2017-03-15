@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.computerdatabase.persistence.dao.DatabaseConnection;
+import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.persistence.model.Computer;
 import com.computerdatabase.persistence.model.IEntity;
 import com.computerdatabase.service.exception.ServiceException;
@@ -118,6 +119,7 @@ public class ComputerServiceTest {
 
 	@Test
 	public void testSave() {
+
 		final LocalDateTime localDateTime = LocalDateTime.now().withNano(0);
 		Computer computer = new Computer.ComputerBuilder().name("TestServiceComputer").introduced(LocalDateTime.now())
 				.discontinued(LocalDateTime.now()).build();
@@ -128,20 +130,20 @@ public class ComputerServiceTest {
 		Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
 		Assert.assertTrue(computer.getId() != 0);
 		final long idOk = computer.getId();
-		Assert.assertTrue(computer.getCompanyId() == 0);
+		Assert.assertTrue(computer.getCompany().getId() == 0);
 		Assert.assertTrue(computer.getDiscontinued().equals(localDateTime));
 		Assert.assertTrue(computer.getIntroduced().equals(localDateTime));
 		computer.setName("TestServiceComputerUpdated");
 		computer.setDiscontinued(localDateTime.plusYears(1));
 		computer.setIntroduced(localDateTime.plusYears(2));
-		computer.setCompanyId(2);
+		computer.setCompany(new Company.CompanyBuilder().id(2).name("Truurur").build());
 		computer = ComputerServiceTest.computerService.save(computer);
 		Assert.assertTrue(computer != null);
 		Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
 		computer = ComputerServiceTest.computerService.get(computer.getId());
 		Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
 		Assert.assertTrue(computer.getId() == idOk);
-		Assert.assertTrue(computer.getCompanyId() == 2);
+		Assert.assertTrue(computer.getCompany().getId() == 2);
 		Assert.assertTrue(computer.getDiscontinued().equals(localDateTime.plusYears(1)));
 		Assert.assertTrue(computer.getIntroduced().equals(localDateTime.plusYears(2)));
 	}

@@ -84,7 +84,7 @@ public class Main {
 
 	/**
 	 * Get a long
-	 * 
+	 *
 	 * @return
 	 */
 	private static long inputLong() {
@@ -141,7 +141,7 @@ public class Main {
 					sb.append("Name : " + computer.getName() + "\n");
 					sb.append("Introduce date : " + computer.getIntroduced() + "\n");
 					sb.append("Discontinue date : " + computer.getDiscontinued() + "\n");
-					final Company company = Main.companyService.get(computer.getCompanyId());
+					final Company company = computer.getCompany();
 					if (company != null)
 						sb.append("Linked with the company : " + company.getName() + "\n\n");
 					System.out.println(sb);
@@ -158,7 +158,7 @@ public class Main {
 						System.out.print("Company Id :");
 						final long companyId = Main.inputLong();
 						if (companyId != 0)
-							computer.setCompanyId(companyId);
+							computer.setCompany(new Company.CompanyBuilder().id(companyId).build());
 						System.out.print("Introduce date (yyyy-MM-dd) :");
 						LocalDateTime date = Main.inputDate();
 						if (date != null)
@@ -188,7 +188,7 @@ public class Main {
 							System.out.print("Company Id :");
 							final long companyId = Main.inputLong();
 							if (companyId != 0)
-								computer.setCompanyId(companyId);
+								computer.setCompany(new Company.CompanyBuilder().id(companyId).build());
 							System.out.print("Introduce date (yyyy-MM-dd) :");
 							LocalDateTime date = Main.inputDate();
 							if (date != null)
