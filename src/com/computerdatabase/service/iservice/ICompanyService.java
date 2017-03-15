@@ -1,6 +1,6 @@
 package com.computerdatabase.service.iservice;
 
-import com.computerdatabase.model.entity.Company;
+import com.computerdatabase.persistence.model.Company;
 
 /**
  *

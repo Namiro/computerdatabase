@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.computerdatabase.model.dao;
+package com.computerdatabase.persistence.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.computerdatabase.model.entity.Computer;
-import com.computerdatabase.model.entity.Entity;
-import com.computerdatabase.model.entity.IEntity;
-import com.computerdatabase.model.idao.IComputerDao;
+import com.computerdatabase.persistence.idao.IComputerDao;
+import com.computerdatabase.persistence.model.Computer;
+import com.computerdatabase.persistence.model.Entity;
+import com.computerdatabase.persistence.model.IEntity;
 
 /**
  * @author Junior Burleon

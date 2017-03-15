@@ -1,4 +1,4 @@
-package com.computerdatabase.model.entity;
+package com.computerdatabase.persistence.model;
 
 /**
  *

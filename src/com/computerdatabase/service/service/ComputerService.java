@@ -2,11 +2,11 @@ package com.computerdatabase.service.service;
 
 import java.time.LocalDateTime;
 
-import com.computerdatabase.model.dao.CompanyDao;
-import com.computerdatabase.model.dao.ComputerDao;
-import com.computerdatabase.model.entity.Company;
-import com.computerdatabase.model.entity.Computer;
-import com.computerdatabase.model.idao.IDao;
+import com.computerdatabase.persistence.dao.CompanyDao;
+import com.computerdatabase.persistence.dao.ComputerDao;
+import com.computerdatabase.persistence.idao.IDao;
+import com.computerdatabase.persistence.model.Company;
+import com.computerdatabase.persistence.model.Computer;
 import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.iservice.IComputerService;
 

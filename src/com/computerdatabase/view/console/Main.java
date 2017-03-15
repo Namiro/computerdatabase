@@ -10,8 +10,8 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.computerdatabase.model.entity.Company;
-import com.computerdatabase.model.entity.Computer;
+import com.computerdatabase.persistence.model.Company;
+import com.computerdatabase.persistence.model.Computer;
 import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.service.CompanyService;
 import com.computerdatabase.service.service.ComputerService;

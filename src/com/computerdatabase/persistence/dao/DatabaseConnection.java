@@ -1,4 +1,4 @@
-package com.computerdatabase.model.dao;
+package com.computerdatabase.persistence.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

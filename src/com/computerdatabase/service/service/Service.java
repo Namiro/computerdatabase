@@ -2,8 +2,8 @@ package com.computerdatabase.service.service;
 
 import java.util.List;
 
-import com.computerdatabase.model.entity.IEntity;
-import com.computerdatabase.model.idao.IDao;
+import com.computerdatabase.persistence.idao.IDao;
+import com.computerdatabase.persistence.model.IEntity;
 import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.iservice.IService;
 

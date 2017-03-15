@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.computerdatabase.model.dao;
+package com.computerdatabase.persistence.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.computerdatabase.model.entity.Entity;
-import com.computerdatabase.model.entity.IEntity;
-import com.computerdatabase.model.idao.IDao;
+import com.computerdatabase.persistence.idao.IDao;
+import com.computerdatabase.persistence.model.Entity;
+import com.computerdatabase.persistence.model.IEntity;
 
 /**
  * This class allow to have some basic interactions with the table of specified

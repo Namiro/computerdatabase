@@ -1,4 +1,4 @@
-package com.computerdatabase.model.entity;
+package com.computerdatabase.persistence.model;
 
 import com.google.gson.Gson;
 
@@ -29,12 +29,44 @@ public abstract class Entity implements IEntity {
 
 	/*
 	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (this.getClass() != obj.getClass())
+			return false;
+		final Entity other = (Entity) obj;
+		if (this.id != other.id)
+			return false;
+		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 *
 	 * @see com.computerdatabase.model.entity.IEntity#getId()
 	 */
 	@Override
 	public long getId() {
 		return this.id;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (this.id ^ (this.id >>> 32));
+		return result;
 	}
 
 	/*

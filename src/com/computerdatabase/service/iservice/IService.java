@@ -2,7 +2,7 @@ package com.computerdatabase.service.iservice;
 
 import java.util.List;
 
-import com.computerdatabase.model.entity.IEntity;
+import com.computerdatabase.persistence.model.IEntity;
 import com.computerdatabase.service.exception.ServiceException;
 
 /**

@@ -12,8 +12,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.computerdatabase.model.dao.DatabaseConnection;
-import com.computerdatabase.model.entity.Company;
+import com.computerdatabase.persistence.dao.DatabaseConnection;
+import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.iservice.ICompanyService;
 import com.computerdatabase.service.service.CompanyService;

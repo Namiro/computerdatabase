@@ -1,4 +1,4 @@
-package com.computerdatabase.model.dao;
+package com.computerdatabase.persistence.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.computerdatabase.model.entity.Company;
-import com.computerdatabase.model.entity.IEntity;
-import com.computerdatabase.model.idao.ICompanyDao;
+import com.computerdatabase.persistence.idao.ICompanyDao;
+import com.computerdatabase.persistence.model.Company;
+import com.computerdatabase.persistence.model.IEntity;
 
 /**
  * @author Junior Burleon

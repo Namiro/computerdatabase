@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.computerdatabase.test.model.dao;
+package com.computerdatabase.test.persistence.dao;
 
 import java.sql.Statement;
 
@@ -10,8 +10,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.computerdatabase.model.dao.CompanyDao;
-import com.computerdatabase.model.dao.DatabaseConnection;
+import com.computerdatabase.persistence.dao.CompanyDao;
+import com.computerdatabase.persistence.dao.DatabaseConnection;
 
 /**
  * @author Junior Burléon

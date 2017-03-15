@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.computerdatabase.test.model.dao;
+package com.computerdatabase.test.persistence.dao;
 
 import java.sql.Statement;
 import java.time.LocalDateTime;
@@ -11,9 +11,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.computerdatabase.model.dao.ComputerDao;
-import com.computerdatabase.model.dao.DatabaseConnection;
-import com.computerdatabase.model.entity.Computer;
+import com.computerdatabase.persistence.dao.ComputerDao;
+import com.computerdatabase.persistence.dao.DatabaseConnection;
+import com.computerdatabase.persistence.model.Computer;
 
 /**
  * @author Junior Burléon

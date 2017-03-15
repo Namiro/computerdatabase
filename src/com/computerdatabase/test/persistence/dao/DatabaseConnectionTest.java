@@ -1,12 +1,12 @@
 /**
  *
  */
-package com.computerdatabase.test.model.dao;
+package com.computerdatabase.test.persistence.dao;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.computerdatabase.model.dao.DatabaseConnection;
+import com.computerdatabase.persistence.dao.DatabaseConnection;
 
 /**
  * @author Junior Burléon

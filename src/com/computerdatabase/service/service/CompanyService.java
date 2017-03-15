@@ -1,7 +1,7 @@
 package com.computerdatabase.service.service;
 
-import com.computerdatabase.model.dao.CompanyDao;
-import com.computerdatabase.model.entity.Company;
+import com.computerdatabase.persistence.dao.CompanyDao;
+import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.iservice.ICompanyService;
 

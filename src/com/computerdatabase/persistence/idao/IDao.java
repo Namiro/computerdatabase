@@ -1,8 +1,8 @@
-package com.computerdatabase.model.idao;
+package com.computerdatabase.persistence.idao;
 
 import java.util.ArrayList;
 
-import com.computerdatabase.model.entity.IEntity;
+import com.computerdatabase.persistence.model.IEntity;
 
 public interface IDao<E> {
 
