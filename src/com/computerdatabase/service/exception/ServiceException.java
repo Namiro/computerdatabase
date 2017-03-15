@@ -6,8 +6,12 @@ package com.computerdatabase.service.exception;
  * @author Junior Burleon
  *
  */
-@SuppressWarnings("serial")
-public class ServiceException extends Exception {
+public class ServiceException extends RuntimeException {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -4026635148559085053L;
+
 	public ServiceException() {
 		super();
 	}
