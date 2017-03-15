@@ -61,7 +61,7 @@ public class ComputerServiceTest {
 	 * @throws java.lang.Exception
 	 */
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	public static void tearDownAfterClass() {
 
 	}
 

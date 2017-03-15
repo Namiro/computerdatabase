@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.computerdatabase.persistence.exception.PersistenceException;
 import com.computerdatabase.service.tool.PropertiesManager;
 
 /**
@@ -37,7 +38,8 @@ public enum DatabaseConnection {
 			try {
 				connection.close();
 			} catch (final SQLException e) {
-				e.printStackTrace();
+				Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
+				throw new PersistenceException(e);
 			}
 	}
 
@@ -46,7 +48,8 @@ public enum DatabaseConnection {
 			try {
 				resultset.close();
 			} catch (final SQLException e) {
-				e.printStackTrace();
+				Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
+				throw new PersistenceException(e);
 			}
 	}
 
@@ -55,7 +58,8 @@ public enum DatabaseConnection {
 			try {
 				statement.close();
 			} catch (final SQLException e) {
-				e.printStackTrace();
+				Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
+				throw new PersistenceException(e);
 			}
 	}
 
@@ -70,6 +74,7 @@ public enum DatabaseConnection {
 			this.connection = DriverManager.getConnection(this.url, this.user, this.pwd);
 		} catch (SQLException | ClassNotFoundException e) {
 			Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		}
 		return this.connection;
 	}

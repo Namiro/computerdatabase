@@ -48,7 +48,7 @@ public class CompanyServiceTest {
 	 * @throws java.lang.Exception
 	 */
 	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
+	public static void tearDownAfterClass() {
 		DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
 	}
 
@@ -56,7 +56,7 @@ public class CompanyServiceTest {
 	public final ExpectedException exception = ExpectedException.none();
 
 	@Test
-	public void testCheckDataEntityNameSoLong() throws ServiceException {
+	public void testCheckDataEntityNameSoLong() {
 		final Company company = new Company.CompanyBuilder()
 				.name("rhgughrughguhdfguhfdiguhdfighfughdfguifghfgfhdgidfhgufidhgdfughfghfidghfduighfgudfhgdfuhgufhgdfuioghfioghuifdpghfdlgifdhguiodfghdfogfgdfgfi")
 				.build();

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.computerdatabase.persistence.exception.PersistenceException;
 import com.computerdatabase.persistence.idao.IDao;
 import com.computerdatabase.persistence.model.Entity;
 import com.computerdatabase.persistence.model.IEntity;
@@ -59,10 +60,10 @@ public abstract class Dao<E> implements IDao<E> {
 			statement.executeUpdate();
 			DatabaseConnection.INSTANCE.getConnection().setAutoCommit(false);
 			statement.execute();
-		} catch (final SQLException ex) {
+		} catch (final SQLException e) {
 			try {
-				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-				return false;
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+				throw new PersistenceException(e);
 			} finally {
 				DatabaseConnection.INSTANCE.closeStatement(statement);
 				DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
@@ -105,8 +106,9 @@ public abstract class Dao<E> implements IDao<E> {
 			resultSet = statement.getResultSet();
 			if (resultSet.first())
 				nbTotal = resultSet.getInt("total");
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);

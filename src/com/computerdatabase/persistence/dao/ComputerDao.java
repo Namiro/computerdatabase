@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.computerdatabase.persistence.exception.PersistenceException;
 import com.computerdatabase.persistence.idao.IComputerDao;
 import com.computerdatabase.persistence.model.Computer;
 import com.computerdatabase.persistence.model.Entity;
@@ -59,8 +60,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 			resultSet.next();
 			entity.setId(resultSet.getInt(1));
 			_entity = centity;
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -89,8 +91,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 										? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
 								.companyId(resultSet.getLong("company_id")).build());
 
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -119,8 +122,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
 						resultSet.getLong("company_id"));
 
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -151,8 +155,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
 						resultSet.getLong("company_id")));
 
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -190,8 +195,9 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 			statement.setLong(5, entity.getId());
 			statement.executeUpdate();
 			_entity = centity;
-		} catch (final Exception ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final Exception e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeStatement(statement);
 			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());

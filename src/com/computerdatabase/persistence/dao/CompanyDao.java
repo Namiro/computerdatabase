@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.computerdatabase.persistence.exception.PersistenceException;
 import com.computerdatabase.persistence.idao.ICompanyDao;
 import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.persistence.model.IEntity;
@@ -38,8 +39,9 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 			resultSet.next();
 			entity.setId(resultSet.getInt(1));
 			_entity = centity;
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -63,8 +65,9 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 				entities.add(new Company.CompanyBuilder().name(resultSet.getString("name")).id(resultSet.getInt("id"))
 						.build());
 
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -88,8 +91,9 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 			if (resultSet.first())
 				entity = new Company(resultSet.getInt("id"), resultSet.getString("name"));
 
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -115,8 +119,9 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 			while (resultSet.next())
 				entities.add(new Company(resultSet.getInt("id"), resultSet.getString("name")));
 
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
 			DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -138,8 +143,9 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 			statement.setLong(2, entity.getId());
 			statement.executeUpdate();
 			_entity = centity;
-		} catch (final SQLException ex) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
+		} catch (final SQLException e) {
+			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+			throw new PersistenceException(e);
 		} finally {
 			DatabaseConnection.INSTANCE.closeStatement(statement);
 			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
