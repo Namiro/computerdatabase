@@ -39,7 +39,7 @@ public abstract class Dao<E> implements IDao<E> {
 	 */
 	public Dao() {
 
-		this.connection = DatabaseConnection.getInstance();
+		this.connection = DatabaseConnection.INSTANCE.getConnection();
 	}
 
 	/*

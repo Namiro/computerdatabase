@@ -52,7 +52,7 @@ public class ComputerServiceTest {
 				"INSERT INTO computer (id,name,introduced,discontinued,company_id) VALUES (  9,'Apple IIGS',null,null,null)",
 				"INSERT INTO computer (id,name,introduced,discontinued,company_id) VALUES ( 10,'Apple IIc Plus',null,null,null)" };
 
-		final Statement statement = DatabaseConnection.getInstance().createStatement();
+		final Statement statement = DatabaseConnection.INSTANCE.getConnection().createStatement();
 		for (final String query : queries)
 			statement.execute(query);
 	}

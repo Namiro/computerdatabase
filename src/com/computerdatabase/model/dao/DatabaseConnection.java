@@ -14,37 +14,41 @@ import com.computerdatabase.service.tool.PropertiesManager;
  *
  *
  */
-public abstract class DatabaseConnection {
+public enum DatabaseConnection {
+	INSTANCE;
 
-	private static String url = "";
-	private static String user = "";
-	private static String pwd = "";
-	private static Connection connect;
+	public static DatabaseConnection getInstance() {
+		return INSTANCE;
+	}
 
-	public static void close() {
-		if (DatabaseConnection.connect != null)
+	private Connection connection;
+	private String url = "";
+	private String user = "";
+	private String pwd = "";
+
+	private DatabaseConnection() {
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			PropertiesManager.load();
+			this.url = PropertiesManager.prop.getProperty("database");
+			this.user = PropertiesManager.prop.getProperty("dbuser");
+			this.pwd = PropertiesManager.prop.getProperty("dbpassword");
+			this.connection = DriverManager.getConnection(this.url, this.user, this.pwd);
+		} catch (SQLException | ClassNotFoundException ex) {
+			Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+
+	public void close() {
+		if (this.connection != null)
 			try {
-				DatabaseConnection.connect.close();
+				this.connection.close();
 			} catch (final SQLException e) {
 				e.printStackTrace();
 			}
 	}
 
-	public static Connection getInstance() {
-		if (DatabaseConnection.connect == null)
-			try {
-				Class.forName("com.mysql.jdbc.Driver");
-				PropertiesManager.load();
-				DatabaseConnection.url = PropertiesManager.prop.getProperty("database");
-				DatabaseConnection.user = PropertiesManager.prop.getProperty("dbuser");
-				DatabaseConnection.pwd = PropertiesManager.prop.getProperty("dbpassword");
-				DatabaseConnection.connect = DriverManager.getConnection(DatabaseConnection.url,
-						DatabaseConnection.user, DatabaseConnection.pwd);
-			}
-
-			catch (SQLException | ClassNotFoundException ex) {
-				Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		return DatabaseConnection.connect;
+	public Connection getConnection() {
+		return this.connection;
 	}
 }

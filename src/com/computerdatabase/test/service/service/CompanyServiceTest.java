@@ -39,7 +39,7 @@ public class CompanyServiceTest {
 				"INSERT INTO company (id,name) VALUES (  4,'Netronics')",
 				"INSERT INTO company (id,name) VALUES (  5,'Tandy Corporation')" };
 
-		final Statement statement = DatabaseConnection.getInstance().createStatement();
+		final Statement statement = DatabaseConnection.INSTANCE.getConnection().createStatement();
 		for (final String query : queries)
 			statement.execute(query);
 	}
@@ -49,7 +49,7 @@ public class CompanyServiceTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
-		DatabaseConnection.close();
+		DatabaseConnection.INSTANCE.close();
 	}
 
 	@Rule

@@ -17,6 +17,6 @@ public class DatabaseConnectionTest {
 	@Test
 	public void testConnection() {
 		Assert.assertNotNull(DatabaseConnection.getInstance());
-		DatabaseConnection.close();
+		DatabaseConnection.INSTANCE.close();
 	}
 }
