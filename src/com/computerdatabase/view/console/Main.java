@@ -1,12 +1,18 @@
 package com.computerdatabase.view.console;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.computerdatabase.model.entity.Company;
 import com.computerdatabase.model.entity.Computer;
+import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.service.CompanyService;
 import com.computerdatabase.service.service.ComputerService;
 import com.computerdatabase.service.service.PageService;
@@ -37,8 +43,8 @@ public class Main {
 		boolean isContinue = true;
 		int choice = 0;
 		do {
-			final String choiceString = Main.scan.next();
-			final Pattern pattern = Pattern.compile("([0-9])");
+			final String choiceString = Main.scan.nextLine();
+			final Pattern pattern = Pattern.compile("(\\d+)");
 			final Matcher matcher = pattern.matcher(choiceString);
 			if (matcher.find())
 				if (!matcher.group(1).equalsIgnoreCase("")) {
@@ -50,11 +56,57 @@ public class Main {
 		return choice;
 	}
 
+	/**
+	 * Get a date with the format : yyyy-MM-dd
+	 *
+	 * @return
+	 */
+	public static LocalDateTime inputDate() {
+		boolean isContinue = true;
+		DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		LocalDate datee = null;
+		LocalDateTime date = null;
+		while (isContinue) {
+			final String line = Main.scan.nextLine();
+			if (!line.trim().isEmpty())
+				try {
+					datee = LocalDate.parse(line);
+					isContinue = false;
+					date = LocalDateTime.of(datee, LocalTime.now());
+				} catch (final DateTimeParseException e) {
+					System.out.println("Sorry, that's not valid. Please try again.");
+				}
+			else
+				isContinue = false;
+		}
+		return date;
+	}
+
+	private static long inputLong() {
+		boolean isContinue = true;
+		long input = 0;
+		do {
+			final String inputLong = Main.scan.nextLine();
+			final Pattern pattern = Pattern.compile("(\\d+)");
+			final Matcher matcher = pattern.matcher(inputLong);
+			if (!inputLong.equals("")) {
+				if (matcher.find())
+					if (!matcher.group(1).equalsIgnoreCase("")) {
+						input = Long.valueOf(matcher.group(1));
+						isContinue = false;
+					}
+			} else
+				isContinue = false;
+		} while (isContinue);
+		return input;
+	}
+
 	public static void main(final String[] args) throws IOException {
 		Main.companyPage = new PageService<>(Main.companyService);
 		Main.computerPage = new PageService<>(Main.computerService);
 
 		boolean isContinue = true;
+		boolean isContinueSubMenu = false;
 		while (isContinue) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("\t1. List computers\n");
@@ -91,10 +143,67 @@ public class Main {
 				}
 				break;
 			case 4:
-
+				do
+					try {
+						isContinueSubMenu = false;
+						computer = new Computer();
+						System.out.print("Computer creation\n");
+						System.out.print("Name :");
+						computer.setName(Main.scan.nextLine());
+						System.out.print("Company Id :");
+						final long companyId = Main.inputLong();
+						if (companyId != 0)
+							computer.setCompanyId(companyId);
+						System.out.print("Introduce date (yyyy-MM-dd) :");
+						LocalDateTime date = Main.inputDate();
+						if (date != null)
+							computer.setIntroduced(date);
+						System.out.print("Discontinue date (yyyy-MM-dd) :");
+						date = Main.inputDate();
+						if (date != null)
+							computer.setDiscontinued(date);
+						Main.computerService.save(computer);
+						Main.computerPage.refresh();
+					} catch (final ServiceException e) {
+						System.out.println(e.getMessage());
+						isContinueSubMenu = true;
+					}
+				while (isContinueSubMenu);
 				break;
 			case 5:
-
+				computer = new Computer();
+				System.out.print("Computer update ID :");
+				computer = Main.computerService.get(Main.inputLong());
+				if (computer != null)
+					do
+						try {
+							isContinueSubMenu = false;
+							System.out.print("Name :");
+							computer.setName(Main.scan.nextLine());
+							System.out.print("Company Id :");
+							final long companyId = Main.inputLong();
+							if (companyId != 0)
+								computer.setCompanyId(companyId);
+							System.out.print("Introduce date (yyyy-MM-dd) :");
+							LocalDateTime date = Main.inputDate();
+							if (date != null)
+								computer.setIntroduced(date);
+							System.out.print("Discontinue date (yyyy-MM-dd) :");
+							date = Main.inputDate();
+							if (date != null)
+								computer.setDiscontinued(date);
+							Main.computerService.save(computer);
+							Main.computerPage.refresh();
+						} catch (final ServiceException e) {
+							System.out.println(e.getMessage());
+							isContinueSubMenu = true;
+						}
+					while (isContinueSubMenu);
+				else {
+					sb = new StringBuilder();
+					sb.append("The computer doens't exist\n");
+					System.out.println(sb);
+				}
 				break;
 			case 6:
 				sb = new StringBuilder();
@@ -120,7 +229,9 @@ public class Main {
 			default:
 				break;
 			}
+
 		}
+
 	}
 
 	/**
