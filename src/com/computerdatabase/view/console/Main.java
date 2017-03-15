@@ -82,6 +82,11 @@ public class Main {
 		return date;
 	}
 
+	/**
+	 * Get a long
+	 * 
+	 * @return
+	 */
 	private static long inputLong() {
 		boolean isContinue = true;
 		long input = 0;
