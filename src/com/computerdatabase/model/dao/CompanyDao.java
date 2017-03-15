@@ -47,10 +47,11 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	public ArrayList<Company> find() {
 		ArrayList<Company> entities = null;
 		try {
-			final ResultSet resultQ = this.connection
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM " + this.tableName);
-
+			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			prepare.setString(1, this.tableName);
+			prepare.executeUpdate();
+			final ResultSet resultQ = prepare.getResultSet();
 			entities = new ArrayList<>();
 			while (resultQ.next())
 				entities.add(new Company(resultQ.getInt("id"), resultQ.getString("name")));
@@ -65,9 +66,12 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	public Company find(final long id) {
 		Company entity = null;
 		try {
-			final ResultSet resultQ = this.connection
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM " + this.tableName + " WHERE id = " + id);
+			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ? WHERE id = ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			prepare.setString(1, this.tableName);
+			prepare.setLong(2, id);
+			prepare.executeUpdate();
+			final ResultSet resultQ = prepare.getResultSet();
 			if (resultQ.first())
 				entity = new Company(resultQ.getInt("id"), resultQ.getString("name"));
 
@@ -81,10 +85,13 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	public ArrayList<Company> findRange(final int first, final int nbRecord) {
 		ArrayList<Company> entities = null;
 		try {
-			final ResultSet resultQ = this.connection
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM " + this.tableName + " LIMIT " + first + "," + nbRecord);
-
+			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ? LIMIT ?,?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			prepare.setString(1, this.tableName);
+			prepare.setInt(2, first);
+			prepare.setInt(3, nbRecord);
+			prepare.executeUpdate();
+			final ResultSet resultQ = prepare.getResultSet();
 			entities = new ArrayList<>();
 			while (resultQ.next())
 				entities.add(new Company(resultQ.getInt("id"), resultQ.getString("name")));
@@ -100,11 +107,11 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 		final Company centity = (Company) entity;
 		Company _entity = null;
 		try {
-			final PreparedStatement prepare = this.connection.prepareStatement(
-					"UPDATE " + this.tableName + " SET name = ? WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
-			prepare.setString(1, centity.getName());
-			prepare.setLong(2, entity.getId());
+			final PreparedStatement prepare = this.connection.prepareStatement("UPDATE ? SET name = ? WHERE id = ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			prepare.setString(1, this.tableName);
+			prepare.setString(2, centity.getName());
+			prepare.setLong(3, entity.getId());
 			prepare.executeUpdate();
 			_entity = centity;
 		} catch (final SQLException ex) {

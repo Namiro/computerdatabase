@@ -34,24 +34,24 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		Computer _entity = null;
 		try {
 			final PreparedStatement prepare = this.connection.prepareStatement(
-					"INSERT INTO " + this.tableName
-							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
+					"INSERT INTO ? SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
 					Statement.RETURN_GENERATED_KEYS);
-			prepare.setString(1, centity.getName());
+			prepare.setString(1, this.tableName);
+			prepare.setString(2, centity.getName());
 			if (centity.getIntroduced() == null)
-				prepare.setNull(2, java.sql.Types.TIMESTAMP);
-			else
-				prepare.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
-
-			if (centity.getDiscontinued() == null)
 				prepare.setNull(3, java.sql.Types.TIMESTAMP);
 			else
-				prepare.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
+				prepare.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
+
+			if (centity.getDiscontinued() == null)
+				prepare.setNull(4, java.sql.Types.TIMESTAMP);
+			else
+				prepare.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
 
 			if (centity.getCompanyId() == 0)
-				prepare.setNull(4, java.sql.Types.INTEGER);
+				prepare.setNull(5, java.sql.Types.INTEGER);
 			else
-				prepare.setLong(4, centity.getCompanyId());
+				prepare.setLong(5, centity.getCompanyId());
 			prepare.executeUpdate();
 			final ResultSet rs = prepare.getGeneratedKeys();
 			rs.next();
@@ -67,10 +67,11 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	public ArrayList<Computer> find() {
 		ArrayList<Computer> entities = null;
 		try {
-			final ResultSet resultQ = this.connection
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM " + this.tableName);
-
+			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			prepare.setString(1, this.tableName);
+			prepare.executeUpdate();
+			final ResultSet resultQ = prepare.getResultSet();
 			entities = new ArrayList<>();
 			while (resultQ.next())
 				entities.add(new Computer(resultQ.getLong("id"), resultQ.getString("name"),
@@ -90,9 +91,12 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	public Computer find(final long id) {
 		Computer entity = null;
 		try {
-			final ResultSet resultQ = this.connection
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM " + this.tableName + " WHERE id = " + id);
+			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ? WHERE id = ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			prepare.setString(1, this.tableName);
+			prepare.setLong(2, id);
+			prepare.executeUpdate();
+			final ResultSet resultQ = prepare.getResultSet();
 			if (resultQ.first())
 				entity = new Computer(resultQ.getLong("id"), resultQ.getString("name"),
 						(resultQ.getTimestamp("introduced") != null)
@@ -111,10 +115,13 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	public ArrayList<Computer> findRange(final int first, final int nbRecord) {
 		ArrayList<Computer> entities = null;
 		try {
-			final ResultSet resultQ = this.connection
-					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
-					.executeQuery("SELECT * FROM " + this.tableName + " LIMIT " + first + "," + nbRecord);
-
+			final PreparedStatement prepare = this.connection.prepareStatement("SELECT * FROM ? LIMIT ?,?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			prepare.setString(1, this.tableName);
+			prepare.setInt(2, first);
+			prepare.setInt(3, nbRecord);
+			prepare.executeUpdate();
+			final ResultSet resultQ = prepare.getResultSet();
 			entities = new ArrayList<>();
 			while (resultQ.next())
 				entities.add(new Computer(resultQ.getLong("id"), resultQ.getString("name"),
@@ -136,26 +143,26 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 		Computer _entity = null;
 		try {
 			final PreparedStatement prepare = this.connection.prepareStatement(
-					"UPDATE " + this.tableName
-							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?",
+					"UPDATE ? SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			prepare.setString(1, centity.getName());
+			prepare.setString(1, this.tableName);
+			prepare.setString(2, centity.getName());
 			if (centity.getIntroduced() == null)
-				prepare.setNull(2, java.sql.Types.TIMESTAMP);
-			else
-				prepare.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
-
-			if (centity.getDiscontinued() == null)
 				prepare.setNull(3, java.sql.Types.TIMESTAMP);
 			else
-				prepare.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
+				prepare.setTimestamp(3, Timestamp.valueOf(centity.getIntroduced()));
+
+			if (centity.getDiscontinued() == null)
+				prepare.setNull(4, java.sql.Types.TIMESTAMP);
+			else
+				prepare.setTimestamp(4, Timestamp.valueOf(centity.getDiscontinued()));
 
 			if (centity.getCompanyId() == 0)
-				prepare.setNull(4, java.sql.Types.INTEGER);
+				prepare.setNull(5, java.sql.Types.INTEGER);
 			else
-				prepare.setLong(4, centity.getCompanyId());
+				prepare.setLong(5, centity.getCompanyId());
 
-			prepare.setLong(5, entity.getId());
+			prepare.setLong(6, entity.getId());
 			prepare.executeUpdate();
 			_entity = centity;
 		} catch (final Exception ex) {
