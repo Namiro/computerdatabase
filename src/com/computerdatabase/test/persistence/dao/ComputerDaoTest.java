@@ -63,8 +63,8 @@ public class ComputerDaoTest {
 	@Test
 	public void testCreate() {
 
-		final Computer computer = ComputerDaoTest.computerDao
-				.create(new Computer("ComputerNameTest", LocalDateTime.now(), LocalDateTime.now(), 0));
+		final Computer computer = ComputerDaoTest.computerDao.create(new Computer.ComputerBuilder()
+				.name("TestServiceComputer").introduced(LocalDateTime.now()).discontinued(LocalDateTime.now()).build());
 		Assert.assertTrue(computer.getId() == 11);
 	}
 

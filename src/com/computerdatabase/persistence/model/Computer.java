@@ -9,9 +9,42 @@ import java.time.LocalDateTime;
  *
  */
 public class Computer extends Entity implements IEntity {
+	public static class ComputerBuilder extends EntityBuilder<ComputerBuilder, Computer> {
+		private String name;
+		private LocalDateTime introduced;
+		private LocalDateTime discontinued;
+		private long companyId;
+
+		@Override
+		public Computer build() {
+			return new Computer(this.id, this.name, this.introduced, this.discontinued, this.companyId);
+		}
+
+		public ComputerBuilder companyId(final long companyId) {
+			this.companyId = companyId;
+			return this;
+		}
+
+		public ComputerBuilder discontinued(final LocalDateTime discontinued) {
+			this.discontinued = discontinued;
+			return this;
+		}
+
+		public ComputerBuilder introduced(final LocalDateTime introduced) {
+			this.introduced = introduced;
+			return this;
+		}
+
+		public ComputerBuilder name(final String name) {
+			this.name = name;
+			return this;
+		}
+	}
+
 	private String name;
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;
+
 	private long companyId;
 
 	public Computer() {
@@ -27,17 +60,9 @@ public class Computer extends Entity implements IEntity {
 		this.companyId = companyId;
 	}
 
-	public Computer(final String name, final LocalDateTime introduced, final LocalDateTime discontinued,
-			final long companyId) {
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.companyId = companyId;
-	}
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -87,7 +112,7 @@ public class Computer extends Entity implements IEntity {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -121,5 +146,4 @@ public class Computer extends Entity implements IEntity {
 	public String toString() {
 		return this.id + "\t" + this.name + "\t";
 	}
-
 }

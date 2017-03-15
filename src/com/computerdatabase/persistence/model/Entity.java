@@ -11,6 +11,32 @@ import com.google.gson.Gson;
  */
 public abstract class Entity implements IEntity {
 
+	/**
+	 * For the builder pattern
+	 *
+	 * @author Junior Burleon
+	 *
+	 */
+	protected static abstract class EntityBuilder<B extends EntityBuilder, T extends Entity> implements IBuild<T> {
+		long id;
+
+		public B id(final long id) {
+			this.id = id;
+			return (B) this;
+		}
+	}
+
+	/**
+	 * For the builder pattern
+	 *
+	 * @author Junior Burleon
+	 *
+	 * @param <T>
+	 */
+	interface IBuild<T> {
+		T build();
+	}
+
 	private static Gson gson = new Gson();
 
 	/**
@@ -22,14 +48,14 @@ public abstract class Entity implements IEntity {
 
 	}
 
-	public Entity(final long id) {
+	Entity(final long id) {
 		super();
 		this.id = id;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -58,7 +84,7 @@ public abstract class Entity implements IEntity {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

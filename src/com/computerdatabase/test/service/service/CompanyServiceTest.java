@@ -57,15 +57,16 @@ public class CompanyServiceTest {
 
 	@Test
 	public void testCheckDataEntityNameSoLong() throws ServiceException {
-		final Company company = new Company(
-				"rhgughrughguhdfguhfdiguhdfighfughdfguifghfgfhdgidfhgufidhgdfughfghfidghfduighfgudfhgdfuhgufhgdfuioghfioghuifdpghfdlgifdhguiodfghdfogfgdfgfi");
+		final Company company = new Company.CompanyBuilder()
+				.name("rhgughrughguhdfguhfdiguhdfighfughdfguifghfgfhdgidfhgufidhgdfughfghfidghfduighfgudfhgdfuhgufhgdfuioghfioghuifdpghfdlgifdhguiodfghdfogfgdfgfi")
+				.build();
 		this.exception.expect(ServiceException.class);
 		CompanyServiceTest.companyService.checkDataEntity(company);
 	}
 
 	@Test
 	public void testCheckDataEntityNoName() throws ServiceException {
-		final Company company = new Company("");
+		final Company company = new Company.CompanyBuilder().name("").build();
 		this.exception.expect(ServiceException.class);
 		CompanyServiceTest.companyService.checkDataEntity(company);
 	}
@@ -90,7 +91,7 @@ public class CompanyServiceTest {
 
 	@Test
 	public void testSave() throws ServiceException {
-		Company company = new Company("TestServiceCompany");
+		Company company = new Company.CompanyBuilder().name("TestServiceCompany").build();
 		Assert.assertTrue(CompanyServiceTest.companyService.save(company) != null);
 		Assert.assertTrue(
 				(company = CompanyServiceTest.companyService.save(company)).getName().equals("TestServiceCompany"));

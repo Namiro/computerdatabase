@@ -7,24 +7,34 @@ package com.computerdatabase.persistence.model;
  *
  */
 public class Company extends Entity implements IEntity {
+	public static class CompanyBuilder extends EntityBuilder<CompanyBuilder, Company> {
+		String name;
+
+		@Override
+		public Company build() {
+			return new Company(this.id, this.name);
+		}
+
+		public CompanyBuilder name(final String name) {
+			this.name = name;
+			return this;
+		}
+	}
+
 	private String name;
 
 	public Company() {
 
 	}
 
-	public Company(final int id, final String name) {
+	public Company(final long id, final String name) {
 		super(id);
-		this.name = name;
-	}
-
-	public Company(final String name) {
 		this.name = name;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -50,7 +60,7 @@ public class Company extends Entity implements IEntity {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

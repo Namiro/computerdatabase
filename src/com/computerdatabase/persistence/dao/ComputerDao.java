@@ -81,12 +81,13 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
 			while (resultSet.next())
-				entities.add(new Computer(resultSet.getLong("id"), resultSet.getString("name"),
-						(resultSet.getTimestamp("introduced") != null)
-								? resultSet.getTimestamp("introduced").toLocalDateTime() : null,
-						(resultSet.getTimestamp("discontinued") != null)
-								? resultSet.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultSet.getLong("company_id")));
+				entities.add(
+						new Computer.ComputerBuilder().name(resultSet.getString("name")).id(resultSet.getLong("id"))
+								.introduced((resultSet.getTimestamp("introduced") != null)
+										? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
+								.discontinued((resultSet.getTimestamp("discontinued") != null)
+										? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
+								.companyId(resultSet.getLong("company_id")).build());
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);

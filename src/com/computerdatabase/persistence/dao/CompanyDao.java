@@ -60,7 +60,8 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
 			while (resultSet.next())
-				entities.add(new Company(resultSet.getInt("id"), resultSet.getString("name")));
+				entities.add(new Company.CompanyBuilder().name(resultSet.getString("name")).id(resultSet.getInt("id"))
+						.build());
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);

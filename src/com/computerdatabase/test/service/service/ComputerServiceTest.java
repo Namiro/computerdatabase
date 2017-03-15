@@ -70,16 +70,17 @@ public class ComputerServiceTest {
 
 	@Test
 	public void testCheckDataEntityNameSoLong() {
-		final Computer computer = new Computer(
-				"TestNamedxklgdfuigjkgdfgdfhgdfhmgidfjhgdfklgdfiogdfigdfjgiodfljhiodfghfighdfgjdfuigjdfiogjdfgiofhgijfghdfighdfgdfh",
-				LocalDateTime.now(), LocalDateTime.now(), 0);
+		final Computer computer = new Computer.ComputerBuilder()
+				.name("TestNamedxklgdfuigjkgdfgdfhgdfhmgidfjhgdfklgdfiogdfigdfjgiodfljhiodfghfighdfgjdfuigjdfiogjdfgiofhgijfghdfighdfgdfh")
+				.introduced(LocalDateTime.now()).discontinued(LocalDateTime.now()).build();
 		this.exception.expect(ServiceException.class);
 		ComputerServiceTest.computerService.checkDataEntity(computer);
 	}
 
 	@Test
 	public void testCheckDataEntityNoName() {
-		final Computer computer = new Computer("", LocalDateTime.now(), LocalDateTime.now(), 0);
+		final Computer computer = new Computer.ComputerBuilder().name("").introduced(LocalDateTime.now())
+				.discontinued(LocalDateTime.now()).build();
 		this.exception.expect(ServiceException.class);
 		ComputerServiceTest.computerService.checkDataEntity(computer);
 	}
@@ -118,7 +119,8 @@ public class ComputerServiceTest {
 	@Test
 	public void testSave() {
 		final LocalDateTime localDateTime = LocalDateTime.now().withNano(0);
-		Computer computer = new Computer("TestServiceComputer", localDateTime, localDateTime, 0);
+		Computer computer = new Computer.ComputerBuilder().name("TestServiceComputer").introduced(LocalDateTime.now())
+				.discontinued(LocalDateTime.now()).build();
 		computer = ComputerServiceTest.computerService.save(computer);
 		Assert.assertTrue(computer != null);
 		Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
