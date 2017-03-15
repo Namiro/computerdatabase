@@ -22,7 +22,7 @@ public abstract class Service<E> implements IService<E> {
 	}
 
 	@Override
-	public E get(final int id) {
+	public E get(final long id) {
 		if (id > 0)
 			return this.dao.find(id);
 		else

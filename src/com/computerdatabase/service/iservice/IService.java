@@ -34,7 +34,7 @@ public interface IService<E> {
 	 * @param id
 	 * @return A entity with a type domaine class or Null if not exist
 	 */
-	public E get(int id);
+	public E get(long id);
 
 	/**
 	 * Return the records that are in a page

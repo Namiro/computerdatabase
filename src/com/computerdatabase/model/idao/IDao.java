@@ -39,7 +39,7 @@ public interface IDao<E> {
 	 * @param id
 	 * @return T Object of type T. Null if nothing found.
 	 */
-	E find(int id);
+	E find(long id);
 
 	/**
 	 * Method to get all element between in a limit from the database The limit

@@ -12,14 +12,14 @@ public class Computer extends Entity implements IEntity {
 	private String name;
 	private LocalDateTime introduced;
 	private LocalDateTime discontinued;
-	private Integer companyId;
+	private long companyId;
 
 	public Computer() {
 
 	}
 
-	public Computer(final int id, final String name, final LocalDateTime introduced, final LocalDateTime discontinued,
-			final Integer companyId) {
+	public Computer(final long id, final String name, final LocalDateTime introduced, final LocalDateTime discontinued,
+			final long companyId) {
 		super(id);
 		this.name = name;
 		this.introduced = introduced;
@@ -28,14 +28,14 @@ public class Computer extends Entity implements IEntity {
 	}
 
 	public Computer(final String name, final LocalDateTime introduced, final LocalDateTime discontinued,
-			final Integer companyId) {
+			final long companyId) {
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
 		this.companyId = companyId;
 	}
 
-	public Integer getCompanyId() {
+	public long getCompanyId() {
 		return this.companyId;
 	}
 
@@ -51,8 +51,8 @@ public class Computer extends Entity implements IEntity {
 		return this.name;
 	}
 
-	public void setCompanyId(final Integer companyId) {
-		this.companyId = companyId;
+	public void setCompanyId(final long l) {
+		this.companyId = l;
 	}
 
 	public void setDiscontinued(final LocalDateTime discontinued) {

@@ -69,17 +69,17 @@ public class ComputerServiceTest {
 	public final ExpectedException exception = ExpectedException.none();
 
 	@Test
-	public void testCheckDataEntityNameSoLong() throws ServiceException {
+	public void testCheckDataEntityNameSoLong() {
 		final Computer computer = new Computer(
 				"TestNamedxklgdfuigjkgdfgdfhgdfhmgidfjhgdfklgdfiogdfigdfjgiodfljhiodfghfighdfgjdfuigjdfiogjdfgiofhgijfghdfighdfgdfh",
-				LocalDateTime.now(), LocalDateTime.now(), null);
+				LocalDateTime.now(), LocalDateTime.now(), 0);
 		this.exception.expect(ServiceException.class);
 		ComputerServiceTest.computerService.checkDataEntity(computer);
 	}
 
 	@Test
-	public void testCheckDataEntityNoName() throws ServiceException {
-		final Computer computer = new Computer("", LocalDateTime.now(), LocalDateTime.now(), null);
+	public void testCheckDataEntityNoName() {
+		final Computer computer = new Computer("", LocalDateTime.now(), LocalDateTime.now(), 0);
 		this.exception.expect(ServiceException.class);
 		ComputerServiceTest.computerService.checkDataEntity(computer);
 	}
@@ -118,35 +118,30 @@ public class ComputerServiceTest {
 	@Test
 	public void testSave() {
 		final LocalDateTime localDateTime = LocalDateTime.now().withNano(0);
-		Computer computer = new Computer("TestServiceComputer", localDateTime, localDateTime, null);
-		try {
-			computer = ComputerServiceTest.computerService.save(computer);
-			Assert.assertTrue(computer != null);
-			Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
-			computer = ComputerServiceTest.computerService.get(computer.getId());
-			Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
-			Assert.assertTrue(computer.getId() != 0);
-			final int idOk = computer.getId();
-			Assert.assertTrue(computer.getCompanyId() == 0);
-			Assert.assertTrue(computer.getDiscontinued().equals(localDateTime));
-			Assert.assertTrue(computer.getIntroduced().equals(localDateTime));
-			computer.setName("TestServiceComputerUpdated");
-			computer.setDiscontinued(localDateTime.plusYears(1));
-			computer.setIntroduced(localDateTime.plusYears(2));
-			computer.setCompanyId(2);
-			computer = ComputerServiceTest.computerService.save(computer);
-			Assert.assertTrue(computer != null);
-			Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
-			computer = ComputerServiceTest.computerService.get(computer.getId());
-			Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
-			Assert.assertTrue(computer.getId() == idOk);
-			Assert.assertTrue(computer.getCompanyId() == 2);
-			Assert.assertTrue(computer.getDiscontinued().equals(localDateTime.plusYears(1)));
-			Assert.assertTrue(computer.getIntroduced().equals(localDateTime.plusYears(2)));
-		} catch (final Exception e) {
-			Assert.fail();
-			System.out.println(e);
-		}
+		Computer computer = new Computer("TestServiceComputer", localDateTime, localDateTime, 0);
+		computer = ComputerServiceTest.computerService.save(computer);
+		Assert.assertTrue(computer != null);
+		Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
+		computer = ComputerServiceTest.computerService.get(computer.getId());
+		Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
+		Assert.assertTrue(computer.getId() != 0);
+		final long idOk = computer.getId();
+		Assert.assertTrue(computer.getCompanyId() == 0);
+		Assert.assertTrue(computer.getDiscontinued().equals(localDateTime));
+		Assert.assertTrue(computer.getIntroduced().equals(localDateTime));
+		computer.setName("TestServiceComputerUpdated");
+		computer.setDiscontinued(localDateTime.plusYears(1));
+		computer.setIntroduced(localDateTime.plusYears(2));
+		computer.setCompanyId(2);
+		computer = ComputerServiceTest.computerService.save(computer);
+		Assert.assertTrue(computer != null);
+		Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
+		computer = ComputerServiceTest.computerService.get(computer.getId());
+		Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
+		Assert.assertTrue(computer.getId() == idOk);
+		Assert.assertTrue(computer.getCompanyId() == 2);
+		Assert.assertTrue(computer.getDiscontinued().equals(localDateTime.plusYears(1)));
+		Assert.assertTrue(computer.getIntroduced().equals(localDateTime.plusYears(2)));
 	}
 
 }

@@ -95,7 +95,7 @@ public abstract class Dao<E> implements IDao<E> {
 	 * @see com.computerdatabase.model.dao.IDao#find(int)
 	 */
 	@Override
-	public abstract E find(final int id);
+	public abstract E find(final long id);
 
 	/*
 	 * (non-Javadoc)

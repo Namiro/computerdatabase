@@ -16,13 +16,13 @@ public abstract class Entity implements IEntity {
 	/**
 	 * This is the id for all entities.
 	 */
-	protected int id;
+	protected long id;
 
 	public Entity() {
 
 	}
 
-	public Entity(final int id) {
+	public Entity(final long id) {
 		super();
 		this.id = id;
 	}
@@ -33,7 +33,7 @@ public abstract class Entity implements IEntity {
 	 * @see com.computerdatabase.model.entity.IEntity#getId()
 	 */
 	@Override
-	public int getId() {
+	public long getId() {
 		return this.id;
 	}
 
@@ -43,7 +43,7 @@ public abstract class Entity implements IEntity {
 	 * @see com.computerdatabase.model.entity.IEntity#setId(int)
 	 */
 	@Override
-	public void setId(final int id) {
+	public void setId(final long id) {
 		this.id = id;
 	}
 

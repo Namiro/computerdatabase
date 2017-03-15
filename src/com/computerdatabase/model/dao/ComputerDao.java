@@ -48,10 +48,10 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 			else
 				prepare.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
 
-			if (centity.getCompanyId() == null || centity.getCompanyId() == 0)
+			if (centity.getCompanyId() == 0)
 				prepare.setNull(4, java.sql.Types.INTEGER);
 			else
-				prepare.setInt(4, centity.getCompanyId());
+				prepare.setLong(4, centity.getCompanyId());
 			prepare.executeUpdate();
 			final ResultSet rs = prepare.getGeneratedKeys();
 			rs.next();
@@ -73,12 +73,12 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 
 			entities = new ArrayList<>();
 			while (resultQ.next())
-				entities.add(new Computer(resultQ.getInt("id"), resultQ.getString("name"),
+				entities.add(new Computer(resultQ.getLong("id"), resultQ.getString("name"),
 						(resultQ.getTimestamp("introduced") != null)
 								? resultQ.getTimestamp("introduced").toLocalDateTime() : null,
 						(resultQ.getTimestamp("discontinued") != null)
 								? resultQ.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultQ.getInt("company_id")));
+						resultQ.getLong("company_id")));
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
@@ -87,19 +87,19 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	}
 
 	@Override
-	public Computer find(final int id) {
+	public Computer find(final long id) {
 		Computer entity = null;
 		try {
 			final ResultSet resultQ = this.connection
 					.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)
 					.executeQuery("SELECT * FROM " + this.tableName + " WHERE id = " + id);
 			if (resultQ.first())
-				entity = new Computer(resultQ.getInt("id"), resultQ.getString("name"),
+				entity = new Computer(resultQ.getLong("id"), resultQ.getString("name"),
 						(resultQ.getTimestamp("introduced") != null)
 								? resultQ.getTimestamp("introduced").toLocalDateTime() : null,
 						(resultQ.getTimestamp("discontinued") != null)
 								? resultQ.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultQ.getInt("company_id"));
+						resultQ.getLong("company_id"));
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
@@ -117,12 +117,12 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 
 			entities = new ArrayList<>();
 			while (resultQ.next())
-				entities.add(new Computer(resultQ.getInt("id"), resultQ.getString("name"),
+				entities.add(new Computer(resultQ.getLong("id"), resultQ.getString("name"),
 						(resultQ.getTimestamp("introduced") != null)
 								? resultQ.getTimestamp("introduced").toLocalDateTime() : null,
 						(resultQ.getTimestamp("discontinued") != null)
 								? resultQ.getTimestamp("discontinued").toLocalDateTime() : null,
-						resultQ.getInt("company_id")));
+						resultQ.getLong("company_id")));
 
 		} catch (final SQLException ex) {
 			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, ex);
@@ -150,12 +150,12 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 			else
 				prepare.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
 
-			if (centity.getCompanyId() == null || centity.getCompanyId() == 0)
+			if (centity.getCompanyId() == 0)
 				prepare.setNull(4, java.sql.Types.INTEGER);
 			else
-				prepare.setInt(4, centity.getCompanyId());
+				prepare.setLong(4, centity.getCompanyId());
 
-			prepare.setInt(5, entity.getId());
+			prepare.setLong(5, entity.getId());
 			prepare.executeUpdate();
 			_entity = centity;
 		} catch (final Exception ex) {

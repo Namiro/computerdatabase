@@ -7,9 +7,9 @@ package com.computerdatabase.model.entity;
  */
 public interface IEntity {
 
-	public int getId();
+	public long getId();
 
-	public void setId(int id);
+	public void setId(long id);
 
 	@Override
 	public String toString();

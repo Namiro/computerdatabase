@@ -62,7 +62,7 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	}
 
 	@Override
-	public Company find(final int id) {
+	public Company find(final long id) {
 		Company entity = null;
 		try {
 			final ResultSet resultQ = this.connection
@@ -104,7 +104,7 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 					"UPDATE " + this.tableName + " SET name = ? WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			prepare.setString(1, centity.getName());
-			prepare.setInt(2, entity.getId());
+			prepare.setLong(2, entity.getId());
 			prepare.executeUpdate();
 			_entity = centity;
 		} catch (final SQLException ex) {
