@@ -16,7 +16,6 @@ import org.junit.rules.ExpectedException;
 import com.computerdatabase.persistence.dao.DatabaseConnection;
 import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.persistence.model.Computer;
-import com.computerdatabase.persistence.model.IEntity;
 import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.iservice.IComputerService;
 import com.computerdatabase.service.service.ComputerService;
@@ -88,31 +87,31 @@ public class ComputerServiceTest {
 
 	@Test
 	public void testGet() {
-		Assert.assertTrue(ComputerServiceTest.computerService.get().size() == 10);
+		Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class).size() == 10);
 	}
 
 	@Test
 	public void testGetWithBadId() {
 		final int id = 50;
-		Assert.assertNull(ComputerServiceTest.computerService.get(id));
+		Assert.assertNull(ComputerServiceTest.computerService.get(Computer.class, id));
 	}
 
 	@Test
 	public void testGetWithId() {
 		final int id = 2;
-		Assert.assertTrue(ComputerServiceTest.computerService.get(id).getId() == 2);
-		Assert.assertTrue(ComputerServiceTest.computerService.get(id).getName().equals("CM-2a"));
+		Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class, id).getId() == 2);
+		Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class, id).getName().equals("CM-2a"));
 	}
 
 	@Test
 	public void testRemove() {
-		final IEntity entity = new Computer();
+		final Computer entity = new Computer();
 		entity.setId(8);
 		Assert.assertTrue(ComputerServiceTest.computerService.remove(entity));
 	}
 
 	public void testRemoveWithBadId() {
-		final IEntity entity = new Computer();
+		final Computer entity = new Computer();
 		entity.setId(50);
 		Assert.assertFalse(ComputerServiceTest.computerService.remove(entity));
 	}
@@ -126,7 +125,7 @@ public class ComputerServiceTest {
 		computer = ComputerServiceTest.computerService.save(computer);
 		Assert.assertTrue(computer != null);
 		Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
-		computer = ComputerServiceTest.computerService.get(computer.getId());
+		computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId());
 		Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
 		Assert.assertTrue(computer.getId() != 0);
 		final long idOk = computer.getId();
@@ -140,7 +139,7 @@ public class ComputerServiceTest {
 		computer = ComputerServiceTest.computerService.save(computer);
 		Assert.assertTrue(computer != null);
 		Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
-		computer = ComputerServiceTest.computerService.get(computer.getId());
+		computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId());
 		Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
 		Assert.assertTrue(computer.getId() == idOk);
 		Assert.assertTrue(computer.getCompany().getId() == 2);

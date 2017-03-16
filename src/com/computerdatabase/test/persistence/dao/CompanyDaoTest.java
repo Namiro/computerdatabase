@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.computerdatabase.persistence.dao.CompanyDao;
 import com.computerdatabase.persistence.dao.DatabaseConnection;
+import com.computerdatabase.persistence.model.Company;
 
 /**
  * @author Junior Burléon
@@ -26,7 +27,7 @@ public class CompanyDaoTest {
 	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		CompanyDaoTest.companyDao = new CompanyDao();
+		CompanyDaoTest.companyDao = CompanyDao.INSTANCE;
 
 		final String[] queries = { "SET FOREIGN_KEY_CHECKS = 0", "TRUNCATE company", "SET FOREIGN_KEY_CHECKS = 1",
 				"INSERT INTO company (id,name) VALUES (  1,'Apple Inc.')",
@@ -50,6 +51,10 @@ public class CompanyDaoTest {
 
 	@Test
 	public void testFind() {
-		Assert.assertEquals(5, CompanyDaoTest.companyDao.find().size());
+		try {
+			Assert.assertEquals(5, CompanyDaoTest.companyDao.find(Company.class).size());
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

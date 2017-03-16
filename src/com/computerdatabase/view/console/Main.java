@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.persistence.model.Computer;
 import com.computerdatabase.service.exception.ServiceException;
-import com.computerdatabase.service.service.CompanyService;
 import com.computerdatabase.service.service.ComputerService;
 import com.computerdatabase.service.service.PageService;
 
@@ -24,7 +23,6 @@ public class Main {
 	private static PageService<Computer> computerPage;
 	private static int choiceMainMenu;
 	private static final ComputerService computerService = new ComputerService();
-	private static final CompanyService companyService = new CompanyService();
 
 	public static void clearConsole() {
 		// TODO;
@@ -107,8 +105,8 @@ public class Main {
 	}
 
 	public static void main(final String[] args) throws IOException {
-		Main.companyPage = new PageService<>(Main.companyService);
-		Main.computerPage = new PageService<>(Main.computerService);
+		Main.companyPage = new PageService<>(Company.class);
+		Main.computerPage = new PageService<>(Computer.class);
 
 		boolean isContinue = true;
 		boolean isContinueSubMenu = false;
@@ -133,8 +131,8 @@ public class Main {
 			case 3:
 				sb = new StringBuilder();
 				sb.append("Computer ID :\n");
-				Computer computer = Main.computerService
-						.get(Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
+				Computer computer = Main.computerService.get(Computer.class,
+						Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
 				if (computer != null) {
 					sb = new StringBuilder();
 					sb.append("Detail of : " + computer.getId() + "\n");
@@ -178,7 +176,7 @@ public class Main {
 			case 5:
 				computer = new Computer();
 				System.out.print("Computer update ID :");
-				computer = Main.computerService.get(Main.inputLong());
+				computer = Main.computerService.get(Computer.class, Main.inputLong());
 				if (computer != null)
 					do
 						try {
@@ -213,7 +211,8 @@ public class Main {
 			case 6:
 				sb = new StringBuilder();
 				sb.append("Remove computer ID :\n");
-				computer = Main.computerService.get(Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
+				computer = Main.computerService.get(Computer.class,
+						Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
 				if (computer != null) {
 					Main.computerService.remove(computer);
 					Main.companyPage.refresh();
