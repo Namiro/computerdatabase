@@ -7,6 +7,6 @@ import com.computerdatabase.persistence.model.Company;
  * @author Junior Burleon
  *
  */
-public interface ICompanyService extends IService<Company> {
+public interface ICompanyService extends IModelService<Company> {
 
 }

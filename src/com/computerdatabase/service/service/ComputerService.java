@@ -2,30 +2,28 @@ package com.computerdatabase.service.service;
 
 import java.time.LocalDateTime;
 
-import com.computerdatabase.persistence.dao.ComputerDao;
 import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.persistence.model.Computer;
 import com.computerdatabase.service.exception.ServiceException;
 import com.computerdatabase.service.iservice.IComputerService;
-import com.computerdatabase.service.iservice.IService;
+import com.computerdatabase.service.iservice.IModelService;
 
 /**
  *
  * @author Junior Burleon
  *
  */
-public class ComputerService extends Service<Computer> implements IComputerService {
+public class ComputerService extends ModelService<Computer> implements IComputerService {
 
-	private final IService<Company> companyService = new CompanyService();
+	private final IModelService<Company> companyService = new CompanyService();
 
 	public ComputerService() {
-		this.dao = new ComputerDao();
+
 	}
 
 	@Override
 	public void checkDataEntity(final Computer entity) throws ServiceException {
-		if (entity == null)
-			throw new ServiceException("The computer hasn't been initialized");
+		IComputerService.super.checkDataEntity(entity);
 		if (entity.getName().length() < 1)
 			throw new ServiceException("The name of computer must be longer (More then 1 caracter)");
 		if (entity.getName().length() > 50)
