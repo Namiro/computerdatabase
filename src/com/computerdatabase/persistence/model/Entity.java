@@ -17,7 +17,8 @@ public abstract class Entity implements IEntity {
 	 * @author Junior Burleon
 	 *
 	 */
-	protected static abstract class EntityBuilder<B extends EntityBuilder, T extends Entity> implements IBuild<T> {
+	protected static abstract class EntityBuilder<B extends EntityBuilder<?, ?>, T extends Entity>
+			implements IBuild<T> {
 		long id;
 
 		public B id(final long id) {
