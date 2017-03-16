@@ -2,7 +2,8 @@ package com.computerdatabase.service.service;
 
 import java.util.List;
 
-import com.computerdatabase.service.iservice.IService;
+import com.computerdatabase.persistence.model.IEntity;
+import com.computerdatabase.service.iservice.IModelService;
 
 /**
  * This class is a page of entities show to the user
@@ -10,17 +11,19 @@ import com.computerdatabase.service.iservice.IService;
  * @author Junior Burleon
  *
  */
-public class PageService<E> {
+public class PageService<E extends IEntity> {
 	static final int numberOfRecordsBypage = 3;
 
 	private int number;
 	private List<E> records;
-	private final IService<E> service;
+	private final IModelService<E> service;
+	private final Class<E> entityType;
 
-	public PageService(final IService<E> service) {
-		this.service = service;
+	public PageService(final Class<E> T) {
+		this.entityType = T;
+		this.service = new ModelService<>();
 		this.number = 1;
-		this.records = this.service.getPage(1, PageService.numberOfRecordsBypage);
+		this.records = this.service.getPage(this.entityType, this.number, PageService.numberOfRecordsBypage);
 	}
 
 	public int getNumber() {
@@ -38,7 +41,7 @@ public class PageService<E> {
 	 */
 	public List<E> next() {
 		this.number++;
-		final List<E> records = this.service.getPage(this.number, PageService.numberOfRecordsBypage);
+		final List<E> records = this.service.getPage(this.entityType, this.number, PageService.numberOfRecordsBypage);
 		if (records != null && !records.isEmpty())
 			this.records = records;
 		else
@@ -54,7 +57,8 @@ public class PageService<E> {
 	public List<E> page(final int pageNumber) {
 		System.out.println(pageNumber);
 		if (pageNumber > 0) {
-			final List<E> records = this.service.getPage(pageNumber, PageService.numberOfRecordsBypage);
+			final List<E> records = this.service.getPage(this.entityType, pageNumber,
+					PageService.numberOfRecordsBypage);
 			if (records != null && !records.isEmpty()) {
 				this.records = records;
 				this.number = pageNumber;
@@ -71,7 +75,7 @@ public class PageService<E> {
 	public List<E> previous() {
 		if (this.number > 1) {
 			this.number--;
-			this.records = this.service.getPage(this.number, PageService.numberOfRecordsBypage);
+			this.records = this.service.getPage(this.entityType, this.number, PageService.numberOfRecordsBypage);
 		}
 		return this.records;
 	}
@@ -80,7 +84,7 @@ public class PageService<E> {
 	 * To refresh the current page
 	 */
 	public void refresh() {
-		this.records = this.service.getPage(this.number, PageService.numberOfRecordsBypage);
+		this.records = this.service.getPage(this.entityType, this.number, PageService.numberOfRecordsBypage);
 	}
 
 	@Override
