@@ -24,7 +24,6 @@ public enum DatabaseConnection {
 		return INSTANCE;
 	}
 
-	private Connection connection;
 	private String url = "";
 	private String user = "";
 	private String pwd = "";
@@ -65,17 +64,15 @@ public enum DatabaseConnection {
 
 	public Connection getConnection() {
 		try {
-			if (this.connection == null || this.connection.isClosed())
-				Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
 			PropertiesManager.load();
 			this.url = PropertiesManager.prop.getProperty("database");
 			this.user = PropertiesManager.prop.getProperty("dbuser");
 			this.pwd = PropertiesManager.prop.getProperty("dbpassword");
-			this.connection = DriverManager.getConnection(this.url, this.user, this.pwd);
+			return DriverManager.getConnection(this.url, this.user, this.pwd);
 		} catch (SQLException | ClassNotFoundException e) {
 			Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
 			throw new PersistenceException(e);
 		}
-		return this.connection;
 	}
 }
