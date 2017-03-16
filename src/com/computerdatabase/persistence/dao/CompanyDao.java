@@ -11,27 +11,29 @@ import java.util.logging.Logger;
 import com.computerdatabase.persistence.exception.PersistenceException;
 import com.computerdatabase.persistence.idao.ICompanyDao;
 import com.computerdatabase.persistence.model.Company;
-import com.computerdatabase.persistence.model.IEntity;
 
 /**
  * @author Junior Burleon
  *
  */
-public class CompanyDao extends Dao<Company> implements ICompanyDao {
+public enum CompanyDao implements ICompanyDao {
 
-	public CompanyDao() {
-		this.tableName = Company.class.getSimpleName().toLowerCase();
+	INSTANCE;
+
+	private CompanyDao() {
+
 	}
 
 	@Override
-	public Company create(final IEntity entity) {
-		final Company centity = (Company) entity;
+	public Company create(final Company entity) {
+		final Company centity = entity;
 		Company _entity = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"INSERT INTO " + this.tableName + " SET name = ?", Statement.RETURN_GENERATED_KEYS);
+					"INSERT INTO " + this.getTableName(entity.getClass()) + " SET name = ?",
+					Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, centity.getName());
 			statement.executeUpdate();
 
@@ -51,13 +53,14 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	}
 
 	@Override
-	public ArrayList<Company> find() {
+	public ArrayList<Company> find(final Class<Company> c) {
 		ArrayList<Company> entities = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
-			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement("SELECT * FROM " + this.tableName,
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+					"SELECT * FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
+					ResultSet.CONCUR_UPDATABLE);
 			statement.execute();
 			resultSet = statement.getResultSet();
 			entities = new ArrayList<>();
@@ -77,13 +80,13 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	}
 
 	@Override
-	public Company find(final long id) {
+	public Company find(final Class<Company> c, final long id) {
 		Company entity = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"SELECT * FROM " + this.tableName + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+					"SELECT * FROM " + this.getTableName(c) + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			statement.setLong(1, id);
 			statement.execute();
@@ -103,13 +106,13 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	}
 
 	@Override
-	public ArrayList<Company> findRange(final int first, final int nbRecord) {
+	public ArrayList<Company> findRange(final Class<Company> c, final int first, final int nbRecord) {
 		ArrayList<Company> entities = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"SELECT * FROM " + this.tableName + " LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
+					"SELECT * FROM " + this.getTableName(c) + " LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
 					ResultSet.CONCUR_UPDATABLE);
 			statement.setInt(1, first);
 			statement.setInt(2, nbRecord);
@@ -131,14 +134,14 @@ public class CompanyDao extends Dao<Company> implements ICompanyDao {
 	}
 
 	@Override
-	public Company update(final IEntity entity) {
-		final Company centity = (Company) entity;
+	public Company update(final Company entity) {
+		final Company centity = entity;
 		Company _entity = null;
 		PreparedStatement statement = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"UPDATE " + this.tableName + " SET name = ? WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
+					"UPDATE " + this.getTableName(entity.getClass()) + " SET name = ? WHERE id = ?",
+					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.setString(1, centity.getName());
 			statement.setLong(2, entity.getId());
 			statement.executeUpdate();

@@ -16,29 +16,29 @@ import com.computerdatabase.persistence.exception.PersistenceException;
 import com.computerdatabase.persistence.idao.IComputerDao;
 import com.computerdatabase.persistence.model.Company;
 import com.computerdatabase.persistence.model.Computer;
-import com.computerdatabase.persistence.model.Entity;
-import com.computerdatabase.persistence.model.IEntity;
 
 /**
  * @author Junior Burleon
  *
  */
-public class ComputerDao extends Dao<Computer> implements IComputerDao {
+public enum ComputerDao implements IComputerDao {
 
-	public ComputerDao() {
-		this.tableName = Computer.class.getSimpleName().toLowerCase();
+	INSTANCE;
+
+	private ComputerDao() {
+
 	}
 
 	@Override
-	public Computer create(final IEntity entity) {
+	public Computer create(final Computer entity) {
 
-		final Computer centity = (Computer) entity;
+		final Computer centity = entity;
 		Computer _entity = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"INSERT INTO " + this.tableName
+					"INSERT INTO " + this.getTableName(entity.getClass())
 							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
 					Statement.RETURN_GENERATED_KEYS);
 			statement.setString(1, centity.getName());
@@ -73,14 +73,14 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	}
 
 	@Override
-	public ArrayList<Computer> find() {
+	public ArrayList<Computer> find(final Class<Computer> c) {
 		ArrayList<Computer> entities = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
 					"SELECT computer.id, computer.name, introduced, discontinued, company_id, company.name as cName FROM "
-							+ this.tableName + " LEFT JOIN company ON computer.company_id=company.id",
+							+ this.getTableName(c) + " LEFT JOIN company ON computer.company_id=company.id",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.execute();
 			resultSet = statement.getResultSet();
@@ -108,14 +108,14 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	}
 
 	@Override
-	public Computer find(final long id) {
+	public Computer find(final Class<Computer> c, final long id) {
 		Computer entity = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
 					"SELECT computer.id, computer.name, introduced, discontinued, company_id, company.name as cName FROM "
-							+ this.tableName
+							+ this.getTableName(c)
 							+ " LEFT JOIN company ON computer.company_id=company.id WHERE computer.id = ?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.setLong(1, id);
@@ -143,14 +143,14 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	}
 
 	@Override
-	public ArrayList<Computer> findRange(final int first, final int nbRecord) {
+	public ArrayList<Computer> findRange(final Class<Computer> c, final int first, final int nbRecord) {
 		ArrayList<Computer> entities = null;
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
 					"SELECT computer.id, computer.name, introduced, discontinued, company_id, company.name as cName FROM "
-							+ this.tableName + " LEFT JOIN company ON computer.company_id=company.id LIMIT ?,?",
+							+ this.getTableName(c) + " LEFT JOIN company ON computer.company_id=company.id LIMIT ?,?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.setInt(1, first);
 			statement.setInt(2, nbRecord);
@@ -180,13 +180,13 @@ public class ComputerDao extends Dao<Computer> implements IComputerDao {
 	}
 
 	@Override
-	public Entity update(final IEntity entity) {
-		final Computer centity = (Computer) entity;
+	public Computer update(final Computer entity) {
+		final Computer centity = entity;
 		Computer _entity = null;
 		PreparedStatement statement = null;
 		try {
 			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"UPDATE " + this.tableName
+					"UPDATE " + this.getTableName(entity.getClass())
 							+ " SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE computer.id = ?",
 					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			statement.setString(1, centity.getName());
