@@ -10,19 +10,23 @@ import org.apache.commons.configuration2.ex.ConfigurationException;
 
 public class PropertiesManager {
 
-	public static FileBasedConfiguration config;
+    public static FileBasedConfiguration config;
 
-	public static void load() {
-		final Parameters params = new Parameters();
-		final File propertiesFile = new File("config.properties");
+    /**
+     * To load the properties file.
+     */
+    public static void load() {
+        final Parameters params = new Parameters();
+        final File propertiesFile = new File("config.properties");
 
-		final FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
-				PropertiesConfiguration.class).configure(params.fileBased().setFile(propertiesFile));
-		try {
-			PropertiesManager.config = builder.getConfiguration();
-		} catch (final ConfigurationException e) {
-			e.printStackTrace();
-		}
-	}
+        final FileBasedConfigurationBuilder<
+                FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
+                        PropertiesConfiguration.class).configure(params.fileBased().setFile(propertiesFile));
+        try {
+            PropertiesManager.config = builder.getConfiguration();
+        } catch (final ConfigurationException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

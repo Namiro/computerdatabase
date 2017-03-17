@@ -13,93 +13,111 @@ import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
  * @author Junior Burleon
  *
  * @param <E>
+ *            The type of service you want.
  */
 public interface IModelService<E extends IEntity> {
 
-	/**
-	 * Check the value of each instance variable of entity.
-	 *
-	 * @param entity
-	 * @throws com.sgs.service.exception.ServiceException
-	 */
-	default public void checkDataEntity(final E entity) throws ServiceException {
-		if (entity == null)
-			throw new ServiceException("The object hasn't been initialized");
-	}
+    /**
+     * Check the value of each instance variable of entity.
+     *
+     * @param entity
+     *            The entity to check
+     * @throws ServiceException
+     *             If the entity is null
+     */
+    default void checkDataEntity(final E entity) throws ServiceException {
+        if (entity == null) {
+            throw new ServiceException("The object hasn't been initialized");
+        }
+    }
 
-	/**
-	 * Get all entities
-	 *
-	 * @return A entity with a type domain class or Null if not exist
-	 */
-	default public List<E> get(final Class<E> T) {
-		return DaoFactory.INSTANCE.getDao(T).find(T);
-	}
+    /**
+     * Get all entities.
+     *
+     * @param entityType
+     *            The entity type
+     * @return A entity with a type domain class or Null if not exist
+     */
+    default List<E> get(final Class<E> entityType) {
+        return DaoFactory.INSTANCE.getDao(entityType).find(entityType);
+    }
 
-	/**
-	 * Get one entity
-	 *
-	 * @param id
-	 * @return A entity with a type domain class or Null if not exist
-	 */
-	default public E get(final Class<E> T, final long id) {
-		if (id > 0)
-			return DaoFactory.INSTANCE.getDao(T).find(T, id);
-		else
-			return null;
-	}
+    /**
+     * Get one entity.
+     *
+     * @param entityType
+     *            The entity type
+     * @param id
+     *            The entity id
+     * @return A entity with a type domain class or Null if not exist
+     */
+    default E get(final Class<E> entityType, final long id) {
+        if (id > 0) {
+            return DaoFactory.INSTANCE.getDao(entityType).find(entityType, id);
+        } else {
+            return null;
+        }
+    }
 
-	/**
-	 *
-	 * @param entityType
-	 * @param number
-	 * @param recordsByPage
-	 * @return
-	 */
-	default public List<E> getPage(final Class<E> T, final int pageNumber, final int recordsByPage) {
-		return DaoFactory.INSTANCE.getDao(T).findRange(T, (pageNumber - 1) * recordsByPage, recordsByPage);
-	}
+    /**
+     * To get a page.
+     *
+     * @param entityType
+     *            The entity type
+     * @param pageNumber
+     *            The number of page
+     * @param recordsByPage
+     *            The number of record on one page
+     * @return A list of entity that match with the page asked.
+     */
+    default List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage) {
+        return DaoFactory.INSTANCE.getDao(entityType).findRange(entityType, (pageNumber - 1) * recordsByPage,
+                recordsByPage);
+    }
 
-	/**
-	 * Method to get the table name. The table name is the name of the entity
-	 * class.
-	 *
-	 *
-	 * @param clazz
-	 *            The entity class
-	 * @return The table Name
-	 */
-	default String getTableName(final Class<? extends IEntity> clazz) {
+    /**
+     * Method to get the table name. The table name is the name of the entity
+     * class.
+     *
+     * @param clazz
+     *            The entity class
+     * @return The table Name
+     */
+    default String getTableName(final Class<? extends IEntity> clazz) {
 
-		return clazz.getSimpleName().toLowerCase();
-	}
+        return clazz.getSimpleName().toLowerCase();
+    }
 
-	/**
-	 * Remove the entity
-	 *
-	 * @param entity
-	 * @return True if OK & False is not OK
-	 */
-	default public boolean remove(final E entity) {
-		return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity);
-	}
+    /**
+     * Remove the entity.
+     *
+     * @param entity
+     *            The entity to remove
+     * @return True if OK & False is not OK
+     */
+    default boolean remove(final E entity) {
+        return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity);
+    }
 
-	/**
-	 * Create or update the entity
-	 *
-	 * @param entity
-	 * @return A entity created or updated with a type domaine class or Null if
-	 *         not OK
-	 * @throws com.sgs.service.exception.ServiceException
-	 */
-	default public E save(final E entity) throws ServiceException {
+    /**
+     * Create or update the entity.
+     *
+     * @param entity
+     *            The entity to save
+     * @return A entity created or updated with a type domain class or Null if
+     *         not OK
+     * @throws ServiceException
+     *             If the check data fail
+     */
+    default E save(final E entity) throws ServiceException {
 
-		this.checkDataEntity(entity);
+        this.checkDataEntity(entity);
 
-		if (entity.getId() != 0)
-			return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).update(entity);
-		else
-			return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).create(entity);
-	}
+        if (entity.getId() != 0) {
+            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).update(entity);
+        } else {
+            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).create(entity);
+        }
+    }
 
 }
