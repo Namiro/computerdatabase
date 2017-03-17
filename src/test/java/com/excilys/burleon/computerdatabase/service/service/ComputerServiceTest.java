@@ -40,6 +40,7 @@ public class ComputerServiceTest {
 
     /**
      * @throws java.lang.Exception
+     *             Exception
      */
     @Before
     public void setUp() throws Exception {

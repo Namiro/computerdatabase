@@ -34,7 +34,7 @@ public enum CompanyDao implements ICompanyDao {
         ResultSet resultSet = null;
         try {
             statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "INSERT INTO " + this.getTableName(tmpEntity.getClass()) + " SET name = ?",
+                    "INSERT INTO " + this.getTableName(entity.getClass()) + " SET name = ?",
                     Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, entity.getName());
             statement.executeUpdate();

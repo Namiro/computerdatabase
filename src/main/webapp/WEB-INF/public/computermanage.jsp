@@ -1,7 +1,7 @@
 <%-- Constants block. --%>
-    <c:set var="LIST_GAME" value="<%=Data.LIST_GAME%>" />
+<c:set var="LIST_COMPUTER" value="<%=Data.LIST_COMPUTER%>" />
 
-    <%-- Content page. --%>
+<%-- Content page. --%>
         <div class="row">
             <div class="col-xs-8 col-xs-offset-2 box">
                 <h1>Manage Computer</h1>

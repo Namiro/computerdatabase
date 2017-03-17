@@ -30,6 +30,69 @@ public final class Data {
     public static final String SUBMIT_CREATE = "sumbitCreate";
     public static final String SUBMIT_SAVE = "submtiSave";
     public static final String SUBMIT_DELETE = "submitDelete";
-    public static final String SUBMIT_MEET = "submitMeet";
-    public static final String HIDDEN_CPT = "hidden_cpt";
+
+    public static String getComputer() {
+        return Data.COMPUTER;
+    }
+
+    public static String getComputerCompanyId() {
+        return Data.COMPUTER_COMPANY_ID;
+    }
+
+    public static String getComputerCompanyName() {
+        return Data.COMPUTER_COMPANY_NAME;
+    }
+
+    public static String getComputerDiscontinueDate() {
+        return Data.COMPUTER_DISCONTINUE_DATE;
+    }
+
+    public static String getComputerId() {
+        return Data.COMPUTER_ID;
+    }
+
+    public static String getComputerIntroduceDate() {
+        return Data.COMPUTER_INTRODUCE_DATE;
+    }
+
+    public static String getComputerName() {
+        return Data.COMPUTER_NAME;
+    }
+
+    public static String getListComputer() {
+        return Data.LIST_COMPUTER;
+    }
+
+    public static String getMessageDefault() {
+        return Data.MESSAGE_DEFAULT;
+    }
+
+    public static String getMessageError() {
+        return Data.MESSAGE_ERROR;
+    }
+
+    public static String getMessageInfo() {
+        return Data.MESSAGE_INFO;
+    }
+
+    public static String getMessageSuccess() {
+        return Data.MESSAGE_SUCCESS;
+    }
+
+    public static String getMessageWarrning() {
+        return Data.MESSAGE_WARRNING;
+    }
+
+    public static String getSubmitCreate() {
+        return Data.SUBMIT_CREATE;
+    }
+
+    public static String getSubmitDelete() {
+        return Data.SUBMIT_DELETE;
+    }
+
+    public static String getSubmitSave() {
+        return Data.SUBMIT_SAVE;
+    }
+
 }

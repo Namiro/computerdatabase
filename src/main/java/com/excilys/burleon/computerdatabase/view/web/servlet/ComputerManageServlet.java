@@ -26,7 +26,7 @@ import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
  *
  * @author Junior
  */
-@WebServlet("/GameManage")
+@WebServlet("/ComputerManage")
 public class ComputerManageServlet extends HttpServlet {
 
     private static final long serialVersionUID = -922272733938052338L;

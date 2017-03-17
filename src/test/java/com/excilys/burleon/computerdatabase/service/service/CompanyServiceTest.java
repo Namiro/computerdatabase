@@ -38,6 +38,7 @@ public class CompanyServiceTest {
 
     /**
      * @throws java.lang.Exception
+     *             Exception
      */
     @Before
     public void setUp() throws Exception {

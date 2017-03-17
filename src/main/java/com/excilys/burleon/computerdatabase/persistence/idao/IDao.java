@@ -20,7 +20,7 @@ public interface IDao<E extends IEntity> {
      *            Object of type E
      * @return Entity
      */
-    E create(final E entity);
+    E create(E entity);
 
     /**
      * Method to delete an element in the table of specified entity.
@@ -61,7 +61,7 @@ public interface IDao<E extends IEntity> {
      *         Else a list (This list can be empty if there is nothing found
      *         by the request).
      */
-    ArrayList<E> find(final Class<E> c);
+    ArrayList<E> find(Class<E> c);
 
     /**
      * Method to research by id an element in the table of specified entity.
@@ -72,7 +72,7 @@ public interface IDao<E extends IEntity> {
      *            The id of the entity you want get
      * @return E Object of type E. Null if nothing found.
      */
-    E find(final Class<E> c, long id);
+    E find(Class<E> c, long id);
 
     /**
      * Method to get all element between in a limit from the database The
@@ -86,7 +86,7 @@ public interface IDao<E extends IEntity> {
      *            The number of record you want from the first
      * @return A list with the record comprise between first and last.
      */
-    ArrayList<E> findRange(final Class<E> c, int first, int nbRecord);
+    ArrayList<E> findRange(Class<E> c, int first, int nbRecord);
 
     /**
      *

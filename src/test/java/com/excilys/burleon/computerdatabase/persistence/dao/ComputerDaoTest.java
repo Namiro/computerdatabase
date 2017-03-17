@@ -23,6 +23,7 @@ public class ComputerDaoTest {
 
     /**
      * @throws java.lang.Exception
+     *             Exception
      */
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
@@ -31,6 +32,7 @@ public class ComputerDaoTest {
 
     /**
      * @throws java.lang.Exception
+     *             Exception
      */
     @Before
     public void setUp() throws Exception {

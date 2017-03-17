@@ -19,9 +19,10 @@
 		<version.mysql>5.1.6</version.mysql>
 		<version.commonsconfiguration2>2.0</version.commonsconfiguration2>
 		<version.commonsbeanutils>1.9.3</version.commonsbeanutils>
-		<version.servlet>3.0.1</version.servlet>
+		<version.servlet>3.1.0</version.servlet>
+		<version.jspapi>2.1</version.jspapi>
+		<version.jstl>1.2</version.jstl>
 		<version.plugin.eclipse>2.9</version.plugin.eclipse>
-		<version.plugin.tomcat>3.0-r1655215</version.plugin.tomcat>
 		<version.plugin.checkstyle>2.17</version.plugin.checkstyle>
 	</properties>
 	<dependencies>
@@ -76,6 +77,24 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>${version.servlet}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>${version.jspapi}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${version.jstl}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-catalina</artifactId>
+			<version>9.0.0.M17</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -111,19 +130,6 @@
 					<downloadJavadocs>false</downloadJavadocs>
 					<!-- Avoid type mvn eclipse:eclipse -Dwtpversion=2.0 -->
 					<wtpversion>2.0</wtpversion>
-				</configuration>
-			</plugin>
-			<!-- For Maven Tomcat Plugin -->
-			<plugin>
-				<groupId>org.apache.tomcat.maven</groupId>
-				<artifactId>tomcat8-maven-plugin</artifactId>
-				<version>${version.plugin.tomcat}</version>
-				<configuration>
-					<url>http://localhost:8080</url>
-					<path>/ComputerDatabase</path>
-					<server>tomcatserver</server>
-					<username>admin</username>
-					<password>admin</password>
 				</configuration>
 			</plugin>
 		</plugins>
