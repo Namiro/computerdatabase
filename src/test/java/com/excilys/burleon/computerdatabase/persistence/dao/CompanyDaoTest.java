@@ -1,17 +1,15 @@
 /**
  *
  */
-package com.excilys.burleon.computerdatabase.test.persistence.dao;
+package com.excilys.burleon.computerdatabase.persistence.dao;
 
 import java.sql.Statement;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.excilys.burleon.computerdatabase.persistence.dao.CompanyDao;
-import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 
 /**
@@ -25,7 +23,7 @@ public class CompanyDaoTest {
 	/**
 	 * @throws java.lang.Exception
 	 */
-	@BeforeClass
+	@Before
 	public static void setUpBeforeClass() throws Exception {
 		CompanyDaoTest.companyDao = CompanyDao.INSTANCE;
 

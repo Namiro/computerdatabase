@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.excilys.burleon.computerdatabase.test.service.service;
+package com.excilys.burleon.computerdatabase.persistence.dao;
 
 import java.sql.Statement;
 import java.time.LocalDateTime;

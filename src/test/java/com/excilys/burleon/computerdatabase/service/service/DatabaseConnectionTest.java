@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.excilys.burleon.computerdatabase.test.service.service;
+package com.excilys.burleon.computerdatabase.service.service;
 
 import org.junit.Assert;
 import org.junit.Test;

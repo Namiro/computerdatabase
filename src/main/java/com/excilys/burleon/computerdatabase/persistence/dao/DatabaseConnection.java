@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.service.tool.PropertiesManager;
 
@@ -65,9 +66,9 @@ public enum DatabaseConnection {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			PropertiesManager.load();
-			this.url = PropertiesManager.prop.getProperty("database");
-			this.user = PropertiesManager.prop.getProperty("dbuser");
-			this.pwd = PropertiesManager.prop.getProperty("dbpassword");
+			this.url = PropertiesManager.config.getString("database");
+			this.user = PropertiesManager.config.getString("dbuser");
+			this.pwd = PropertiesManager.config.getString("dbpassword");
 			return DriverManager.getConnection(this.url, this.user, this.pwd);
 		} catch (SQLException | ClassNotFoundException e) {
 			Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);

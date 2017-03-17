@@ -1,33 +1,28 @@
 package com.excilys.burleon.computerdatabase.service.tool;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import java.io.File;
+
+import org.apache.commons.configuration2.FileBasedConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 public class PropertiesManager {
 
-	public static Properties prop = new Properties();
-	public static InputStream input = null;
+	public static FileBasedConfiguration config;
 
 	public static void load() {
+		final Parameters params = new Parameters();
+		final File propertiesFile = new File("config.properties");
+
+		final FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
+				PropertiesConfiguration.class).configure(params.fileBased().setFile(propertiesFile));
 		try {
-			PropertiesManager.input = new FileInputStream("config.properties");
-
-			// load a properties file
-			PropertiesManager.prop.load(PropertiesManager.input);
-
-		} catch (final IOException ex) {
-			ex.printStackTrace();
-		} finally {
-			if (PropertiesManager.input != null)
-				try {
-					PropertiesManager.input.close();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
+			PropertiesManager.config = builder.getConfiguration();
+		} catch (final ConfigurationException e) {
+			e.printStackTrace();
 		}
-
 	}
 
 }
