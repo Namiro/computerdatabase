@@ -3,7 +3,9 @@ package com.excilys.burleon.computerdatabase.service.service;
 import java.util.List;
 
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
+import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
+import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 
 /**
  * This class is a page of entities show to the user.
@@ -11,9 +13,9 @@ import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
  * @author Junior Burleon
  *
  */
-public class PageService<E extends IEntity> {
-    static final int RECORDS_BY_PAGE = 3;
+public class PageService<E extends IEntity> implements IPageService<E> {
 
+    private int recordsByPage;
     private int number;
     private List<E> records;
     private final IModelService<E> service;
@@ -24,30 +26,59 @@ public class PageService<E extends IEntity> {
      *
      * @param entityType
      *            The type of entity that this page will manage
+     * @param recordsByPage
+     *            The number of records by page
      */
-    public PageService(final Class<E> entityType) {
+    public PageService(final Class<E> entityType, final int recordsByPage) {
         this.entityType = entityType;
         this.service = new ModelService<>();
         this.number = 1;
-        this.records = this.service.getPage(this.entityType, this.number, PageService.RECORDS_BY_PAGE);
+        this.recordsByPage = recordsByPage;
+        this.records = this.service.getPage(this.entityType, this.number, recordsByPage);
     }
 
-    public int getNumber() {
+    @Override
+    public int getMaxPageNumber() {
+        return this.service.getTotalRecords(this.entityType) / this.recordsByPage;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.excilys.burleon.computerdatabase.service.service.IPageService#
+     * getNumber()
+     */
+    @Override
+    public int getPageNumber() {
         return this.number;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.excilys.burleon.computerdatabase.service.service.IPageService#
+     * getPageRecords()
+     */
+    @Override
     public List<E> getPageRecords() {
         return this.records;
     }
 
-    /**
-     * To go to the next page.
+    public int getRecordsByPage() {
+        return this.recordsByPage;
+    }
+
+    /*
+     * (non-Javadoc)
      *
-     * @return The list of record for the new page
+     * @see
+     * com.excilys.burleon.computerdatabase.service.service.IPageService#next(
+     * )
      */
+    @Override
     public List<E> next() {
         this.number++;
-        final List<E> records = this.service.getPage(this.entityType, this.number, PageService.RECORDS_BY_PAGE);
+        final List<E> records = this.service.getPage(this.entityType, this.number, this.recordsByPage);
         if (records != null && !records.isEmpty()) {
             this.records = records;
         } else {
@@ -56,17 +87,18 @@ public class PageService<E extends IEntity> {
         return this.records;
     }
 
-    /**
-     * To go to the a specific page.
+    /*
+     * (non-Javadoc)
      *
-     * @param pageNumber
-     *            The page number
-     * @return The list of record for the new page
+     * @see
+     * com.excilys.burleon.computerdatabase.service.service.IPageService#page(
+     * int)
      */
+    @Override
     public List<E> page(final int pageNumber) {
         System.out.println(pageNumber);
         if (pageNumber > 0) {
-            final List<E> records = this.service.getPage(this.entityType, pageNumber, PageService.RECORDS_BY_PAGE);
+            final List<E> records = this.service.getPage(this.entityType, pageNumber, this.recordsByPage);
             if (records != null && !records.isEmpty()) {
                 this.records = records;
                 this.number = pageNumber;
@@ -75,24 +107,38 @@ public class PageService<E extends IEntity> {
         return this.records;
     }
 
-    /**
-     * To go to the previous page.
+    /*
+     * (non-Javadoc)
      *
-     * @return The list of record for the new page
+     * @see com.excilys.burleon.computerdatabase.service.service.IPageService#
+     * previous()
      */
+    @Override
     public List<E> previous() {
         if (this.number > 1) {
             this.number--;
-            this.records = this.service.getPage(this.entityType, this.number, PageService.RECORDS_BY_PAGE);
+            this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage);
         }
         return this.records;
     }
 
-    /**
-     * To refresh the current page.
+    /*
+     * (non-Javadoc)
+     *
+     * @see com.excilys.burleon.computerdatabase.service.service.IPageService#
+     * refresh()
      */
+    @Override
     public void refresh() {
-        this.records = this.service.getPage(this.entityType, this.number, PageService.RECORDS_BY_PAGE);
+        this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage);
+    }
+
+    @Override
+    public void setRecordsByPage(final int recordsByPage) {
+        if (recordsByPage < 1) {
+            throw new ServiceException("The number of record by page must be upper then 0");
+        }
+        this.recordsByPage = recordsByPage;
     }
 
     @Override

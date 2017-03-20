@@ -102,7 +102,7 @@ public interface IDao<E extends IEntity> {
             statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
                     "SELECT count(*) as total FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
                     ResultSet.CONCUR_UPDATABLE);
-            statement.executeUpdate();
+            statement.execute();
             resultSet = statement.getResultSet();
             if (resultSet.first()) {
                 nbTotal = resultSet.getInt("total");

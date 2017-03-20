@@ -11,7 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
-import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
+import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
+import com.excilys.burleon.computerdatabase.service.service.PageService;
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
 
@@ -24,7 +25,7 @@ public class ComputerListServlet extends HttpServlet {
 
     private static final long serialVersionUID = -6681257837248708119L;
 
-    public IComputerService computerService;
+    public IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
 
     /**
      * Variable working.
@@ -35,9 +36,17 @@ public class ComputerListServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
-        final List<Computer> listGame = this.computerService.get(Computer.class);
 
-        request.setAttribute(Data.LIST_COMPUTER, listGame);
+        final int newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
+                ? Integer.parseInt(request.getParameter(Data.PAGINATION_CURRENT_PAGE)) : 1;
+        final int recordsByPage = (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null)
+                ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE)) : 20;
+        this.pageService.setRecordsByPage(recordsByPage);
+        final List<Computer> listComputer = this.pageService.page(newCurrentPage);
+
+        request.setAttribute(Data.LIST_COMPUTER, listComputer);
+        request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
+        request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
 
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
     }

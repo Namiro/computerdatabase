@@ -8,7 +8,7 @@
     <display-name>Computer Database Web App</display-name>
 
     <welcome-file-list>
-        <welcome-file>/WEB-INF/public/computerlist.jsp</welcome-file>
+        <welcome-file>ComputerList</welcome-file>
     </welcome-file-list>
 
     <!-- Header & Footer of Web page -->

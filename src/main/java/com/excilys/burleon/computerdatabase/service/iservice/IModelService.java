@@ -15,7 +15,7 @@ import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
  * @param <E>
  *            The type of service you want.
  */
-public interface IModelService<E extends IEntity> {
+public interface IModelService<E extends IEntity> extends IService {
 
     /**
      * Check the value of each instance variable of entity.
@@ -86,6 +86,17 @@ public interface IModelService<E extends IEntity> {
     default String getTableName(final Class<? extends IEntity> clazz) {
 
         return clazz.getSimpleName().toLowerCase();
+    }
+
+    /**
+     * Get the total number of records.
+     *
+     * @param entityType
+     *            The entity type
+     * @return the total number of records
+     */
+    default int getTotalRecords(final Class<E> entityType) {
+        return DaoFactory.INSTANCE.getDao(entityType).getNbRecords(entityType);
     }
 
     /**

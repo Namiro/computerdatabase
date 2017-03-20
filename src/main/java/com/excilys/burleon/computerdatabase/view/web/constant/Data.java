@@ -11,15 +11,15 @@ public final class Data {
 
     /* LIST */
     public static final String LIST_COMPUTER = "listComputer";
+    public static final String LIST_COMPANY = "listCompany";
 
     /* COMPUTER */
     public static final String COMPUTER = "computer";
-    public static final String COMPUTER_ID = "computer_id";
-    public static final String COMPUTER_NAME = "computer_name";
-    public static final String COMPUTER_INTRODUCE_DATE = "computer_introduce_date";
-    public static final String COMPUTER_DISCONTINUE_DATE = "computer_discontinue_date";
-    public static final String COMPUTER_COMPANY_ID = "computer_company_id";
-    public static final String COMPUTER_COMPANY_NAME = "computer_company_name";
+    public static final String COMPUTER_ID = "computerId";
+    public static final String COMPUTER_NAME = "computerName";
+    public static final String COMPUTER_INTRODUCE_DATE = "computerIntroduceDate";
+    public static final String COMPUTER_DISCONTINUE_DATE = "computerDiscontinueDate";
+    public static final String COMPUTER_COMPANY_ID = "computerCompanyId";
 
     /* ALL */
     public static final String MESSAGE_SUCCESS = "successMessage";
@@ -31,68 +31,8 @@ public final class Data {
     public static final String SUBMIT_SAVE = "submtiSave";
     public static final String SUBMIT_DELETE = "submitDelete";
 
-    public static String getComputer() {
-        return Data.COMPUTER;
-    }
-
-    public static String getComputerCompanyId() {
-        return Data.COMPUTER_COMPANY_ID;
-    }
-
-    public static String getComputerCompanyName() {
-        return Data.COMPUTER_COMPANY_NAME;
-    }
-
-    public static String getComputerDiscontinueDate() {
-        return Data.COMPUTER_DISCONTINUE_DATE;
-    }
-
-    public static String getComputerId() {
-        return Data.COMPUTER_ID;
-    }
-
-    public static String getComputerIntroduceDate() {
-        return Data.COMPUTER_INTRODUCE_DATE;
-    }
-
-    public static String getComputerName() {
-        return Data.COMPUTER_NAME;
-    }
-
-    public static String getListComputer() {
-        return Data.LIST_COMPUTER;
-    }
-
-    public static String getMessageDefault() {
-        return Data.MESSAGE_DEFAULT;
-    }
-
-    public static String getMessageError() {
-        return Data.MESSAGE_ERROR;
-    }
-
-    public static String getMessageInfo() {
-        return Data.MESSAGE_INFO;
-    }
-
-    public static String getMessageSuccess() {
-        return Data.MESSAGE_SUCCESS;
-    }
-
-    public static String getMessageWarrning() {
-        return Data.MESSAGE_WARRNING;
-    }
-
-    public static String getSubmitCreate() {
-        return Data.SUBMIT_CREATE;
-    }
-
-    public static String getSubmitDelete() {
-        return Data.SUBMIT_DELETE;
-    }
-
-    public static String getSubmitSave() {
-        return Data.SUBMIT_SAVE;
-    }
-
+    /* PAGINATION */
+    public static final String PAGINATION_CURRENT_PAGE = "paginationCurrentPage";
+    public static final String PAGINATION_TOTAL_PAGE = "paginationTotalPage";
+    public static final String PAGINATION_RECORDS_BY_PAGE = "paginationRecordsByPage";
 }

@@ -7,7 +7,6 @@ package com.excilys.burleon.computerdatabase.view.web.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,9 +14,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
+import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
+import com.excilys.burleon.computerdatabase.service.service.CompanyService;
+import com.excilys.burleon.computerdatabase.service.service.ComputerService;
+import com.excilys.burleon.computerdatabase.service.service.PageService;
 import com.excilys.burleon.computerdatabase.service.tool.Utility;
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
@@ -31,7 +36,10 @@ public class ComputerManageServlet extends HttpServlet {
 
     private static final long serialVersionUID = -922272733938052338L;
 
-    public IComputerService computerService;
+    public IComputerService computerService = new ComputerService();
+    public ICompanyService companyService = new CompanyService();
+
+    public IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
 
     /**
      * Variable working.
@@ -43,25 +51,26 @@ public class ComputerManageServlet extends HttpServlet {
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
 
+        /* If a computer was selected */
         if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))) {
-            final int id = Integer.parseInt(request.getParameter(Data.COMPUTER_ID));
+            final long id = Long.parseLong(request.getParameter(Data.COMPUTER_ID));
             this._computer = this.computerService.get(Computer.class, id);
+            /* If the computer exist, we get its data */
             if (this._computer != null) {
                 request.setAttribute(Data.COMPUTER_ID, this._computer.getId());
-                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE, this._computer.getIntroduced());
-                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE, this._computer.getDiscontinued());
+                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
+                        Utility.convertToString(this._computer.getIntroduced()));
+                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
+                        Utility.convertToString(this._computer.getDiscontinued()));
                 request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
-                // request.setAttribute(Data.COMPUTER_COMPANY,
-                // this._computer.getCompany());
+                request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
             } else {
                 response.sendRedirect(response.encodeRedirectURL(Servlet.SERVLET_COMPUTER_MANAGE));
                 return;
             }
         }
 
-        final List<Computer> listGame = this.computerService.get(Computer.class);
-
-        request.setAttribute(Data.LIST_COMPUTER, listGame);
+        request.setAttribute(Data.LIST_COMPANY, this.companyService.get(Company.class));
 
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request, response);
     }
@@ -72,19 +81,21 @@ public class ComputerManageServlet extends HttpServlet {
 
         // If it is an updating or deleting
         if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))) {
-            final int id = Integer.parseInt(request.getParameter(Data.COMPUTER_ID));
+            final long id = Long.parseLong(request.getParameter(Data.COMPUTER_ID));
             this._computer = this.computerService.get(Computer.class, id);
         } else { // If it is a creating
             new ArrayList<>();
             this._computer = new Computer();
         }
 
+        final Company company = this.companyService.get(Company.class,
+                Long.parseLong(request.getParameter(Data.COMPUTER_COMPANY_ID)));
         this._computer.setName(request.getParameter(Data.COMPUTER_NAME));
         this._computer
                 .setIntroduced(Utility.convertToLocalDateTime(request.getParameter(Data.COMPUTER_INTRODUCE_DATE)));
         this._computer.setIntroduced(
                 Utility.convertToLocalDateTime(request.getParameter(Data.COMPUTER_DISCONTINUE_DATE)));
-        // this._computer.setCompany(request.getParameter(Data.COMPUTER_COMPANY_ID));
+        this._computer.setCompany(company);
 
         if (request.getParameter(Data.SUBMIT_DELETE) != null) {
             this.computerService.remove(this._computer);
@@ -103,8 +114,7 @@ public class ComputerManageServlet extends HttpServlet {
                 request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
                 request.setAttribute(Data.COMPUTER_INTRODUCE_DATE, this._computer.getIntroduced());
                 request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE, this._computer.getDiscontinued());
-                // request.setAttribute(Data.COMPUTER_COMPANY,
-                // this._computer.getCompany());
+                request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
 
                 // Error message
                 request.setAttribute(Data.MESSAGE_ERROR, ex.getMessage());

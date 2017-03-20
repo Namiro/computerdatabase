@@ -13,14 +13,15 @@ import java.util.regex.Pattern;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.service.ComputerService;
 import com.excilys.burleon.computerdatabase.service.service.PageService;
 
 public class Main {
 
     private static final Scanner SCAN = new Scanner(System.in);
-    private static PageService<Company> companyPage;
-    private static PageService<Computer> computerPage;
+    private static IPageService<Company> companyPage;
+    private static IPageService<Computer> computerPage;
     private static int choiceMainMenu;
     private static final ComputerService COMPUTER_SERVICE = new ComputerService();
 
@@ -120,8 +121,8 @@ public class Main {
      *             The IOException
      */
     public static void main(final String[] args) throws IOException {
-        Main.companyPage = new PageService<>(Company.class);
-        Main.computerPage = new PageService<>(Computer.class);
+        Main.companyPage = new PageService<>(Company.class, 5);
+        Main.computerPage = new PageService<>(Computer.class, 5);
 
         boolean isContinue = true;
         boolean isContinueSubMenu = false;

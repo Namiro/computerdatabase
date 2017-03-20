@@ -51,4 +51,20 @@ public class Utility {
         final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return LocalDateTime.parse(dateStr, formatter);
     }
+
+    /**
+     * To convert a localdatetime to a date for html (yyyy-MM-dd).
+     *
+     * @param localdatetime
+     *            The date to convert to string
+     * @return The date as string(yyyy-MM-dd)
+     */
+    public static String convertToString(final LocalDateTime localdatetime) {
+        if (localdatetime == null) {
+            return null;
+        }
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return localdatetime.format(formatter);
+
+    }
 }

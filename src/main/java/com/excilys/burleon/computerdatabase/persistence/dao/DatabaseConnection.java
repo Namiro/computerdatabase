@@ -98,7 +98,8 @@ public enum DatabaseConnection {
             this.url = PropertiesManager.config.getString("database");
             this.user = PropertiesManager.config.getString("dbuser");
             this.pwd = PropertiesManager.config.getString("dbpassword");
-            return DriverManager.getConnection(this.url, this.user, this.pwd);
+            return DriverManager.getConnection(this.url + "?zeroDateTimeBehavior=convertToNull", this.user,
+                    this.pwd);
         } catch (SQLException | ClassNotFoundException e) {
             Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
             throw new PersistenceException(e);
