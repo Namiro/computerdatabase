@@ -20,6 +20,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     private List<E> records;
     private final IModelService<E> service;
     private final Class<E> entityType;
+    private String filterWord = "";
 
     /**
      * Constructor.
@@ -34,12 +35,16 @@ public class PageService<E extends IEntity> implements IPageService<E> {
         this.service = new ModelService<>();
         this.number = 1;
         this.recordsByPage = recordsByPage;
-        this.records = this.service.getPage(this.entityType, this.number, recordsByPage);
+        this.records = this.service.getPage(this.entityType, this.number, recordsByPage, this.filterWord);
+    }
+
+    public String getFilterWord() {
+        return this.filterWord;
     }
 
     @Override
-    public int getMaxPageNumber() {
-        return this.service.getTotalRecords(this.entityType) / this.recordsByPage;
+    public long getMaxPageNumber() {
+        return (this.service.getTotalRecords(this.entityType, this.filterWord) / this.recordsByPage) + 1;
     }
 
     /*
@@ -78,7 +83,8 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     @Override
     public List<E> next() {
         this.number++;
-        final List<E> records = this.service.getPage(this.entityType, this.number, this.recordsByPage);
+        final List<E> records = this.service.getPage(this.entityType, this.number, this.recordsByPage,
+                this.filterWord);
         if (records != null && !records.isEmpty()) {
             this.records = records;
         } else {
@@ -96,9 +102,9 @@ public class PageService<E extends IEntity> implements IPageService<E> {
      */
     @Override
     public List<E> page(final int pageNumber) {
-        System.out.println(pageNumber);
         if (pageNumber > 0) {
-            final List<E> records = this.service.getPage(this.entityType, pageNumber, this.recordsByPage);
+            final List<E> records = this.service.getPage(this.entityType, pageNumber, this.recordsByPage,
+                    this.filterWord);
             if (records != null && !records.isEmpty()) {
                 this.records = records;
                 this.number = pageNumber;
@@ -117,7 +123,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     public List<E> previous() {
         if (this.number > 1) {
             this.number--;
-            this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage);
+            this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord);
         }
         return this.records;
     }
@@ -129,8 +135,18 @@ public class PageService<E extends IEntity> implements IPageService<E> {
      * refresh()
      */
     @Override
-    public void refresh() {
-        this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage);
+    public List<E> refresh() {
+        return this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord);
+    }
+
+    @Override
+    public void setFilterWord(final String filterWord) {
+        if (filterWord == null) {
+            this.filterWord = "";
+        } else {
+            this.filterWord = filterWord;
+        }
+
     }
 
     @Override

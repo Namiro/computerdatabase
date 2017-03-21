@@ -1,7 +1,5 @@
 package com.excilys.burleon.computerdatabase.service.service;
 
-import java.time.LocalDateTime;
-
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
@@ -33,16 +31,16 @@ public class ComputerService extends ModelService<Computer> implements IComputer
         if (entity.getName().length() < 1) {
             throw new ServiceException("The name of computer must be longer (More then 1 caracter)");
         }
-        if (entity.getName().length() > 50) {
+        if (entity.getName().length() > 550) {
             throw new ServiceException("The name of computer must be shorter (Less then 50 caracter)");
         }
-        if (entity.getDiscontinued() != null
-                && entity.getDiscontinued().isBefore(LocalDateTime.now().minusMinutes(20))) {
-            throw new ServiceException("The discontinued date must be bigger then now");
+        if (entity.getDiscontinued() != null && entity.getIntroduced() != null
+                && entity.getDiscontinued().isBefore(entity.getIntroduced())) {
+            throw new ServiceException("The discontinued date must be after then the introduced date");
         }
-        if (entity.getIntroduced() != null
-                && entity.getIntroduced().isBefore(LocalDateTime.now().minusMinutes(20))) {
-            throw new ServiceException("The introduced date must be bigger then now.");
+        if (entity.getDiscontinued() != null && entity.getIntroduced() != null
+                && entity.getIntroduced().isAfter(entity.getDiscontinued())) {
+            throw new ServiceException("The introduced date must be before then discontinued date.");
         }
         if (entity.getCompany() != null) {
             this.companyService.checkDataEntity(entity.getCompany());

@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,12 +51,22 @@ public enum ComputerDao implements IComputerDao {
             if (centity.getIntroduced() == null) {
                 statement.setNull(2, java.sql.Types.TIMESTAMP);
             } else {
+                if (centity.getIntroduced()
+                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                    throw new PersistenceException(
+                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                }
                 statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
             }
 
             if (centity.getDiscontinued() == null) {
                 statement.setNull(3, java.sql.Types.TIMESTAMP);
             } else {
+                if (centity.getDiscontinued()
+                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                    throw new PersistenceException(
+                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                }
                 statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
             }
 
@@ -153,18 +166,25 @@ public enum ComputerDao implements IComputerDao {
     }
 
     @Override
-    public ArrayList<Computer> findRange(final Class<Computer> c, final int first, final int nbRecord) {
+    public ArrayList<Computer> findRange(final Class<Computer> c, final int first, final int nbRecord,
+            String filterWord) {
+        if (filterWord == null) {
+            filterWord = "";
+        }
         ArrayList<Computer> entities = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
-                            + "company.name as cName FROM " + this.getTableName(c)
-                            + " LEFT JOIN company ON computer.company_id=company.id LIMIT ?,?",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-            statement.setInt(1, first);
-            statement.setInt(2, nbRecord);
+            statement = DatabaseConnection.INSTANCE.getConnection()
+                    .prepareStatement(
+                            "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
+                                    + "company.name as cName FROM " + this.getTableName(c)
+                                    + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
+                                    + "LIKE ? LIMIT ?,?",
+                            ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statement.setString(1, "%" + filterWord + "%");
+            statement.setInt(2, first);
+            statement.setInt(3, nbRecord);
             statement.execute();
             resultSet = statement.getResultSet();
             entities = new ArrayList<>();
@@ -192,6 +212,33 @@ public enum ComputerDao implements IComputerDao {
     }
 
     @Override
+    public long getNbRecords(final Class<Computer> c, final String filterWord) {
+        long nbTotal = 0;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statement.setString(1, "%" + filterWord + "%");
+            statement.execute();
+            resultSet = statement.getResultSet();
+            if (resultSet.first()) {
+                nbTotal = resultSet.getLong("total");
+            }
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+
+        return nbTotal;
+    }
+
+    @Override
     public Computer update(final Computer entity) {
         final Computer centity = entity;
         Computer tmpEntity = null;
@@ -205,12 +252,22 @@ public enum ComputerDao implements IComputerDao {
             if (centity.getIntroduced() == null) {
                 statement.setNull(2, java.sql.Types.TIMESTAMP);
             } else {
+                if (centity.getIntroduced()
+                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                    throw new PersistenceException(
+                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                }
                 statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
             }
 
             if (centity.getDiscontinued() == null) {
                 statement.setNull(3, java.sql.Types.TIMESTAMP);
             } else {
+                if (centity.getDiscontinued()
+                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                    throw new PersistenceException(
+                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                }
                 statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
             }
 

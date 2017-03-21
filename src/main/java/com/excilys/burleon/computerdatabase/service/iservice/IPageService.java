@@ -17,9 +17,10 @@ public interface IPageService<E extends IEntity> extends IService {
     /**
      *
      * @return The maximum of page number in function of the number of records
-     *         by page.
+     *         by page. (Be careful, if a FilterWord is set, it will be
+     *         account)
      */
-    int getMaxPageNumber();
+    long getMaxPageNumber();
 
     /**
      *
@@ -36,7 +37,8 @@ public interface IPageService<E extends IEntity> extends IService {
     /**
      * To go to the next page.
      *
-     * @return The list of record for the new page
+     * @return The list of record for the new page. (Be careful, if a
+     *         FilterWord is set, it will be account)
      */
     List<E> next();
 
@@ -45,21 +47,36 @@ public interface IPageService<E extends IEntity> extends IService {
      *
      * @param pageNumber
      *            The page number
-     * @return The list of record for the new page
+     * @return The list of record for the new page. (Be careful, if a
+     *         FilterWord is set, it will be account)
      */
     List<E> page(int pageNumber);
 
     /**
      * To go to the previous page.
      *
-     * @return The list of record for the new page
+     * @return The list of record for the new page. (Be careful, if a
+     *         FilterWord is set, it will be account)
      */
     List<E> previous();
 
     /**
-     * To refresh the current page.
+     * To refresh the current page. (Be careful, if a FilterWord is set, it
+     * will be account)
+     *
+     * @return List of records with the same parameter then the last using of
+     *         the service
      */
-    void refresh();
+    List<E> refresh();
+
+    /**
+     * Allow to put a filter in the service. It means the results that you
+     * will get, will be the result that have the word in their fields.
+     *
+     * @param filterWord
+     *            The word that will be used to filter.
+     */
+    void setFilterWord(String filterWord);
 
     /**
      * To change the number of records by page.

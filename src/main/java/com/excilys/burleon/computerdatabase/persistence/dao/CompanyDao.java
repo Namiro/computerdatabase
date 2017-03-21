@@ -110,16 +110,21 @@ public enum CompanyDao implements ICompanyDao {
     }
 
     @Override
-    public ArrayList<Company> findRange(final Class<Company> c, final int first, final int nbRecord) {
+    public ArrayList<Company> findRange(final Class<Company> c, final int first, final int nbRecord,
+            String filterWord) {
+        if (filterWord == null) {
+            filterWord = "";
+        }
         ArrayList<Company> entities = null;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
             statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "SELECT * FROM " + this.getTableName(c) + " LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
-            statement.setInt(1, first);
-            statement.setInt(2, nbRecord);
+                    "SELECT * FROM " + this.getTableName(c) + " WHERE company.name " + "LIKE ? LIMIT ?,?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statement.setString(1, "%" + filterWord + "%");
+            statement.setInt(2, first);
+            statement.setInt(3, nbRecord);
             statement.execute();
             resultSet = statement.getResultSet();
             entities = new ArrayList<>();
@@ -136,6 +141,33 @@ public enum CompanyDao implements ICompanyDao {
             DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
         return entities;
+    }
+
+    @Override
+    public long getNbRecords(final Class<Company> c, final String filterWord) {
+        long nbTotal = 0;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statement.setString(1, "%" + filterWord + "%");
+            statement.execute();
+            resultSet = statement.getResultSet();
+            if (resultSet.first()) {
+                nbTotal = resultSet.getLong("total");
+            }
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+
+        return nbTotal;
     }
 
     @Override

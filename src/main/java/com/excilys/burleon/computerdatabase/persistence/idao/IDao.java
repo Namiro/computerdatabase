@@ -84,9 +84,11 @@ public interface IDao<E extends IEntity> {
      *            The number of the first element
      * @param nbRecord
      *            The number of record you want from the first
+     * @param filterWord
+     *            The word that will be used to filter the results
      * @return A list with the record comprise between first and last.
      */
-    ArrayList<E> findRange(Class<E> c, int first, int nbRecord);
+    ArrayList<E> findRange(Class<E> c, int first, int nbRecord, String filterWord);
 
     /**
      *
@@ -94,8 +96,8 @@ public interface IDao<E extends IEntity> {
      *            The type of entity
      * @return The number of records for this entity
      */
-    default int getNbRecords(final Class<E> c) {
-        int nbTotal = 0;
+    default long getNbRecords(final Class<E> c) {
+        long nbTotal = 0;
         PreparedStatement statement = null;
         ResultSet resultSet = null;
         try {
@@ -105,7 +107,7 @@ public interface IDao<E extends IEntity> {
             statement.execute();
             resultSet = statement.getResultSet();
             if (resultSet.first()) {
-                nbTotal = resultSet.getInt("total");
+                nbTotal = resultSet.getLong("total");
             }
         } catch (final SQLException e) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
@@ -118,6 +120,18 @@ public interface IDao<E extends IEntity> {
 
         return nbTotal;
     }
+
+    /**
+     *
+     * @param c
+     *            The type of entity
+     * @param filterWord
+     *            To filter the records and get only these that match with the
+     *            filter word
+     * @return The number of records for this entity and that match with the
+     *         filter word
+     */
+    long getNbRecords(Class<E> c, String filterWord);
 
     /**
      * Method to get the table name. The table name is the name of the entity

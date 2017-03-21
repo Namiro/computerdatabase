@@ -3,6 +3,7 @@ package com.excilys.burleon.computerdatabase.service.iservice;
 import java.util.List;
 
 import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
+import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
@@ -68,11 +69,15 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The number of page
      * @param recordsByPage
      *            The number of record on one page
-     * @return A list of entity that match with the page asked.
+     * @param filterWord
+     *            The word that will be used to filter the result
+     * @return A list of entity that match with the page asked and the filter
+     *         word.
      */
-    default List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage) {
+    default List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage,
+            final String filterWord) {
         return DaoFactory.INSTANCE.getDao(entityType).findRange(entityType, (pageNumber - 1) * recordsByPage,
-                recordsByPage);
+                recordsByPage, filterWord);
     }
 
     /**
@@ -93,10 +98,15 @@ public interface IModelService<E extends IEntity> extends IService {
      *
      * @param entityType
      *            The entity type
-     * @return the total number of records
+     * @param filterWord
+     *            The word that will be used to filter the result
+     * @return the total number of records that match with the filter word
      */
-    default int getTotalRecords(final Class<E> entityType) {
-        return DaoFactory.INSTANCE.getDao(entityType).getNbRecords(entityType);
+    default long getTotalRecords(final Class<E> entityType, String filterWord) {
+        if (filterWord == null) {
+            filterWord = "";
+        }
+        return DaoFactory.INSTANCE.getDao(entityType).getNbRecords(entityType, filterWord);
     }
 
     /**
@@ -107,7 +117,11 @@ public interface IModelService<E extends IEntity> extends IService {
      * @return True if OK & False is not OK
      */
     default boolean remove(final E entity) {
-        return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity);
+        if (entity != null) {
+            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity);
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -124,11 +138,14 @@ public interface IModelService<E extends IEntity> extends IService {
 
         this.checkDataEntity(entity);
 
-        if (entity.getId() != 0) {
-            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).update(entity);
-        } else {
-            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).create(entity);
+        try {
+            if (entity.getId() != 0) {
+                return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).update(entity);
+            } else {
+                return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).create(entity);
+            }
+        } catch (final PersistenceException e) {
+            throw new ServiceException(e);
         }
     }
-
 }
