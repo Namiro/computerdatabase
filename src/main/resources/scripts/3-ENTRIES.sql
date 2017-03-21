@@ -16,7 +16,7 @@ insert into company (id,name) values ( 15,'Canon');
 insert into company (id,name) values ( 16,'Nokia');
 insert into company (id,name) values ( 17,'Sony');
 insert into company (id,name) values ( 18,'OQO');
-insert into company (id,name) values ( 19,'NeXT');    
+insert into company (id,name) values ( 19,'NeXT');
 insert into company (id,name) values ( 20,'Atari');
 insert into company (id,name) values ( 22,'Acorn computer');
 insert into company (id,name) values ( 23,'Timex Sinclair');
