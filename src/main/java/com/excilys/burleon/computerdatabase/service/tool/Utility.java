@@ -3,8 +3,14 @@ package com.excilys.burleon.computerdatabase.service.tool;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 
 /**
  *
@@ -47,9 +53,37 @@ public class Utility {
      *            The string
      * @return The localdatetime
      */
-    public static LocalDateTime convertToLocalDateTime(final String dateStr) {
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        return LocalDateTime.parse(dateStr, formatter);
+    public static LocalDateTime convertStringDateTimeToLocalDateTime(final String dateStr) {
+        if (dateStr.equals("")) {
+            return null;
+        }
+
+        try {
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            return LocalDateTime.parse(dateStr, formatter);
+        } catch (final DateTimeParseException e) {
+            throw new ServiceException(e);
+        }
+    }
+
+    /**
+     * To convert a string to a localdatetime.
+     *
+     * @param dateStr
+     *            The string
+     * @return The localdatetime
+     */
+    public static LocalDateTime convertStringDateToLocalDateTime(final String dateStr) {
+        if (dateStr.equals("")) {
+            return null;
+        }
+
+        try {
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return LocalDateTime.of(LocalDate.parse(dateStr, formatter), LocalTime.NOON);
+        } catch (final DateTimeParseException e) {
+            throw new ServiceException(e);
+        }
     }
 
     /**
@@ -59,12 +93,16 @@ public class Utility {
      *            The date to convert to string
      * @return The date as string(yyyy-MM-dd)
      */
-    public static String convertToString(final LocalDateTime localdatetime) {
+    public static String convertToStringDate(final LocalDateTime localdatetime) {
         if (localdatetime == null) {
             return null;
         }
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return localdatetime.format(formatter);
 
+        try {
+            final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            return localdatetime.format(formatter);
+        } catch (final DateTimeException e) {
+            throw new ServiceException(e);
+        }
     }
 }
