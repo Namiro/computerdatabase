@@ -4,7 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime" %>
-<%@ taglib uri="/WEB-INF/paginator.tld" prefix="paginator" %> 
+<%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags" prefix="mytags"%>
 <jsp:useBean id="Data" class="com.excilys.burleon.computerdatabase.view.web.constant.Data" scope="application"/>
 <jsp:useBean id="Servlet" class="com.excilys.burleon.computerdatabase.view.web.constant.Servlet" scope="application"/>
 <jsp:useBean id="Session" class="com.excilys.burleon.computerdatabase.view.web.constant.Session" scope="application"/>
@@ -18,13 +18,19 @@
 <c:set var="SUBMIT_CREATE" value="<%=Data.SUBMIT_CREATE%>" />
 <c:set var="SUBMIT_SAVE" value="<%=Data.SUBMIT_SAVE%>" />
 <c:set var="SUBMIT_DELETE" value="<%=Data.SUBMIT_DELETE%>" />
+<c:set var="SUBMIT_SEARCH" value="<%=Data.SUBMIT_SEARCH%>" />
  
 <%-- Name of all servlets. --%>
 <c:set var="SERVLET_COMPUTER_LIST" value="<%=Servlet.SERVLET_COMPUTER_LIST%>" /> 
 <c:set var="SERVLET_COMPUTER_MANAGE" value="<%=Servlet.SERVLET_COMPUTER_MANAGE%>" /> 
 
+<%-- The list. --%>
+<c:set var="LIST_COMPUTER" value="<%=Data.LIST_COMPUTER%>" />
+<c:set var="LIST_COMPANY" value="<%=Data.LIST_COMPANY%>"/>
 
 <%-- For this page. --%>
+<c:set var="SEARCH_WORD" value="<%=Data.SEARCH_WORD%>" /> 
+<c:set var="SEARCH_NUMBER_RESULTS" value="<%=Data.SEARCH_NUMBER_RESULTS%>" />
 
 
 <!DOCTYPE html>
@@ -32,6 +38,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="css/main.css" rel="stylesheet" type="text/css" />
         <title>Computer Database</title>
     </head>
     <body>

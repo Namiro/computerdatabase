@@ -1,5 +1,4 @@
 <%-- Constants block. --%>
-<c:set var="LIST_COMPUTER" value="<%=Data.LIST_COMPUTER%>" />
 <c:set var="COMPUTER_ID" value="<%=Data.COMPUTER_ID%>" />
 <c:set var="COMPUTER_INTRODUCE_DATE"
 	value="<%=Data.COMPUTER_INTRODUCE_DATE%>" />
@@ -14,10 +13,13 @@
 		<h1>Manage Computer</h1>
 		<form action="${SERVLET_COMPUTER_MANAGE}" method="POST">
 			<fieldset>
+				<input name="${COMPUTER_ID}" hidden="true"
+					value="${requestScope[COMPUTER_ID]}" />
 				<div class="form-group">
 					<label for="computerName">Computer name</label> <input type="text"
-						class="form-control" id="${COMPUTER_NAME}" name="${COMPUTER_NAME}" value="${requestScope[COMPUTER_NAME]}"
-						placeholder="Computer name"> <span class="help-block"></span>
+						class="form-control" id="${COMPUTER_NAME}" name="${COMPUTER_NAME}"
+						value="${requestScope[COMPUTER_NAME]}" placeholder="Computer name">
+					<span class="help-block"></span>
 				</div>
 				<div class="form-group">
 					<label for="introduced">Introduced date</label> <input type="date"
@@ -35,16 +37,15 @@
 						class="help-block"></span>
 				</div>
 				<div class="form-group">
-					<select class="form-control" name="${LIST_COMPANY}">
-						<option value="0" disabled selected>The company</option>
+					<select class="form-control" name="${COMPUTER_COMPANY_ID}">
+						<option value="0" selected>The company</option>
 						<c:forEach items="${requestScope[LIST_COMPANY]}" var="company"
-                            varStatus="vs">
+							varStatus="as">
 							<option value="${company.id}"
 								<c:if test="${company.id == requestScope[COMPUTER_COMPANY_ID]}"> selected </c:if>>
-								${company.name}</option> 
+								${company.name}</option>
 						</c:forEach>
-					</select> 
-					<span class="help-block"></span>
+					</select> <span class="help-block"></span>
 				</div>
 			</fieldset>
 			<div class="actions pull-right">

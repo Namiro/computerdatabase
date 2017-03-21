@@ -30,6 +30,11 @@ public final class Data {
     public static final String SUBMIT_CREATE = "sumbitCreate";
     public static final String SUBMIT_SAVE = "submtiSave";
     public static final String SUBMIT_DELETE = "submitDelete";
+    public static final String SUBMIT_SEARCH = "submitSearch";
+
+    /* DIVERS */
+    public static final String SEARCH_WORD = "searchWord";
+    public static final String SEARCH_NUMBER_RESULTS = "searchNumberResults";
 
     /* PAGINATION */
     public static final String PAGINATION_CURRENT_PAGE = "paginationCurrentPage";

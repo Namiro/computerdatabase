@@ -59,9 +59,9 @@ public class ComputerManageServlet extends HttpServlet {
             if (this._computer != null) {
                 request.setAttribute(Data.COMPUTER_ID, this._computer.getId());
                 request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
-                        Utility.convertToString(this._computer.getIntroduced()));
+                        Utility.convertToStringDate(this._computer.getIntroduced()));
                 request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
-                        Utility.convertToString(this._computer.getDiscontinued()));
+                        Utility.convertToStringDate(this._computer.getDiscontinued()));
                 request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
                 request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
             } else {
@@ -69,8 +69,6 @@ public class ComputerManageServlet extends HttpServlet {
                 return;
             }
         }
-
-        request.setAttribute(Data.LIST_COMPANY, this.companyService.get(Company.class));
 
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request, response);
     }
@@ -80,7 +78,8 @@ public class ComputerManageServlet extends HttpServlet {
             throws ServletException, IOException {
 
         // If it is an updating or deleting
-        if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))) {
+        if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))
+                && !"0".equals(request.getParameter(Data.COMPUTER_ID))) {
             final long id = Long.parseLong(request.getParameter(Data.COMPUTER_ID));
             this._computer = this.computerService.get(Computer.class, id);
         } else { // If it is a creating
@@ -88,14 +87,23 @@ public class ComputerManageServlet extends HttpServlet {
             this._computer = new Computer();
         }
 
-        final Company company = this.companyService.get(Company.class,
-                Long.parseLong(request.getParameter(Data.COMPUTER_COMPANY_ID)));
-        this._computer.setName(request.getParameter(Data.COMPUTER_NAME));
-        this._computer
-                .setIntroduced(Utility.convertToLocalDateTime(request.getParameter(Data.COMPUTER_INTRODUCE_DATE)));
-        this._computer.setIntroduced(
-                Utility.convertToLocalDateTime(request.getParameter(Data.COMPUTER_DISCONTINUE_DATE)));
-        this._computer.setCompany(company);
+        try {
+            this._computer.setName(request.getParameter(Data.COMPUTER_NAME));
+            this._computer.setIntroduced(
+                    Utility.convertStringDateToLocalDateTime(request.getParameter(Data.COMPUTER_INTRODUCE_DATE)));
+            this._computer.setDiscontinued(Utility
+                    .convertStringDateToLocalDateTime(request.getParameter(Data.COMPUTER_DISCONTINUE_DATE)));
+            if (request.getParameter(Data.COMPUTER_COMPANY_ID) != null) {
+                final Company company = this.companyService.get(Company.class,
+                        Long.parseLong(request.getParameter(Data.COMPUTER_COMPANY_ID)));
+                this._computer.setCompany(company);
+            }
+        } catch (final ServiceException e) {
+            // Error message
+            request.setAttribute(Data.MESSAGE_ERROR, e.getMessage());
+            this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
+                    response);
+        }
 
         if (request.getParameter(Data.SUBMIT_DELETE) != null) {
             this.computerService.remove(this._computer);
@@ -107,17 +115,23 @@ public class ComputerManageServlet extends HttpServlet {
                 // Update and create /!\ For update ID must exist
                 this._computer = this.computerService.save(this._computer);
                 request.setAttribute(Data.MESSAGE_SUCCESS, "Save OK");
-                response.sendRedirect(response.encodeRedirectURL(
-                        Servlet.SERVLET_COMPUTER_MANAGE + "?computer=" + this._computer.getId()));
-            } catch (final ServiceException ex) {
-                // If there is an exception (A problem with the data of form
-                request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
-                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE, this._computer.getIntroduced());
-                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE, this._computer.getDiscontinued());
-                request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
-
+            } catch (final ServiceException e) {
                 // Error message
-                request.setAttribute(Data.MESSAGE_ERROR, ex.getMessage());
+                request.setAttribute(Data.MESSAGE_ERROR, e.getMessage());
+            } finally {
+                request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
+                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
+                        Utility.convertToStringDate(this._computer.getIntroduced()));
+                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
+                        Utility.convertToStringDate(this._computer.getDiscontinued()));
+                if (this._computer.getCompany() != null) {
+                    request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
+                }
+                request.setAttribute(Data.LIST_COMPANY, this.companyService.get(Company.class));
+                if (this._computer.getId() != 0) {
+                    request.setAttribute(Data.COMPUTER_ID, this._computer.getId());
+                }
+
                 this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
                         response);
             }
