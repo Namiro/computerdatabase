@@ -70,6 +70,8 @@ public class ComputerManageServlet extends HttpServlet {
             }
         }
 
+        request.setAttribute(Data.LIST_COMPANY, this.companyService.get(Company.class));
+
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request, response);
     }
 

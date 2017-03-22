@@ -11,34 +11,51 @@
 <div class="row">
 	<div class="col-xs-8 col-xs-offset-2 box">
 		<h1>Manage Computer</h1>
-		<form action="${SERVLET_COMPUTER_MANAGE}" method="POST">
+		<form action="${SERVLET_COMPUTER_MANAGE}" method="POST" role="form"
+			data-toggle="validator">
 			<fieldset>
 				<input name="${COMPUTER_ID}" hidden="true"
 					value="${requestScope[COMPUTER_ID]}" />
-				<div class="form-group">
-					<label for="computerName">Computer name</label> <input type="text"
-						class="form-control" id="${COMPUTER_NAME}" name="${COMPUTER_NAME}"
-						value="${requestScope[COMPUTER_NAME]}" placeholder="Computer name">
-					<span class="help-block"></span>
+
+				<div class="form-group has-feedback">
+					<label for="${COMPUTER_NAME}">Computer name</label> <input
+						type="text" class="form-control" id="${COMPUTER_NAME}"
+						placeholder="Computer name" name="${COMPUTER_NAME}"
+						value="${requestScope[COMPUTER_NAME]}" maxlength="550"
+						data-error="You must enter simple
+                        character and max 500"
+						required> <span class="glyphicon form-control-feedback"
+						aria-hidden="true"></span>
+					<div class="help-block with-errors"></div>
 				</div>
-				<div class="form-group">
-					<label for="introduced">Introduced date</label> <input type="date"
-						class="form-control" id="${COMPUTER_INTRODUCE_DATE}"
-						name="${COMPUTER_INTRODUCE_DATE}" placeholder="Introduced date"
-						value="${requestScope[COMPUTER_INTRODUCE_DATE]}"> <span
-						class="help-block"></span>
+
+				<div class="form-group has-feedback">
+					<label for="${COMPUTER_INTRODUCE_DATE}">Introduced date</label> <input
+						type="date" class="form-control" id="${COMPUTER_INTRODUCE_DATE}"
+						name="${COMPUTER_INTRODUCE_DATE}"
+						value="${requestScope[COMPUTER_INTRODUCE_DATE]}"
+						pattern="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((1[6-9]|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$"
+						data-error="You must enter a date with the format dd/MM/aaaa">
+					<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+					<div class="help-block with-errors"></div>
 				</div>
-				<div class="form-group">
-					<label for="discontinued">Discontinued date</label> <input
-						type="date" class="form-control" id="${COMPUTER_DISCONTINUE_DATE}"
-						placeholder="Discontinued date"
+
+				<div class="form-group has-feedback">
+					<label for="${COMPUTER_DISCONTINUE_DATE}">Discontinued date</label>
+					<input type="date" class="form-control"
+						id="${COMPUTER_DISCONTINUE_DATE}"
 						name="${COMPUTER_DISCONTINUE_DATE}"
-						value="${requestScope[COMPUTER_DISCONTINUE_DATE]}"> <span
-						class="help-block"></span>
+						value="${requestScope[COMPUTER_DISCONTINUE_DATE]}"
+						pattern="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((1[6-9]|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$"
+						data-error="You must enter a date with the format dd/MM/aaaa">
+					<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
+					<div class="help-block with-errors"></div>
 				</div>
+
 				<div class="form-group">
-					<select class="form-control" name="${COMPUTER_COMPANY_ID}">
-						<option value="0" selected>The company</option>
+					<label for="${COMPUTER_COMPANY_ID}">Company</label> <select class="form-control"
+						name="${COMPUTER_COMPANY_ID}">
+						<option value="0" selected id="${COMPUTER_COMPANY_ID}">The company</option>
 						<c:forEach items="${requestScope[LIST_COMPANY]}" var="company"
 							varStatus="as">
 							<option value="${company.id}"
@@ -51,6 +68,7 @@
 			<div class="actions pull-right">
 				<c:choose>
 					<c:when test="${not empty requestScope[COMPUTER_ID]}">
+
 						<input type="submit" class="btn btn-success" style="float: right;"
 							name="${SUBMIT_SAVE}" value="Save" />
 						<input type="submit" class="btn btn-danger" style="float: right;"
