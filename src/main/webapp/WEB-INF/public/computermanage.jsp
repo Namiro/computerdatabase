@@ -34,7 +34,7 @@
 						type="date" class="form-control" id="${COMPUTER_INTRODUCE_DATE}"
 						name="${COMPUTER_INTRODUCE_DATE}"
 						value="${requestScope[COMPUTER_INTRODUCE_DATE]}"
-						pattern="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((1[6-9]|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$"
+						pattern="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((1[6-9]|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))|(((((1[26]|2[048])00)|[12]\d([2468][048]|[13579][26]|0[48]))-((((0[13578]|1[02])-(0[1-9]|[12]\d|3[01]))|((0[469]|11)-(0[1-9]|[12]\d|30)))|(02-(0[1-9]|[12]\d))))|((([12]\d([02468][1235679]|[13579][01345789]))|((1[1345789]|2[1235679])00))-((((0[13578]|1[02])-(0[1-9]|[12]\d|3[01]))|((0[469]|11)-(0[1-9]|[12]\d|30)))|(02-(0[1-9]|1\d|2[0-8]))))))$"
 						data-error="You must enter a date with the format dd/MM/aaaa">
 					<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 					<div class="help-block with-errors"></div>
@@ -46,16 +46,18 @@
 						id="${COMPUTER_DISCONTINUE_DATE}"
 						name="${COMPUTER_DISCONTINUE_DATE}"
 						value="${requestScope[COMPUTER_DISCONTINUE_DATE]}"
-						pattern="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((1[6-9]|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$"
+						pattern="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((1[6-9]|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))|(((((1[26]|2[048])00)|[12]\d([2468][048]|[13579][26]|0[48]))-((((0[13578]|1[02])-(0[1-9]|[12]\d|3[01]))|((0[469]|11)-(0[1-9]|[12]\d|30)))|(02-(0[1-9]|[12]\d))))|((([12]\d([02468][1235679]|[13579][01345789]))|((1[1345789]|2[1235679])00))-((((0[13578]|1[02])-(0[1-9]|[12]\d|3[01]))|((0[469]|11)-(0[1-9]|[12]\d|30)))|(02-(0[1-9]|1\d|2[0-8]))))))$"
 						data-error="You must enter a date with the format dd/MM/aaaa">
 					<span class="glyphicon form-control-feedback" aria-hidden="true"></span>
 					<div class="help-block with-errors"></div>
 				</div>
 
 				<div class="form-group">
-					<label for="${COMPUTER_COMPANY_ID}">Company</label> <select class="form-control"
-						name="${COMPUTER_COMPANY_ID}">
-						<option value="0" selected id="${COMPUTER_COMPANY_ID}">The company</option>
+					<label for="${COMPUTER_COMPANY_ID}">Company</label> <select
+						class="form-control" name="${COMPUTER_COMPANY_ID}"
+						id="${COMPUTER_COMPANY_ID}">
+						<option value="0" selected id="${COMPUTER_COMPANY_ID}">The
+							company</option>
 						<c:forEach items="${requestScope[LIST_COMPANY]}" var="company"
 							varStatus="as">
 							<option value="${company.id}"
@@ -70,13 +72,13 @@
 					<c:when test="${not empty requestScope[COMPUTER_ID]}">
 
 						<input type="submit" class="btn btn-success" style="float: right;"
-							name="${SUBMIT_SAVE}" value="Save" />
+							id="${SUBMIT_SAVE}" name="${SUBMIT_SAVE}" value="Save" />
 						<input type="submit" class="btn btn-danger" style="float: right;"
-							name="${SUBMIT_DELETE}" value="Delete" />
+							id="${SUBMIT_DELETE}" name="${SUBMIT_DELETE}" value="Delete" />
 					</c:when>
 					<c:otherwise>
 						<input type="submit" class="btn btn-primary" style="float: right;"
-							name="${SUBMIT_CREATE}" value="Create" />
+							id="${SUBMIT_CREATE}" name="${SUBMIT_CREATE}" value="Create" />
 					</c:otherwise>
 				</c:choose>
 			</div>

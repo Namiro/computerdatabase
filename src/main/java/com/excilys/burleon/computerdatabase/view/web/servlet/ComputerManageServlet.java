@@ -58,10 +58,14 @@ public class ComputerManageServlet extends HttpServlet {
             /* If the computer exist, we get its data */
             if (this._computer != null) {
                 request.setAttribute(Data.COMPUTER_ID, this._computer.getId());
-                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
-                        Utility.convertToStringDate(this._computer.getIntroduced()));
-                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
-                        Utility.convertToStringDate(this._computer.getDiscontinued()));
+                if (this._computer.getIntroduced() != null) {
+                    request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
+                            this._computer.getIntroduced().toLocalDate());
+                }
+                if (this._computer.getDiscontinued() != null) {
+                    request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
+                            this._computer.getDiscontinued().toLocalDate());
+                }
                 request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
                 request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
             } else {

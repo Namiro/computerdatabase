@@ -65,9 +65,9 @@
 									href="${SERVLET_COMPUTER_MANAGE}?${COMPUTER_ID}=${computer.id}"><c:out
 											value="${computer.name}" /></a></td>
 								<td><javatime:format value='${computer.introduced}'
-										pattern="yyyy-MM-dd" style="MS" />
+										pattern="dd-MM-yyyy" style="MS" />
 								<td><javatime:format value='${computer.discontinued}'
-										pattern="yyyy-MM-dd" style="MS" />
+										pattern="dd-MM-yyyy" style="MS" />
 								<td><c:out value="${computer.company.name}" /></td>
 							</tr>
 						</c:forEach>
