@@ -18,141 +18,177 @@ import com.excilys.burleon.computerdatabase.persistence.model.Company;
  */
 public enum CompanyDao implements ICompanyDao {
 
-	INSTANCE;
+    INSTANCE;
 
-	private CompanyDao() {
+    /**
+     * Default constructor.
+     */
+    CompanyDao() {
 
-	}
+    }
 
-	@Override
-	public Company create(final Company entity) {
-		final Company centity = entity;
-		Company _entity = null;
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"INSERT INTO " + this.getTableName(entity.getClass()) + " SET name = ?",
-					Statement.RETURN_GENERATED_KEYS);
-			statement.setString(1, centity.getName());
-			statement.executeUpdate();
+    @Override
+    public Company create(final Company entity) {
+        Company tmpEntity = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "INSERT INTO " + this.getTableName(entity.getClass()) + " SET name = ?",
+                    Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, entity.getName());
+            statement.executeUpdate();
 
-			resultSet = statement.getGeneratedKeys();
-			resultSet.next();
-			entity.setId(resultSet.getInt(1));
-			_entity = centity;
-		} catch (final SQLException e) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
-			throw new PersistenceException(e);
-		} finally {
-			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
-		}
-		return _entity;
-	}
+            resultSet = statement.getGeneratedKeys();
+            resultSet.next();
+            entity.setId(resultSet.getInt(1));
+            tmpEntity = entity;
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+        return tmpEntity;
+    }
 
-	@Override
-	public ArrayList<Company> find(final Class<Company> c) {
-		ArrayList<Company> entities = null;
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"SELECT * FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
-			statement.execute();
-			resultSet = statement.getResultSet();
-			entities = new ArrayList<>();
-			while (resultSet.next())
-				entities.add(new Company.CompanyBuilder().name(resultSet.getString("name")).id(resultSet.getInt("id"))
-						.build());
+    @Override
+    public ArrayList<Company> find(final Class<Company> c) {
+        ArrayList<Company> entities = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "SELECT * FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE);
+            statement.execute();
+            resultSet = statement.getResultSet();
+            entities = new ArrayList<>();
+            while (resultSet.next()) {
+                entities.add(new Company.CompanyBuilder().name(resultSet.getString("name"))
+                        .id(resultSet.getInt("id")).build());
+            }
 
-		} catch (final SQLException e) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
-			throw new PersistenceException(e);
-		} finally {
-			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
-		}
-		return entities;
-	}
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+        return entities;
+    }
 
-	@Override
-	public Company find(final Class<Company> c, final long id) {
-		Company entity = null;
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"SELECT * FROM " + this.getTableName(c) + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
-			statement.setLong(1, id);
-			statement.execute();
-			resultSet = statement.getResultSet();
-			if (resultSet.first())
-				entity = new Company(resultSet.getInt("id"), resultSet.getString("name"));
+    @Override
+    public Company find(final Class<Company> c, final long id) {
+        Company tmpEntity = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "SELECT * FROM " + this.getTableName(c) + " WHERE id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE);
+            statement.setLong(1, id);
+            statement.execute();
+            resultSet = statement.getResultSet();
+            if (resultSet.first()) {
+                tmpEntity = new Company(resultSet.getInt("id"), resultSet.getString("name"));
+            }
 
-		} catch (final SQLException e) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
-			throw new PersistenceException(e);
-		} finally {
-			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
-		}
-		return entity;
-	}
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+        return tmpEntity;
+    }
 
-	@Override
-	public ArrayList<Company> findRange(final Class<Company> c, final int first, final int nbRecord) {
-		ArrayList<Company> entities = null;
-		PreparedStatement statement = null;
-		ResultSet resultSet = null;
-		try {
-			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"SELECT * FROM " + this.getTableName(c) + " LIMIT ?,?", ResultSet.TYPE_SCROLL_SENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
-			statement.setInt(1, first);
-			statement.setInt(2, nbRecord);
-			statement.execute();
-			resultSet = statement.getResultSet();
-			entities = new ArrayList<>();
-			while (resultSet.next())
-				entities.add(new Company(resultSet.getInt("id"), resultSet.getString("name")));
+    @Override
+    public ArrayList<Company> findRange(final Class<Company> c, final int first, final int nbRecord,
+            String filterWord) {
+        if (filterWord == null) {
+            filterWord = "";
+        }
+        ArrayList<Company> entities = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "SELECT * FROM " + this.getTableName(c) + " WHERE company.name " + "LIKE ? LIMIT ?,?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statement.setString(1, "%" + filterWord + "%");
+            statement.setInt(2, first);
+            statement.setInt(3, nbRecord);
+            statement.execute();
+            resultSet = statement.getResultSet();
+            entities = new ArrayList<>();
+            while (resultSet.next()) {
+                entities.add(new Company(resultSet.getInt("id"), resultSet.getString("name")));
+            }
 
-		} catch (final SQLException e) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
-			throw new PersistenceException(e);
-		} finally {
-			DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
-		}
-		return entities;
-	}
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+        return entities;
+    }
 
-	@Override
-	public Company update(final Company entity) {
-		final Company centity = entity;
-		Company _entity = null;
-		PreparedStatement statement = null;
-		try {
-			statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-					"UPDATE " + this.getTableName(entity.getClass()) + " SET name = ? WHERE id = ?",
-					ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-			statement.setString(1, centity.getName());
-			statement.setLong(2, entity.getId());
-			statement.executeUpdate();
-			_entity = centity;
-		} catch (final SQLException e) {
-			Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
-			throw new PersistenceException(e);
-		} finally {
-			DatabaseConnection.INSTANCE.closeStatement(statement);
-			DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
-		}
-		return _entity;
-	}
+    @Override
+    public long getNbRecords(final Class<Company> c, final String filterWord) {
+        long nbTotal = 0;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statement.setString(1, "%" + filterWord + "%");
+            statement.execute();
+            resultSet = statement.getResultSet();
+            if (resultSet.first()) {
+                nbTotal = resultSet.getLong("total");
+            }
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+
+        return nbTotal;
+    }
+
+    @Override
+    public Company update(final Company entity) {
+        Company tmpEntity = null;
+        PreparedStatement statement = null;
+        try {
+            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
+                    "UPDATE " + this.getTableName(entity.getClass()) + " SET name = ? WHERE id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            statement.setString(1, entity.getName());
+            statement.setLong(2, entity.getId());
+            statement.executeUpdate();
+            tmpEntity = entity;
+        } catch (final SQLException e) {
+            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            throw new PersistenceException(e);
+        } finally {
+            DatabaseConnection.INSTANCE.closeStatement(statement);
+            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+        }
+        return tmpEntity;
+    }
 }

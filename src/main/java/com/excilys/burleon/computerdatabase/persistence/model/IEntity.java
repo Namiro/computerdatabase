@@ -7,11 +7,22 @@ package com.excilys.burleon.computerdatabase.persistence.model;
  */
 public interface IEntity {
 
-	public long getId();
+    /**
+     * To get the id.
+     *
+     * @return The entity id
+     */
+    long getId();
 
-	public void setId(long id);
+    /**
+     * To set the entity id.
+     *
+     * @param id
+     *            The new value for the id
+     */
+    void setId(long id);
 
-	@Override
-	public String toString();
+    @Override
+    String toString();
 
 }

@@ -14,9 +14,9 @@ import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
  */
 public class DatabaseConnectionTest {
 
-	@Test
-	public void testConnection() {
-		Assert.assertNotNull(DatabaseConnection.getInstance());
-		DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
-	}
+    @Test
+    public void testConnection() {
+        Assert.assertNotNull(DatabaseConnection.getInstance());
+        DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
+    }
 }
