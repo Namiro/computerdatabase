@@ -4,7 +4,7 @@
 	<groupId>com.excilys.burleon</groupId>
 	<artifactId>ComputerDatabase</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-RELEASE</version>
 	<name>ComputerDatabase Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
@@ -16,16 +16,25 @@
 		<version.slf4j>1.7.24</version.slf4j>
 		<version.mockito>1.9.5</version.mockito>
 		<version.powermock>1.7.0RC4</version.powermock>
+		<version.dbunit>2.4.9</version.dbunit>
 		<version.mysql>5.1.6</version.mysql>
 		<version.commonsconfiguration2>2.0</version.commonsconfiguration2>
 		<version.commonsbeanutils>1.9.3</version.commonsbeanutils>
 		<version.servlet>3.1.0</version.servlet>
 		<version.jspapi>2.1</version.jspapi>
 		<version.jstl>1.2</version.jstl>
+		<version.selenium>3.3.1</version.selenium>
+		<version.javaTimeJsp>1.1.3</version.javaTimeJsp>
+		<version.tomcat>9.0.0.M17</version.tomcat>
 		<version.plugin.eclipse>2.9</version.plugin.eclipse>
 		<version.plugin.checkstyle>2.17</version.plugin.checkstyle>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>org.dbunit</groupId>
+			<artifactId>dbunit</artifactId>
+			<version>${version.dbunit}</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -51,7 +60,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito</artifactId>
+			<artifactId>powermock-api-mockito2</artifactId>
+			<version>${version.powermock}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
 			<version>${version.powermock}</version>
 			<scope>test</scope>
 		</dependency>
@@ -94,12 +109,17 @@
 		<dependency>
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
-			<version>9.0.0.M17</version>
+			<version>${version.tomcat}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sargue</groupId>
 			<artifactId>java-time-jsptags</artifactId>
-			<version>1.1.3</version>
+			<version>${version.javaTimeJsp}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${version.selenium}</version>
 		</dependency>
 	</dependencies>
 
