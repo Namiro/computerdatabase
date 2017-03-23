@@ -1,6 +1,7 @@
 package com.excilys.burleon.computerdatabase.service.iservice;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,14 +60,14 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The entity id
      * @return A entity with a type domain class or Null if not exist
      */
-    default E get(final Class<E> entityType, final long id) {
+    default Optional<E> get(final Class<E> entityType, final long id) {
         IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id);
         if (id > 0) {
             IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND OK");
             return DaoFactory.INSTANCE.getDao(entityType).find(entityType, id);
         } else {
             IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND KO");
-            return null;
+            return Optional.empty();
         }
     }
 
@@ -131,7 +132,7 @@ public interface IModelService<E extends IEntity> extends IService {
      */
     default boolean remove(final E entity) {
         IModelService.LOGGER.trace("remove : entity : " + entity);
-        if (entity != null) {
+        if (entity != null && entity.getId() > 0) {
             return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity);
         } else {
             return false;
@@ -148,7 +149,7 @@ public interface IModelService<E extends IEntity> extends IService {
      * @throws ServiceException
      *             If the check data fail
      */
-    default E save(final E entity) throws ServiceException {
+    default Optional<E> save(final E entity) throws ServiceException {
 
         IModelService.LOGGER.trace("save : entity : " + entity);
 

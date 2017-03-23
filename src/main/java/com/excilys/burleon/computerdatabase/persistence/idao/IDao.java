@@ -1,9 +1,11 @@
 package com.excilys.burleon.computerdatabase.persistence.idao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ public interface IDao<E extends IEntity> {
      *            Object of type E
      * @return Entity
      */
-    E create(E entity);
+    Optional<E> create(E entity);
 
     /**
      * Method to delete an element in the table of specified entity.
@@ -33,23 +35,15 @@ public interface IDao<E extends IEntity> {
      * @return boolean Success -> True else false.
      */
     default boolean delete(final E entity) {
-        PreparedStatement statement = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
+                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setLong(1, entity.getId());
             statement.executeUpdate();
-            DatabaseConnection.INSTANCE.getConnection().setAutoCommit(false);
-            statement.execute();
         } catch (final SQLException e) {
-            try {
-                IDao.LOGGER.error(e.getMessage());
-                throw new PersistenceException(e);
-            } finally {
-                DatabaseConnection.INSTANCE.closeStatement(statement);
-                DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
-            }
+            IDao.LOGGER.error(e.getMessage());
+            throw new PersistenceException(e);
         }
         return true;
     }
@@ -64,7 +58,7 @@ public interface IDao<E extends IEntity> {
      *         Else a list (This list can be empty if there is nothing found
      *         by the request).
      */
-    ArrayList<E> find(Class<E> c);
+    List<E> find(Class<E> c);
 
     /**
      * Method to research by id an element in the table of specified entity.
@@ -75,7 +69,7 @@ public interface IDao<E extends IEntity> {
      *            The id of the entity you want get
      * @return E Object of type E. Null if nothing found.
      */
-    E find(Class<E> c, long id);
+    Optional<E> find(Class<E> c, long id);
 
     /**
      * Method to get all element between in a limit from the database The
@@ -91,7 +85,7 @@ public interface IDao<E extends IEntity> {
      *            The word that will be used to filter the results
      * @return A list with the record comprise between first and last.
      */
-    ArrayList<E> findRange(Class<E> c, int first, int nbRecord, String filterWord);
+    List<E> findRange(Class<E> c, int first, int nbRecord, String filterWord);
 
     /**
      *
@@ -101,26 +95,20 @@ public interface IDao<E extends IEntity> {
      */
     default long getNbRecords(final Class<E> c) {
         long nbTotal = 0;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "SELECT count(*) as total FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
-                    ResultSet.CONCUR_UPDATABLE);
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "SELECT count(*) as total FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
+                        ResultSet.CONCUR_UPDATABLE);) {
             statement.execute();
-            resultSet = statement.getResultSet();
-            if (resultSet.first()) {
-                nbTotal = resultSet.getLong("total");
+            try (ResultSet resultSet = statement.getResultSet();) {
+                if (resultSet.first()) {
+                    nbTotal = resultSet.getLong("total");
+                }
             }
         } catch (final SQLException e) {
             IDao.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
-        } finally {
-            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-            DatabaseConnection.INSTANCE.closeStatement(statement);
-            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
-
         return nbTotal;
     }
 
@@ -156,6 +144,6 @@ public interface IDao<E extends IEntity> {
      *            Object of type E to update
      * @return Entity
      */
-    E update(E entity);
+    Optional<E> update(E entity);
 
 }
