@@ -4,6 +4,7 @@
 package com.excilys.burleon.computerdatabase.persistence.dao;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -27,7 +28,6 @@ public class ComputerDaoTest {
      */
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
-        DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
     }
 
     /**
@@ -43,17 +43,17 @@ public class ComputerDaoTest {
     @Test
     public void testCreate() {
 
-        final Computer computer = ComputerDaoTest.computerDao
+        final Optional<Computer> computer = ComputerDaoTest.computerDao
                 .create(new Computer.ComputerBuilder().name("TestServiceComputer").introduced(LocalDateTime.now())
                         .discontinued(LocalDateTime.now()).build());
-        Assert.assertTrue(
-                computer.getId() == ComputerDaoTest.computerDao.find(Computer.class, computer.getId()).getId());
+        Assert.assertTrue(computer.get().getId() == ComputerDaoTest.computerDao
+                .find(Computer.class, computer.get().getId()).get().getId());
     }
 
     @Test
     public void testDelete() {
-        final Computer computer = ComputerDaoTest.computerDao.find(Computer.class, 7);
-        Assert.assertTrue(ComputerDaoTest.computerDao.delete(computer));
+        final Optional<Computer> computer = ComputerDaoTest.computerDao.find(Computer.class, 7);
+        Assert.assertTrue(ComputerDaoTest.computerDao.delete(computer.get()));
     }
 
     @Test
@@ -64,27 +64,27 @@ public class ComputerDaoTest {
     @Test
     public void testFindWithBadId() {
         final int id = -1;
-        final Computer computer = ComputerDaoTest.computerDao.find(Computer.class, id);
-        Assert.assertNull(computer);
+        final Optional<Computer> computer = ComputerDaoTest.computerDao.find(Computer.class, id);
+        Assert.assertFalse(computer.isPresent());
     }
 
     @Test
     public void testFindWithId() {
         final int id = 10;
-        final Computer computer = ComputerDaoTest.computerDao.find(Computer.class, id);
-        Assert.assertTrue(computer.getId() == id && computer.getName().equals("Apple IIc Plus"));
+        final Optional<Computer> computer = ComputerDaoTest.computerDao.find(Computer.class, id);
+        Assert.assertTrue(computer.get().getId() == id && computer.get().getName().equals("Apple IIc Plus"));
     }
 
     @Test
     public void testUpdate() {
-        final Computer computer = ComputerDaoTest.computerDao.find(Computer.class, 6);
-        Assert.assertTrue(computer.getId() == 6 && computer.getName().equals("MacBook Pro"));
-        computer.setName("testNameCool");
-        ComputerDaoTest.computerDao.update(computer);
-        final Computer computerUpdated = ComputerDaoTest.computerDao.find(Computer.class, 6);
-        Assert.assertTrue(computerUpdated.getName().equals("testNameCool"));
-        computerUpdated.setName("MacBook Pro");
-        ComputerDaoTest.computerDao.update(computerUpdated);
+        final Optional<Computer> computer = ComputerDaoTest.computerDao.find(Computer.class, 6);
+        Assert.assertTrue(computer.get().getId() == 6 && computer.get().getName().equals("MacBook Pro"));
+        computer.get().setName("testNameCool");
+        ComputerDaoTest.computerDao.update(computer.get());
+        final Optional<Computer> computerUpdated = ComputerDaoTest.computerDao.find(Computer.class, 6);
+        Assert.assertTrue(computerUpdated.get().getName().equals("testNameCool"));
+        computerUpdated.get().setName("MacBook Pro");
+        ComputerDaoTest.computerDao.update(computerUpdated.get());
     }
 
 }
