@@ -82,7 +82,7 @@ public class CompanyServiceTest {
 
     @Test
     public void testGetWithBadId() {
-        final int id = 50;
+        final int id = -1;
         Assert.assertNull(CompanyServiceTest.companyService.get(Company.class, id));
     }
 

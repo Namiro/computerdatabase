@@ -85,7 +85,7 @@ public class ComputerServiceTest {
 
     @Test
     public void testGetWithBadId() {
-        final int id = 500;
+        final int id = -1;
         Assert.assertNull(ComputerServiceTest.computerService.get(Computer.class, id));
     }
 

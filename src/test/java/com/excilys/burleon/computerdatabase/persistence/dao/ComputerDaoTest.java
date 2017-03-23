@@ -63,7 +63,7 @@ public class ComputerDaoTest {
 
     @Test
     public void testFindWithBadId() {
-        final int id = 500;
+        final int id = -1;
         final Computer computer = ComputerDaoTest.computerDao.find(Computer.class, id);
         Assert.assertNull(computer);
     }

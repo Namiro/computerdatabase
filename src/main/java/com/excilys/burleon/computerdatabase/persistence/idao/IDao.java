@@ -4,14 +4,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 
 public interface IDao<E extends IEntity> {
+
+    Logger LOGGER = LoggerFactory.getLogger("IDAO");
 
     /**
      * Method to insert an element in the table of specified entity.
@@ -41,7 +44,7 @@ public interface IDao<E extends IEntity> {
             statement.execute();
         } catch (final SQLException e) {
             try {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                IDao.LOGGER.error(e.getMessage());
                 throw new PersistenceException(e);
             } finally {
                 DatabaseConnection.INSTANCE.closeStatement(statement);
@@ -110,7 +113,7 @@ public interface IDao<E extends IEntity> {
                 nbTotal = resultSet.getLong("total");
             }
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+            IDao.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
