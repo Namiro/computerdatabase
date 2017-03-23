@@ -7,6 +7,7 @@ package com.excilys.burleon.computerdatabase.view.web.servlet;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -23,7 +24,10 @@ import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.service.CompanyService;
 import com.excilys.burleon.computerdatabase.service.service.ComputerService;
 import com.excilys.burleon.computerdatabase.service.service.PageService;
-import com.excilys.burleon.computerdatabase.service.tool.Utility;
+import com.excilys.burleon.computerdatabase.view.model.CompanyDTO;
+import com.excilys.burleon.computerdatabase.view.model.ComputerDTO;
+import com.excilys.burleon.computerdatabase.view.model.mapper.CompanyMapper;
+import com.excilys.burleon.computerdatabase.view.model.mapper.ComputerMapper;
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
 
@@ -44,7 +48,7 @@ public class ComputerManageServlet extends HttpServlet {
     /**
      * Variable working.
      */
-    private Computer _computer;
+    private ComputerDTO _computer;
 
     /* METHODE */
     @Override
@@ -54,17 +58,16 @@ public class ComputerManageServlet extends HttpServlet {
         /* If a computer was selected */
         if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))) {
             final long id = Long.parseLong(request.getParameter(Data.COMPUTER_ID));
-            this._computer = this.computerService.get(Computer.class, id);
+            final Optional<Computer> computerOpt = this.computerService.get(Computer.class, id);
             /* If the computer exist, we get its data */
-            if (this._computer != null) {
+            if (computerOpt.isPresent()) {
+                this._computer = ComputerMapper.INSTANCE.toComputerDTO(computerOpt.get());
                 request.setAttribute(Data.COMPUTER_ID, this._computer.getId());
                 if (this._computer.getIntroduced() != null) {
-                    request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
-                            this._computer.getIntroduced().toLocalDate());
+                    request.setAttribute(Data.COMPUTER_INTRODUCE_DATE, this._computer.getIntroduced());
                 }
                 if (this._computer.getDiscontinued() != null) {
-                    request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
-                            this._computer.getDiscontinued().toLocalDate());
+                    request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE, this._computer.getDiscontinued());
                 }
                 request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
                 request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
@@ -74,7 +77,8 @@ public class ComputerManageServlet extends HttpServlet {
             }
         }
 
-        request.setAttribute(Data.LIST_COMPANY, this.companyService.get(Company.class));
+        request.setAttribute(Data.LIST_COMPANY,
+                CompanyMapper.INSTANCE.toCompanyDTO(this.companyService.get(Company.class)));
 
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request, response);
     }
@@ -87,22 +91,21 @@ public class ComputerManageServlet extends HttpServlet {
         if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))
                 && !"0".equals(request.getParameter(Data.COMPUTER_ID))) {
             final long id = Long.parseLong(request.getParameter(Data.COMPUTER_ID));
-            this._computer = this.computerService.get(Computer.class, id);
+            this._computer = ComputerMapper.INSTANCE
+                    .toComputerDTO(this.computerService.get(Computer.class, id).get());
         } else { // If it is a creating
             new ArrayList<>();
-            this._computer = new Computer();
+            this._computer = new ComputerDTO();
         }
 
         try {
             this._computer.setName(request.getParameter(Data.COMPUTER_NAME));
-            this._computer.setIntroduced(
-                    Utility.convertStringDateToLocalDateTime(request.getParameter(Data.COMPUTER_INTRODUCE_DATE)));
-            this._computer.setDiscontinued(Utility
-                    .convertStringDateToLocalDateTime(request.getParameter(Data.COMPUTER_DISCONTINUE_DATE)));
+            this._computer.setIntroduced(request.getParameter(Data.COMPUTER_INTRODUCE_DATE));
+            this._computer.setDiscontinued(request.getParameter(Data.COMPUTER_DISCONTINUE_DATE));
             if (request.getParameter(Data.COMPUTER_COMPANY_ID) != null) {
-                final Company company = this.companyService.get(Company.class,
-                        Long.parseLong(request.getParameter(Data.COMPUTER_COMPANY_ID)));
-                this._computer.setCompany(company);
+                final CompanyDTO companyDTO = CompanyMapper.INSTANCE.toCompanyDTO(this.companyService
+                        .get(Company.class, Long.parseLong(request.getParameter(Data.COMPUTER_COMPANY_ID))).get());
+                this._computer.setCompany(companyDTO);
             }
         } catch (final ServiceException e) {
             // Error message
@@ -112,29 +115,29 @@ public class ComputerManageServlet extends HttpServlet {
         }
 
         if (request.getParameter(Data.SUBMIT_DELETE) != null) {
-            this.computerService.remove(this._computer);
+            this.computerService.remove(ComputerMapper.INSTANCE.toComputer(this._computer));
             request.setAttribute(Data.MESSAGE_SUCCESS, "Remove OK");
             this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
                     response);
         } else {
             try {
                 // Update and create /!\ For update ID must exist
-                this._computer = this.computerService.save(this._computer);
+                this._computer = ComputerMapper.INSTANCE.toComputerDTO(
+                        this.computerService.save(ComputerMapper.INSTANCE.toComputer(this._computer)).get());
                 request.setAttribute(Data.MESSAGE_SUCCESS, "Save OK");
             } catch (final ServiceException e) {
                 // Error message
                 request.setAttribute(Data.MESSAGE_ERROR, e.getMessage());
             } finally {
                 request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
-                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
-                        Utility.convertToStringDate(this._computer.getIntroduced()));
-                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
-                        Utility.convertToStringDate(this._computer.getDiscontinued()));
+                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE, this._computer.getIntroduced());
+                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE, this._computer.getDiscontinued());
+                request.setAttribute(Data.LIST_COMPANY,
+                        CompanyMapper.INSTANCE.toCompanyDTO(this.companyService.get(Company.class)));
                 if (this._computer.getCompany() != null) {
                     request.setAttribute(Data.COMPUTER_COMPANY_ID, this._computer.getCompany().getId());
                 }
-                request.setAttribute(Data.LIST_COMPANY, this.companyService.get(Company.class));
-                if (this._computer.getId() != 0) {
+                if (!this._computer.getId().equals("")) {
                     request.setAttribute(Data.COMPUTER_ID, this._computer.getId());
                 }
 

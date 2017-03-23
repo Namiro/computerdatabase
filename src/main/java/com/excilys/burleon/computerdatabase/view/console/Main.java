@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -147,15 +148,15 @@ public class Main {
                 case 3:
                     sb = new StringBuilder();
                     sb.append("Computer ID :\n");
-                    Computer computer = Main.COMPUTER_SERVICE.get(Computer.class,
+                    Optional<Computer> computerOpt = Main.COMPUTER_SERVICE.get(Computer.class,
                             Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
-                    if (computer != null) {
+                    if (computerOpt.isPresent()) {
                         sb = new StringBuilder();
-                        sb.append("Detail of : " + computer.getId() + "\n");
-                        sb.append("Name : " + computer.getName() + "\n");
-                        sb.append("Introduce date : " + computer.getIntroduced() + "\n");
-                        sb.append("Discontinue date : " + computer.getDiscontinued() + "\n");
-                        final Company company = computer.getCompany();
+                        sb.append("Detail of : " + computerOpt.get().getId() + "\n");
+                        sb.append("Name : " + computerOpt.get().getName() + "\n");
+                        sb.append("Introduce date : " + computerOpt.get().getIntroduced() + "\n");
+                        sb.append("Discontinue date : " + computerOpt.get().getDiscontinued() + "\n");
+                        final Company company = computerOpt.get().getCompany();
                         if (company != null) {
                             sb.append("Linked with the company : " + company.getName() + "\n\n");
                         }
@@ -166,7 +167,7 @@ public class Main {
                     do {
                         try {
                             isContinueSubMenu = false;
-                            computer = new Computer();
+                            final Computer computer = new Computer();
                             System.out.print("Computer creation\n");
                             System.out.print("Name :");
                             computer.setName(Main.SCAN.nextLine());
@@ -194,31 +195,31 @@ public class Main {
                     } while (isContinueSubMenu);
                     break;
                 case 5:
-                    computer = new Computer();
                     System.out.print("Computer update ID :");
-                    computer = Main.COMPUTER_SERVICE.get(Computer.class, Main.inputLong());
-                    if (computer != null) {
+                    computerOpt = Main.COMPUTER_SERVICE.get(Computer.class, Main.inputLong());
+                    if (computerOpt.isPresent()) {
                         do {
                             try {
                                 isContinueSubMenu = false;
                                 System.out.print("Name :");
-                                computer.setName(Main.SCAN.nextLine());
+                                computerOpt.get().setName(Main.SCAN.nextLine());
                                 System.out.print("Company Id :");
                                 final long companyId = Main.inputLong();
                                 if (companyId != 0) {
-                                    computer.setCompany(new Company.CompanyBuilder().id(companyId).build());
+                                    computerOpt.get()
+                                            .setCompany(new Company.CompanyBuilder().id(companyId).build());
                                 }
                                 System.out.print("Introduce date (yyyy-MM-dd) :");
                                 LocalDateTime date = Main.inputDate();
                                 if (date != null) {
-                                    computer.setIntroduced(date);
+                                    computerOpt.get().setIntroduced(date);
                                 }
                                 System.out.print("Discontinue date (yyyy-MM-dd) :");
                                 date = Main.inputDate();
                                 if (date != null) {
-                                    computer.setDiscontinued(date);
+                                    computerOpt.get().setDiscontinued(date);
                                 }
-                                Main.COMPUTER_SERVICE.save(computer);
+                                Main.COMPUTER_SERVICE.save(computerOpt.get());
                                 Main.computerPage.refresh();
                             } catch (final ServiceException e) {
                                 System.out.println(e.getMessage());
@@ -234,10 +235,10 @@ public class Main {
                 case 6:
                     sb = new StringBuilder();
                     sb.append("Remove computer ID :\n");
-                    computer = Main.COMPUTER_SERVICE.get(Computer.class,
+                    computerOpt = Main.COMPUTER_SERVICE.get(Computer.class,
                             Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
-                    if (computer != null) {
-                        Main.COMPUTER_SERVICE.remove(computer);
+                    if (computerOpt.isPresent()) {
+                        Main.COMPUTER_SERVICE.remove(computerOpt.get());
                         Main.companyPage.refresh();
                         sb = new StringBuilder();
                         sb.append("The computer has been deleted");
