@@ -14,3 +14,5 @@ Training project to learn and practice :
 - Spring MVC
 - Spring Security
 - Gatling
+
+Based on https://github.com/excilys/training-java
