@@ -83,30 +83,30 @@ public class CompanyServiceTest {
     @Test
     public void testGetWithBadId() {
         final int id = -1;
-        Assert.assertNull(CompanyServiceTest.companyService.get(Company.class, id));
+        Assert.assertFalse(CompanyServiceTest.companyService.get(Company.class, id).isPresent());
     }
 
     @Test
     public void testGetWithId() {
         final int id = 2;
-        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class, id).getId() == 2);
-        Assert.assertTrue(
-                CompanyServiceTest.companyService.get(Company.class, id).getName().equals("Thinking Machines"));
+        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class, id).get().getId() == 2);
+        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class, id).get().getName()
+                .equals("Thinking Machines"));
     }
 
     @Test
     public void testSave() {
         Company company = new Company.CompanyBuilder().name("TestServiceCompany").build();
         Assert.assertTrue(CompanyServiceTest.companyService.save(company) != null);
-        Assert.assertTrue((company = CompanyServiceTest.companyService.save(company)).getName()
+        Assert.assertTrue((company = CompanyServiceTest.companyService.save(company).get()).getName()
                 .equals("TestServiceCompany"));
-        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class, company.getId()).getName()
+        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class, company.getId()).get().getName()
                 .equals("TestServiceCompany"));
         company.setName("TestServiceCompanyUpdated");
         Assert.assertTrue(CompanyServiceTest.companyService.save(company) != null);
-        Assert.assertTrue(
-                CompanyServiceTest.companyService.save(company).getName().equals("TestServiceCompanyUpdated"));
-        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class, company.getId()).getName()
+        Assert.assertTrue(CompanyServiceTest.companyService.save(company).get().getName()
+                .equals("TestServiceCompanyUpdated"));
+        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class, company.getId()).get().getName()
                 .equals("TestServiceCompanyUpdated"));
     }
 

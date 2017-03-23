@@ -86,14 +86,15 @@ public class ComputerServiceTest {
     @Test
     public void testGetWithBadId() {
         final int id = -1;
-        Assert.assertNull(ComputerServiceTest.computerService.get(Computer.class, id));
+        Assert.assertFalse(ComputerServiceTest.computerService.get(Computer.class, id).isPresent());
     }
 
     @Test
     public void testGetWithId() {
         final int id = 2;
-        Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class, id).getId() == 2);
-        Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class, id).getName().equals("CM-2a"));
+        Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class, id).get().getId() == 2);
+        Assert.assertTrue(
+                ComputerServiceTest.computerService.get(Computer.class, id).get().getName().equals("CM-2a"));
     }
 
     @Test
@@ -103,9 +104,10 @@ public class ComputerServiceTest {
         Assert.assertTrue(ComputerServiceTest.computerService.remove(entity));
     }
 
+    @Test
     public void testRemoveWithBadId() {
         final Computer entity = new Computer();
-        entity.setId(50);
+        entity.setId(-1);
         Assert.assertFalse(ComputerServiceTest.computerService.remove(entity));
     }
 
@@ -114,10 +116,10 @@ public class ComputerServiceTest {
         final LocalDateTime localDateTime = LocalDateTime.now().withNano(0);
         Computer computer = new Computer.ComputerBuilder().name("TestServiceComputer")
                 .introduced(LocalDateTime.now()).discontinued(LocalDateTime.now()).build();
-        computer = ComputerServiceTest.computerService.save(computer);
+        computer = ComputerServiceTest.computerService.save(computer).get();
         Assert.assertTrue(computer != null);
         Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
-        computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId());
+        computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId()).get();
         Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
         Assert.assertTrue(computer.getId() != 0);
         final long idOk = computer.getId();
@@ -128,10 +130,10 @@ public class ComputerServiceTest {
         computer.setDiscontinued(localDateTime.plusYears(2));
         computer.setIntroduced(localDateTime.plusYears(1));
         computer.setCompany(new Company.CompanyBuilder().id(2).name("Truurur").build());
-        computer = ComputerServiceTest.computerService.save(computer);
+        computer = ComputerServiceTest.computerService.save(computer).get();
         Assert.assertTrue(computer != null);
         Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
-        computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId());
+        computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId()).get();
         Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
         Assert.assertTrue(computer.getId() == idOk);
         Assert.assertTrue(computer.getCompany().getId() == 2);
