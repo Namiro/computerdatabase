@@ -3,6 +3,7 @@
  */
 package com.excilys.burleon.computerdatabase.persistence.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,6 +13,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,17 +42,15 @@ public enum ComputerDao implements IComputerDao {
     }
 
     @Override
-    public Computer create(final Computer entity) {
-
+    public Optional<Computer> create(final Computer entity) {
         final Computer centity = entity;
         Computer tmpEntity = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "INSERT INTO " + this.getTableName(entity.getClass())
-                            + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
-                    Statement.RETURN_GENERATED_KEYS);
+
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "INSERT INTO " + this.getTableName(entity.getClass())
+                                + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
+                        Statement.RETURN_GENERATED_KEYS);) {
             statement.setString(1, centity.getName());
             if (centity.getIntroduced() == null) {
                 statement.setNull(2, java.sql.Types.TIMESTAMP);
@@ -79,137 +80,115 @@ public enum ComputerDao implements IComputerDao {
                 statement.setLong(4, centity.getCompany().getId());
             }
             statement.executeUpdate();
-            resultSet = statement.getGeneratedKeys();
-            resultSet.next();
-            entity.setId(resultSet.getInt(1));
-            tmpEntity = centity;
+            try (ResultSet resultSet = statement.getGeneratedKeys();) {
+                resultSet.next();
+                entity.setId(resultSet.getInt(1));
+                tmpEntity = entity;
+            }
         } catch (final SQLException e) {
             this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
-        } finally {
-            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-            DatabaseConnection.INSTANCE.closeStatement(statement);
-            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
-        return tmpEntity;
+        return Optional.ofNullable(tmpEntity);
     }
 
     @Override
-    public ArrayList<Computer> find(final Class<Computer> c) {
-        ArrayList<Computer> entities = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
-                            + "company.name as cName FROM " + this.getTableName(c)
-                            + " LEFT JOIN company ON computer.company_id=company.id",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+    public List<Computer> find(final Class<Computer> c) {
+        final ArrayList<Computer> entities = new ArrayList<>();
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
+                                + "company.name as cName FROM " + this.getTableName(c)
+                                + " LEFT JOIN company ON computer.company_id=company.id",
+                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.execute();
-            resultSet = statement.getResultSet();
-            entities = new ArrayList<>();
-            while (resultSet.next()) {
-                entities.add(new Computer.ComputerBuilder().name(resultSet.getString("name"))
-                        .id(resultSet.getLong("id"))
-                        .introduced((resultSet.getTimestamp("introduced") != null)
-                                ? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
-                        .discontinued((resultSet.getTimestamp("discontinued") != null)
-                                ? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
-                        .company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
-                                .id(resultSet.getLong("company_id")).build())
-                        .build());
+            try (ResultSet resultSet = statement.getResultSet();) {
+                while (resultSet.next()) {
+                    entities.add(new Computer.ComputerBuilder().name(resultSet.getString("name"))
+                            .id(resultSet.getLong("id"))
+                            .introduced((resultSet.getTimestamp("introduced") != null)
+                                    ? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
+                            .discontinued((resultSet.getTimestamp("discontinued") != null)
+                                    ? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
+                            .company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
+                                    .id(resultSet.getLong("company_id")).build())
+                            .build());
+                }
             }
-
         } catch (final SQLException e) {
             this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
-        } finally {
-            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-            DatabaseConnection.INSTANCE.closeStatement(statement);
-            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
         return entities;
     }
 
     @Override
-    public Computer find(final Class<Computer> c, final long id) {
+    public Optional<Computer> find(final Class<Computer> c, final long id) {
         Computer entity = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
-                            + "company.name as cName FROM " + this.getTableName(c)
-                            + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.id = ?",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
+                                + "company.name as cName FROM " + this.getTableName(c)
+                                + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.id = ?",
+                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setLong(1, id);
             statement.execute();
-            resultSet = statement.getResultSet();
-            if (resultSet.first()) {
-                entity = new Computer.ComputerBuilder().name(resultSet.getString("name"))
-                        .id(resultSet.getLong("id"))
-                        .introduced((resultSet.getTimestamp("introduced") != null)
-                                ? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
-                        .discontinued((resultSet.getTimestamp("discontinued") != null)
-                                ? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
-                        .company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
-                                .id(resultSet.getLong("company_id")).build())
-                        .build();
+            try (ResultSet resultSet = statement.getResultSet();) {
+                if (resultSet.first()) {
+                    entity = new Computer.ComputerBuilder().name(resultSet.getString("name"))
+                            .id(resultSet.getLong("id"))
+                            .introduced((resultSet.getTimestamp("introduced") != null)
+                                    ? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
+                            .discontinued((resultSet.getTimestamp("discontinued") != null)
+                                    ? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
+                            .company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
+                                    .id(resultSet.getLong("company_id")).build())
+                            .build();
+                }
             }
-
         } catch (final SQLException e) {
             this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
-        } finally {
-            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-            DatabaseConnection.INSTANCE.closeStatement(statement);
-            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
-        return entity;
+        return Optional.ofNullable(entity);
     }
 
     @Override
-    public ArrayList<Computer> findRange(final Class<Computer> c, final int first, final int nbRecord,
+    public List<Computer> findRange(final Class<Computer> c, final int first, final int nbRecord,
             String filterWord) {
         if (filterWord == null) {
             filterWord = "";
         }
-        ArrayList<Computer> entities = null;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection()
-                    .prepareStatement(
-                            "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
-                                    + "company.name as cName FROM " + this.getTableName(c)
-                                    + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
-                                    + "LIKE ? LIMIT ?,?",
-                            ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        ArrayList<Computer> entities = new ArrayList<>();
+
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
+                                + "company.name as cName FROM " + this.getTableName(c)
+                                + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
+                                + "LIKE ? LIMIT ?,?",
+                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setString(1, "%" + filterWord + "%");
             statement.setInt(2, first);
             statement.setInt(3, nbRecord);
             statement.execute();
-            resultSet = statement.getResultSet();
-            entities = new ArrayList<>();
-            while (resultSet.next()) {
-                entities.add(new Computer.ComputerBuilder().name(resultSet.getString("name"))
-                        .id(resultSet.getLong("id"))
-                        .introduced((resultSet.getTimestamp("introduced") != null)
-                                ? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
-                        .discontinued((resultSet.getTimestamp("discontinued") != null)
-                                ? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
-                        .company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
-                                .id(resultSet.getLong("company_id")).build())
-                        .build());
+            try (ResultSet resultSet = statement.getResultSet();) {
+                entities = new ArrayList<>();
+                while (resultSet.next()) {
+                    entities.add(new Computer.ComputerBuilder().name(resultSet.getString("name"))
+                            .id(resultSet.getLong("id"))
+                            .introduced((resultSet.getTimestamp("introduced") != null)
+                                    ? resultSet.getTimestamp("introduced").toLocalDateTime() : null)
+                            .discontinued((resultSet.getTimestamp("discontinued") != null)
+                                    ? resultSet.getTimestamp("discontinued").toLocalDateTime() : null)
+                            .company(new Company.CompanyBuilder().name(resultSet.getString("cName"))
+                                    .id(resultSet.getLong("company_id")).build())
+                            .build());
+                }
             }
-
         } catch (final SQLException e) {
             this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
-        } finally {
-            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-            DatabaseConnection.INSTANCE.closeStatement(statement);
-            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
         return entities;
     }
@@ -217,40 +196,35 @@ public enum ComputerDao implements IComputerDao {
     @Override
     public long getNbRecords(final Class<Computer> c, final String filterWord) {
         long nbTotal = 0;
-        PreparedStatement statement = null;
-        ResultSet resultSet = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
+                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setString(1, "%" + filterWord + "%");
             statement.execute();
-            resultSet = statement.getResultSet();
-            if (resultSet.first()) {
-                nbTotal = resultSet.getLong("total");
+            try (ResultSet resultSet = statement.getResultSet();) {
+                if (resultSet.first()) {
+                    nbTotal = resultSet.getLong("total");
+                }
             }
         } catch (final SQLException e) {
             this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
-        } finally {
-            DatabaseConnection.INSTANCE.closeResultSet(resultSet);
-            DatabaseConnection.INSTANCE.closeStatement(statement);
-            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
-
         return nbTotal;
     }
 
     @Override
-    public Computer update(final Computer entity) {
+    public Optional<Computer> update(final Computer entity) {
         final Computer centity = entity;
         Computer tmpEntity = null;
-        PreparedStatement statement = null;
-        try {
-            statement = DatabaseConnection.INSTANCE.getConnection().prepareStatement(
-                    "UPDATE " + this.getTableName(entity.getClass())
-                            + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE computer.id = ?",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "UPDATE " + this.getTableName(entity.getClass())
+                                + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
+                                + "WHERE computer.id = ?",
+                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setString(1, centity.getName());
             if (centity.getIntroduced() == null) {
                 statement.setNull(2, java.sql.Types.TIMESTAMP);
@@ -262,7 +236,6 @@ public enum ComputerDao implements IComputerDao {
                 }
                 statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
             }
-
             if (centity.getDiscontinued() == null) {
                 statement.setNull(3, java.sql.Types.TIMESTAMP);
             } else {
@@ -273,23 +246,18 @@ public enum ComputerDao implements IComputerDao {
                 }
                 statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
             }
-
             if (centity.getCompany() == null) {
                 statement.setNull(4, java.sql.Types.INTEGER);
             } else {
                 statement.setLong(4, centity.getCompany().getId());
             }
-
             statement.setLong(5, entity.getId());
             statement.executeUpdate();
-            tmpEntity = centity;
-        } catch (final Exception e) {
+            tmpEntity = entity;
+        } catch (final SQLException e) {
             this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
-        } finally {
-            DatabaseConnection.INSTANCE.closeStatement(statement);
-            DatabaseConnection.INSTANCE.closeConnection(DatabaseConnection.INSTANCE.getConnection());
         }
-        return tmpEntity;
+        return Optional.ofNullable(tmpEntity);
     }
 }
