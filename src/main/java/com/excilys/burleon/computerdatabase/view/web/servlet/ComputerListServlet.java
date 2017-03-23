@@ -3,6 +3,7 @@ package com.excilys.burleon.computerdatabase.view.web.servlet;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -16,6 +17,7 @@ import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.service.ComputerService;
 import com.excilys.burleon.computerdatabase.service.service.PageService;
+import com.excilys.burleon.computerdatabase.view.model.mapper.ComputerMapper;
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
 
@@ -54,7 +56,7 @@ public class ComputerListServlet extends HttpServlet {
         this.pageService.setFilterWord(this.filterWord);
         final List<Computer> listComputer = this.pageService.page(newCurrentPage);
 
-        request.setAttribute(Data.LIST_COMPUTER, listComputer);
+        request.setAttribute(Data.LIST_COMPUTER, ComputerMapper.INSTANCE.toComputerDTO(listComputer));
         request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
                 this.computerService.getTotalRecords(Computer.class, this.filterWord));
         request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
@@ -72,7 +74,11 @@ public class ComputerListServlet extends HttpServlet {
             if (request.getParameter(Data.SUBMIT_DELETE) != null) {
                 final String[] split = request.getParameter(Data.SUBMIT_DELETE).split(",");
                 for (final String idStr : split) {
-                    this.computerService.remove(this.computerService.get(Computer.class, Long.parseLong(idStr)));
+                    final Optional<Computer> computerOpt = this.computerService.get(Computer.class,
+                            Long.parseLong(idStr));
+                    if (computerOpt.isPresent()) {
+                        this.computerService.remove(computerOpt.get());
+                    }
                 }
             }
         } catch (final ServiceException e) {

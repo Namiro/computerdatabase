@@ -64,10 +64,8 @@
 								<td><a
 									href="${SERVLET_COMPUTER_MANAGE}?${COMPUTER_ID}=${computer.id}"><c:out
 											value="${computer.name}" /></a></td>
-								<td><javatime:format value='${computer.introduced}'
-										pattern="dd-MM-yyyy" style="MS" />
-								<td><javatime:format value='${computer.discontinued}'
-										pattern="dd-MM-yyyy" style="MS" />
+								<td><c:out value='${computer.introduced}' />
+								<td><c:out value='${computer.discontinued}' />
 								<td><c:out value="${computer.company.name}" /></td>
 							</tr>
 						</c:forEach>
@@ -91,9 +89,12 @@
 		<form action="${SERVLET_COMPUTER_LIST}" method="GET">
 			<div class="pull-right input-group ">
 				<select class="form-control" name="${PAGINATION_RECORDS_BY_PAGE}">
-					<option value="20"<c:if test="${20 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>20</option>
-					<option value="50"<c:if test="${50 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>50</option>
-					<option value="100"<c:if test="${100 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>100</option>
+					<option value="20"
+						<c:if test="${20 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>20</option>
+					<option value="50"
+						<c:if test="${50 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>50</option>
+					<option value="100"
+						<c:if test="${100 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>100</option>
 				</select> <span class="help-block"></span> <span class="input-group-btn">
 					<button class="btn btn-default" type="submit" tabindex="-1">
 						<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
