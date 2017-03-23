@@ -12,8 +12,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
@@ -27,6 +28,8 @@ import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 public enum ComputerDao implements IComputerDao {
 
     INSTANCE;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(ComputerDao.class);
 
     /**
      * Default constructor.
@@ -81,7 +84,7 @@ public enum ComputerDao implements IComputerDao {
             entity.setId(resultSet.getInt(1));
             tmpEntity = centity;
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -118,7 +121,7 @@ public enum ComputerDao implements IComputerDao {
             }
 
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -155,7 +158,7 @@ public enum ComputerDao implements IComputerDao {
             }
 
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -201,7 +204,7 @@ public enum ComputerDao implements IComputerDao {
             }
 
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -227,7 +230,7 @@ public enum ComputerDao implements IComputerDao {
                 nbTotal = resultSet.getLong("total");
             }
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -281,7 +284,7 @@ public enum ComputerDao implements IComputerDao {
             statement.executeUpdate();
             tmpEntity = centity;
         } catch (final Exception e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeStatement(statement);

@@ -8,12 +8,14 @@
 	<name>ComputerDatabase Maven Webapp</name>
 	<url>http://maven.apache.org</url>
 	<properties>
+		<skiptest>true</skiptest>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<version.junit>4.10</version.junit>
 		<version.gson>2.8.0</version.gson>
-		<version.slf4j>1.7.24</version.slf4j>
+		<version.slf4j>1.6.4</version.slf4j>
+		<version.logback>1.0.1</version.logback>
 		<version.mockito>1.9.5</version.mockito>
 		<version.powermock>1.7.0RC4</version.powermock>
 		<version.dbunit>2.4.9</version.dbunit>
@@ -28,12 +30,14 @@
 		<version.tomcat>9.0.0.M17</version.tomcat>
 		<version.plugin.eclipse>2.9</version.plugin.eclipse>
 		<version.plugin.checkstyle>2.17</version.plugin.checkstyle>
+		<version.plugin.tomcat>2.2</version.plugin.tomcat>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.dbunit</groupId>
 			<artifactId>dbunit</artifactId>
 			<version>${version.dbunit}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -51,6 +55,19 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${version.slf4j}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>${version.logback}</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>${version.logback}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
@@ -110,16 +127,19 @@
 			<groupId>org.apache.tomcat</groupId>
 			<artifactId>tomcat-catalina</artifactId>
 			<version>${version.tomcat}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.sargue</groupId>
 			<artifactId>java-time-jsptags</artifactId>
 			<version>${version.javaTimeJsp}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-java</artifactId>
 			<version>${version.selenium}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -131,11 +151,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${version.plugin.checkstyle}</version>
-
 				<goals>
 					<goal>check</goal>
 				</goals>
-
 				<configuration>
 					<configLocation>checkstyle.xml</configLocation>
 					<encoding>UTF-8</encoding>
@@ -143,8 +161,31 @@
 					<failsOnError>false</failsOnError>
 					<linkXRef>false</linkXRef>
 				</configuration>
-
 			</plugin>
+
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>${version.plugin.tomcat}</version>
+				<configuration>
+					<url>http://localhost:8080/manager/text</url>
+					<server>tomcatserver</server>
+					<path>/ComputerDatabase</path>
+					<username>admin</username>
+					<password>admin</password>
+				</configuration>
+			</plugin>
+
+			<!-- Pjugin to skip test -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+				<configuration>
+					<skipTests>${skiptest}</skipTests>
+				</configuration>
+			</plugin>
+
 			<!-- Eclipse project -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

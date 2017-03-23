@@ -2,6 +2,9 @@ package com.excilys.burleon.computerdatabase.service.iservice;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
@@ -18,6 +21,8 @@ import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
  */
 public interface IModelService<E extends IEntity> extends IService {
 
+    Logger LOGGER = LoggerFactory.getLogger("IModelService");
+
     /**
      * Check the value of each instance variable of entity.
      *
@@ -27,6 +32,7 @@ public interface IModelService<E extends IEntity> extends IService {
      *             If the entity is null
      */
     default void checkDataEntity(final E entity) throws ServiceException {
+        IModelService.LOGGER.trace("checkDataEntity : Entity : " + entity);
         if (entity == null) {
             throw new ServiceException("The object hasn't been initialized");
         }
@@ -40,6 +46,7 @@ public interface IModelService<E extends IEntity> extends IService {
      * @return A entity with a type domain class or Null if not exist
      */
     default List<E> get(final Class<E> entityType) {
+        IModelService.LOGGER.trace("get : entityType : " + entityType);
         return DaoFactory.INSTANCE.getDao(entityType).find(entityType);
     }
 
@@ -53,9 +60,12 @@ public interface IModelService<E extends IEntity> extends IService {
      * @return A entity with a type domain class or Null if not exist
      */
     default E get(final Class<E> entityType, final long id) {
+        IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id);
         if (id > 0) {
+            IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND OK");
             return DaoFactory.INSTANCE.getDao(entityType).find(entityType, id);
         } else {
+            IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND KO");
             return null;
         }
     }
@@ -76,6 +86,8 @@ public interface IModelService<E extends IEntity> extends IService {
      */
     default List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage,
             final String filterWord) {
+        IModelService.LOGGER.trace("getPage : entityType " + entityType + "\tpageNumber : " + pageNumber
+                + "\trecordsByPage : " + recordsByPage);
         return DaoFactory.INSTANCE.getDao(entityType).findRange(entityType, (pageNumber - 1) * recordsByPage,
                 recordsByPage, filterWord);
     }
@@ -89,7 +101,6 @@ public interface IModelService<E extends IEntity> extends IService {
      * @return The table Name
      */
     default String getTableName(final Class<? extends IEntity> clazz) {
-
         return clazz.getSimpleName().toLowerCase();
     }
 
@@ -103,6 +114,8 @@ public interface IModelService<E extends IEntity> extends IService {
      * @return the total number of records that match with the filter word
      */
     default long getTotalRecords(final Class<E> entityType, String filterWord) {
+        IModelService.LOGGER
+                .trace("getTotalRecords : entityType : " + entityType + "\tfilterWord : " + filterWord);
         if (filterWord == null) {
             filterWord = "";
         }
@@ -117,6 +130,7 @@ public interface IModelService<E extends IEntity> extends IService {
      * @return True if OK & False is not OK
      */
     default boolean remove(final E entity) {
+        IModelService.LOGGER.trace("remove : entity : " + entity);
         if (entity != null) {
             return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity);
         } else {
@@ -135,6 +149,8 @@ public interface IModelService<E extends IEntity> extends IService {
      *             If the check data fail
      */
     default E save(final E entity) throws ServiceException {
+
+        IModelService.LOGGER.trace("save : entity : " + entity);
 
         this.checkDataEntity(entity);
 

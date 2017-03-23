@@ -1,5 +1,8 @@
 package com.excilys.burleon.computerdatabase.service.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
@@ -10,6 +13,8 @@ import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
  *
  */
 public class CompanyService extends ModelService<Company> implements ICompanyService {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
     /**
      * Default constructor.

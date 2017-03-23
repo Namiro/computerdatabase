@@ -2,6 +2,9 @@ package com.excilys.burleon.computerdatabase.service.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
@@ -14,6 +17,8 @@ import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
  *
  */
 public class PageService<E extends IEntity> implements IPageService<E> {
+
+    static final Logger LOGGER = LoggerFactory.getLogger(PageService.class);
 
     private int recordsByPage;
     private int number;

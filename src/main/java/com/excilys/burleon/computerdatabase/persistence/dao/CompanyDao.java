@@ -5,8 +5,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.ICompanyDao;
@@ -19,6 +20,8 @@ import com.excilys.burleon.computerdatabase.persistence.model.Company;
 public enum CompanyDao implements ICompanyDao {
 
     INSTANCE;
+
+    private final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);
 
     /**
      * Default constructor.
@@ -44,7 +47,7 @@ public enum CompanyDao implements ICompanyDao {
             entity.setId(resultSet.getInt(1));
             tmpEntity = entity;
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -72,7 +75,7 @@ public enum CompanyDao implements ICompanyDao {
             }
 
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -99,7 +102,7 @@ public enum CompanyDao implements ICompanyDao {
             }
 
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -133,7 +136,7 @@ public enum CompanyDao implements ICompanyDao {
             }
 
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -159,7 +162,7 @@ public enum CompanyDao implements ICompanyDao {
                 nbTotal = resultSet.getLong("total");
             }
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeResultSet(resultSet);
@@ -183,7 +186,7 @@ public enum CompanyDao implements ICompanyDao {
             statement.executeUpdate();
             tmpEntity = entity;
         } catch (final SQLException e) {
-            Logger.getLogger(this.getClass().getSimpleName()).log(Level.SEVERE, null, e);
+            this.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
         } finally {
             DatabaseConnection.INSTANCE.closeStatement(statement);
