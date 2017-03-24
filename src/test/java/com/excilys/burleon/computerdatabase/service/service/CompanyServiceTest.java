@@ -57,6 +57,7 @@ public class CompanyServiceTest {
 
     @Test
     public void testGet() {
+
         /*
          * final ArrayList<Computer> computers = new ArrayList<>();
          * computers.add(new
@@ -65,7 +66,7 @@ public class CompanyServiceTest {
          * Computer.ComputerBuilder().name("BBB").id(2).build());
          * computers.add(new
          * Computer.ComputerBuilder().name("CCC").id(3).build());
-         *
+         * 
          * final ComputerDao mockComputerDao =
          * PowerMockito.mock(ComputerDao.class); final DaoFactory mockFactory
          * = PowerMockito.mock(DaoFactory.class);
