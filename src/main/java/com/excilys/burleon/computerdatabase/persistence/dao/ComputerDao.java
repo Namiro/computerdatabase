@@ -23,6 +23,8 @@ import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceExc
 import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
 
 /**
  * @author Junior Burleon
@@ -46,48 +48,53 @@ public enum ComputerDao implements IComputerDao {
         final Computer centity = entity;
         Computer tmpEntity = null;
 
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
-                PreparedStatement statement = connection.prepareStatement(
-                        "INSERT INTO " + this.getTableName(entity.getClass())
-                                + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
-                        Statement.RETURN_GENERATED_KEYS);) {
-            statement.setString(1, centity.getName());
-            if (centity.getIntroduced() == null) {
-                statement.setNull(2, java.sql.Types.TIMESTAMP);
-            } else {
-                if (centity.getIntroduced()
-                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
-                    throw new PersistenceException(
-                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "INSERT INTO " + this.getTableName(entity.getClass())
+                            + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
+                    Statement.RETURN_GENERATED_KEYS);) {
+                statement.setString(1, centity.getName());
+                if (centity.getIntroduced() == null) {
+                    statement.setNull(2, java.sql.Types.TIMESTAMP);
+                } else {
+                    if (centity.getIntroduced()
+                            .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                        throw new PersistenceException(
+                                "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                    }
+                    statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
                 }
-                statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
-            }
 
-            if (centity.getDiscontinued() == null) {
-                statement.setNull(3, java.sql.Types.TIMESTAMP);
-            } else {
-                if (centity.getDiscontinued()
-                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
-                    throw new PersistenceException(
-                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                if (centity.getDiscontinued() == null) {
+                    statement.setNull(3, java.sql.Types.TIMESTAMP);
+                } else {
+                    if (centity.getDiscontinued()
+                            .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                        throw new PersistenceException(
+                                "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                    }
+                    statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
                 }
-                statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
-            }
 
-            if (centity.getCompany() == null) {
-                statement.setNull(4, java.sql.Types.INTEGER);
-            } else {
-                statement.setLong(4, centity.getCompany().getId());
+                if (centity.getCompany() == null) {
+                    statement.setNull(4, java.sql.Types.INTEGER);
+                } else {
+                    statement.setLong(4, centity.getCompany().getId());
+                }
+                statement.executeUpdate();
+                connection.commit();
+                try (ResultSet resultSet = statement.getGeneratedKeys();) {
+                    resultSet.next();
+                    entity.setId(resultSet.getInt(1));
+                    tmpEntity = entity;
+                }
+            } catch (final SQLException e) {
+                this.LOGGER.error(e.getMessage());
+                throw new PersistenceException(e);
             }
-            statement.executeUpdate();
-            try (ResultSet resultSet = statement.getGeneratedKeys();) {
-                resultSet.next();
-                entity.setId(resultSet.getInt(1));
-                tmpEntity = entity;
-            }
-        } catch (final SQLException e) {
-            this.LOGGER.error(e.getMessage());
-            throw new PersistenceException(e);
+        } catch (final SQLException e1) {
+            this.LOGGER.error(e1.getMessage());
+            throw new PersistenceException(e1);
         }
         return Optional.ofNullable(tmpEntity);
     }
@@ -155,10 +162,14 @@ public enum ComputerDao implements IComputerDao {
 
     @Override
     public List<Computer> findRange(final Class<Computer> c, final int first, final int nbRecord,
-            String filterWord) {
+            String filterWord, IOrderEnum<Computer> orderBy) {
         if (filterWord == null) {
             filterWord = "";
         }
+        if (orderBy == null) {
+            orderBy = OrderComputerEnum.NAME;
+        }
+
         ArrayList<Computer> entities = new ArrayList<>();
 
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
@@ -166,11 +177,14 @@ public enum ComputerDao implements IComputerDao {
                         "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
                                 + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
-                                + "LIKE ? LIMIT ?,?",
+                                + "LIKE ? OR company.name LIKE ? ORDER BY ISNULL(" + orderBy.toString() + "), "
+                                + orderBy.toString() + " ASC LIMIT ?,?",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setString(1, "%" + filterWord + "%");
-            statement.setInt(2, first);
-            statement.setInt(3, nbRecord);
+            statement.setString(2, "%" + filterWord + "%");
+            statement.setInt(3, first);
+            statement.setInt(4, nbRecord);
+            System.out.println(statement.toString());
             statement.execute();
             try (ResultSet resultSet = statement.getResultSet();) {
                 entities = new ArrayList<>();
@@ -198,9 +212,12 @@ public enum ComputerDao implements IComputerDao {
         long nbTotal = 0;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
+                        "SELECT count(*) as total FROM " + this.getTableName(c)
+                                + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
+                                + "LIKE ? OR company.name LIKE ? ",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setString(1, "%" + filterWord + "%");
+            statement.setString(2, "%" + filterWord + "%");
             statement.execute();
             try (ResultSet resultSet = statement.getResultSet();) {
                 if (resultSet.first()) {
@@ -219,44 +236,50 @@ public enum ComputerDao implements IComputerDao {
         final Computer centity = entity;
         Computer tmpEntity = null;
 
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
-                PreparedStatement statement = connection.prepareStatement(
-                        "UPDATE " + this.getTableName(entity.getClass())
-                                + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
-                                + "WHERE computer.id = ?",
-                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-            statement.setString(1, centity.getName());
-            if (centity.getIntroduced() == null) {
-                statement.setNull(2, java.sql.Types.TIMESTAMP);
-            } else {
-                if (centity.getIntroduced()
-                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
-                    throw new PersistenceException(
-                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE " + this.getTableName(entity.getClass())
+                            + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
+                            + "WHERE computer.id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
+                statement.setString(1, centity.getName());
+                if (centity.getIntroduced() == null) {
+                    statement.setNull(2, java.sql.Types.TIMESTAMP);
+                } else {
+                    if (centity.getIntroduced()
+                            .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                        throw new PersistenceException(
+                                "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                    }
+                    statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
                 }
-                statement.setTimestamp(2, Timestamp.valueOf(centity.getIntroduced()));
-            }
-            if (centity.getDiscontinued() == null) {
-                statement.setNull(3, java.sql.Types.TIMESTAMP);
-            } else {
-                if (centity.getDiscontinued()
-                        .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
-                    throw new PersistenceException(
-                            "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                if (centity.getDiscontinued() == null) {
+                    statement.setNull(3, java.sql.Types.TIMESTAMP);
+                } else {
+                    if (centity.getDiscontinued()
+                            .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
+                        throw new PersistenceException(
+                                "Invalid date for TIMESTAMP MySQL. Max is : 2038-01-18 00:00:00");
+                    }
+                    statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
                 }
-                statement.setTimestamp(3, Timestamp.valueOf(centity.getDiscontinued()));
+                if (centity.getCompany() == null) {
+                    statement.setNull(4, java.sql.Types.INTEGER);
+                } else {
+                    statement.setLong(4, centity.getCompany().getId());
+                }
+                statement.setLong(5, entity.getId());
+                statement.executeUpdate();
+                connection.commit();
+                tmpEntity = entity;
+            } catch (final SQLException e) {
+                connection.rollback();
+                this.LOGGER.error(e.getMessage());
+                throw new PersistenceException(e);
             }
-            if (centity.getCompany() == null) {
-                statement.setNull(4, java.sql.Types.INTEGER);
-            } else {
-                statement.setLong(4, centity.getCompany().getId());
-            }
-            statement.setLong(5, entity.getId());
-            statement.executeUpdate();
-            tmpEntity = entity;
-        } catch (final SQLException e) {
-            this.LOGGER.error(e.getMessage());
-            throw new PersistenceException(e);
+        } catch (final SQLException e1) {
+            this.LOGGER.error(e1.getMessage());
+            throw new PersistenceException(e1);
         }
         return Optional.ofNullable(tmpEntity);
     }
