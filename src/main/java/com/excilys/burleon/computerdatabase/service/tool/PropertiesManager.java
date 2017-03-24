@@ -17,7 +17,7 @@ public class PropertiesManager {
      */
     public static void load() {
         final Parameters params = new Parameters();
-        final File propertiesFile = new File("config.properties");
+        final File propertiesFile = new File("dbconfig.properties");
 
         final FileBasedConfigurationBuilder<
                 FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>(
