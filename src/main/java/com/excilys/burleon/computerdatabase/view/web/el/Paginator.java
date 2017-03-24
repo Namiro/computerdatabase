@@ -49,8 +49,13 @@ public final class Paginator extends SimpleTagSupport {
             link.append(className);
             link.append("\"");
         }
-        link.append(">").append("<a href=\"").append(this.uri.replace("##", String.valueOf(page))).append("\">")
-                .append(text).append("</a></li>");
+        if (this.currPage == page) {
+            link.append(">").append("<a href=\"").append(this.uri.replace("##", String.valueOf(page)))
+                    .append("\"><strong>").append(text).append("</strong></a></li>");
+        } else {
+            link.append(">").append("<a href=\"").append(this.uri.replace("##", String.valueOf(page)))
+                    .append("\">").append(text).append("</a></li>");
+        }
         return link.toString();
     }
 
@@ -72,18 +77,24 @@ public final class Paginator extends SimpleTagSupport {
             this.getJspContext().getOut().write("<ul class=\"pagination\">");
 
             if (this.currPage > 1) {
-                this.getJspContext().getOut()
-                        .write(this.constructLink(this.currPage - 1, "Previous", "paginatorPrev"));
+                this.getJspContext().getOut().write(this.constructLink(1, "<<", "paginatorPrev"));
+                this.getJspContext().getOut().write(this.constructLink(this.currPage - 1, "<", "paginatorPrev"));
+
             }
 
             for (int i = pgStart; i < pgEnd; i++) {
-
-                this.getJspContext().getOut().write(this.constructLink(i));
+                if (i < this.totalPages) {
+                    this.getJspContext().getOut().write(this.constructLink(i));
+                }
             }
 
             if (!lastPage) {
                 this.getJspContext().getOut()
-                        .write(this.constructLink(this.currPage + 1, "Next", "paginatorNext paginatorLast"));
+                        .write(this.constructLink(this.currPage + 1, ">", "paginatorNext paginatorLast"));
+                this.getJspContext().getOut()
+                        .write(this.constructLink(this.totalPages, ">>", "paginatorNext paginatorLast"));
+            } else {
+                this.getJspContext().getOut().write(this.constructLink(this.totalPages));
             }
 
             this.getJspContext().getOut().write("</ul>");
