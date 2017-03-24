@@ -19,10 +19,6 @@ import com.zaxxer.hikari.HikariDataSource;
 public enum DatabaseConnection {
     INSTANCE;
 
-    public static DatabaseConnection getInstance() {
-        return INSTANCE;
-    }
-
     private String url = "";
     private String user = "";
     private String pwd = "";
@@ -46,6 +42,16 @@ public enum DatabaseConnection {
             config.setPassword(this.pwd);
             config.setMaximumPoolSize(20);
             this.dataSource = new HikariDataSource(config);
+            this.dataSource.setAutoCommit(false);
+
+            // To close the datasource when the server is closing
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                    DatabaseConnection.this.dataSource.close();
+                }
+            });
+
         } catch (final ClassNotFoundException e) {
             Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
             throw new PersistenceException(e);
@@ -59,7 +65,9 @@ public enum DatabaseConnection {
      */
     public Connection getConnection() {
         try {
-            return this.dataSource.getConnection();
+            final Connection connection = this.dataSource.getConnection();
+            connection.setAutoCommit(false);
+            return connection;
         } catch (final SQLException e) {
             Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
             throw new PersistenceException(e);
