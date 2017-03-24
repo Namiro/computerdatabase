@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
@@ -26,6 +27,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     private final IModelService<E> service;
     private final Class<E> entityType;
     private String filterWord = "";
+    private IOrderEnum<E> orderBy = null;
 
     /**
      * Constructor.
@@ -40,7 +42,8 @@ public class PageService<E extends IEntity> implements IPageService<E> {
         this.service = new ModelService<>();
         this.number = 1;
         this.recordsByPage = recordsByPage;
-        this.records = this.service.getPage(this.entityType, this.number, recordsByPage, this.filterWord);
+        this.records = this.service.getPage(this.entityType, this.number, recordsByPage, this.filterWord,
+                this.orderBy);
     }
 
     public String getFilterWord() {
@@ -50,6 +53,10 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     @Override
     public long getMaxPageNumber() {
         return (this.service.getTotalRecords(this.entityType, this.filterWord) / this.recordsByPage) + 1;
+    }
+
+    public IOrderEnum<E> getOrderBy() {
+        return this.orderBy;
     }
 
     /*
@@ -89,7 +96,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     public List<E> next() {
         this.number++;
         final List<E> records = this.service.getPage(this.entityType, this.number, this.recordsByPage,
-                this.filterWord);
+                this.filterWord, this.orderBy);
         if (records != null && !records.isEmpty()) {
             this.records = records;
         } else {
@@ -109,7 +116,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     public List<E> page(final int pageNumber) {
         if (pageNumber > 0) {
             final List<E> records = this.service.getPage(this.entityType, pageNumber, this.recordsByPage,
-                    this.filterWord);
+                    this.filterWord, this.orderBy);
             if (records != null && !records.isEmpty()) {
                 this.records = records;
                 this.number = pageNumber;
@@ -128,7 +135,8 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     public List<E> previous() {
         if (this.number > 1) {
             this.number--;
-            this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord);
+            this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord,
+                    this.orderBy);
         }
         return this.records;
     }
@@ -141,7 +149,8 @@ public class PageService<E extends IEntity> implements IPageService<E> {
      */
     @Override
     public List<E> refresh() {
-        return this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord);
+        return this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord,
+                this.orderBy);
     }
 
     @Override
@@ -152,6 +161,10 @@ public class PageService<E extends IEntity> implements IPageService<E> {
             this.filterWord = filterWord;
         }
 
+    }
+
+    public void setOrderBy(final IOrderEnum<E> orderBy) {
+        this.orderBy = orderBy;
     }
 
     @Override

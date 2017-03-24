@@ -44,7 +44,17 @@
 <c:set var="SEARCH_WORD" value="<%=Data.SEARCH_WORD%>" />
 <c:set var="SEARCH_NUMBER_RESULTS"
     value="<%=Data.SEARCH_NUMBER_RESULTS%>" />
-
+    <c:set var="ORDER_BY" value="<%=Data.ORDER_BY%>" />
+<c:set var="ORDER_BY_1" value="<%=Data.ORDER_BY_1%>" />
+<c:set var="ORDER_BY_2" value="<%=Data.ORDER_BY_2%>" />
+<c:set var="ORDER_BY_3" value="<%=Data.ORDER_BY_3%>" />
+<c:set var="ORDER_BY_4" value="<%=Data.ORDER_BY_4%>" />
+<c:set var="PAGINATION_CURRENT_PAGE"
+    value="<%=Data.PAGINATION_CURRENT_PAGE%>" />
+<c:set var="PAGINATION_TOTAL_PAGE"
+    value="<%=Data.PAGINATION_TOTAL_PAGE%>" />
+<c:set var="PAGINATION_RECORDS_BY_PAGE"
+    value="<%=Data.PAGINATION_RECORDS_BY_PAGE%>" />
 
 <!DOCTYPE html>
 <html>
@@ -76,7 +86,7 @@
                     class="icon-bar"></span> <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="${SERVLET_COMPUTER_LIST}"><span
+            <a class="navbar-brand" href="${SERVLET_COMPUTER_LIST}?${SEARCH_WORD}=&${ORDER_BY}=&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=20"><span
                 class="glyphicon glyphicon-home"></span></a>
         </div>
 

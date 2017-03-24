@@ -35,9 +35,15 @@ public final class Data {
     /* DIVERS */
     public static final String SEARCH_WORD = "searchWord";
     public static final String SEARCH_NUMBER_RESULTS = "searchNumberResults";
+    public static final String ORDER_BY = "orderBy";
+    public static final String ORDER_BY_1 = "orderBy1";
+    public static final String ORDER_BY_2 = "orderBy2";
+    public static final String ORDER_BY_3 = "orderBy3";
+    public static final String ORDER_BY_4 = "orderBy4";
 
     /* PAGINATION */
     public static final String PAGINATION_CURRENT_PAGE = "paginationCurrentPage";
     public static final String PAGINATION_TOTAL_PAGE = "paginationTotalPage";
     public static final String PAGINATION_RECORDS_BY_PAGE = "paginationRecordsByPage";
+
 }

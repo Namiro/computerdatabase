@@ -10,6 +10,7 @@ import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 
 /**
@@ -82,15 +83,17 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The number of record on one page
      * @param filterWord
      *            The word that will be used to filter the result
+     * @param orderBy
+     *            The field on which one the result will be sort
      * @return A list of entity that match with the page asked and the filter
      *         word.
      */
     default List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage,
-            final String filterWord) {
+            final String filterWord, final IOrderEnum<E> orderBy) {
         IModelService.LOGGER.trace("getPage : entityType " + entityType + "\tpageNumber : " + pageNumber
-                + "\trecordsByPage : " + recordsByPage);
+                + "\trecordsByPage : " + recordsByPage + "\torderBy : " + orderBy);
         return DaoFactory.INSTANCE.getDao(entityType).findRange(entityType, (pageNumber - 1) * recordsByPage,
-                recordsByPage, filterWord);
+                recordsByPage, filterWord, orderBy);
     }
 
     /**

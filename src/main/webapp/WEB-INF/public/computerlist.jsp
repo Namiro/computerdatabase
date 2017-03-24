@@ -1,12 +1,5 @@
 <%-- Constants block. --%>
 <c:set var="COMPUTER_ID" value="<%=Data.COMPUTER_ID%>" />
-<c:set var="PAGINATION_CURRENT_PAGE"
-    value="<%=Data.PAGINATION_CURRENT_PAGE%>" />
-<c:set var="PAGINATION_TOTAL_PAGE"
-    value="<%=Data.PAGINATION_TOTAL_PAGE%>" />
-<c:set var="PAGINATION_RECORDS_BY_PAGE"
-    value="<%=Data.PAGINATION_RECORDS_BY_PAGE%>" />
-
 
 <%-- Content page. --%>
 <div class="row">
@@ -41,7 +34,8 @@
     <div class="container" style="margin-top: 10px;">
         <c:choose>
             <c:when test="${not empty requestScope[LIST_COMPUTER]}">
-                <table class="table table-striped table-bordered">
+                <table
+                    class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th class="editMode"
@@ -53,10 +47,14 @@
                                         <i class="fa fa-trash-o fa-lg"></i>
                                 </a>
                             </span></th>
-                            <th>Name</th>
-                            <th>Introduce</th>
-                            <th>Discontinue</th>
-                            <th>Company</th>
+                            <th><a
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}">Name</a></th>
+                            <th><a
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}">Introduce</a></th>
+                            <th><a
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}">Discontinue</a></th>
+                            <th><a
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}">Company</a></th>
                         </tr>
                     </thead>
                     <tbody>

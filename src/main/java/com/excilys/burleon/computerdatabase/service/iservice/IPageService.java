@@ -3,6 +3,7 @@ package com.excilys.burleon.computerdatabase.service.iservice;
 import java.util.List;
 
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
 
 /**
  * This service allow to manage the records with pages.
@@ -79,11 +80,18 @@ public interface IPageService<E extends IEntity> extends IService {
     void setFilterWord(String filterWord);
 
     /**
+     * To set the order.
+     *
+     * @param orderBy
+     *            The order
+     */
+    void setOrderBy(IOrderEnum<E> orderBy);
+
+    /**
      * To change the number of records by page.
      *
      * @param recordsByPage
      *            The number of records by page
      */
     void setRecordsByPage(int recordsByPage);
-
 }
