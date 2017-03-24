@@ -15,6 +15,7 @@ import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
+import com.excilys.burleon.computerdatabase.service.service.CompanyService;
 import com.excilys.burleon.computerdatabase.service.service.ComputerService;
 import com.excilys.burleon.computerdatabase.service.service.PageService;
 
@@ -25,6 +26,7 @@ public class Main {
     private static IPageService<Computer> computerPage;
     private static int choiceMainMenu;
     private static final ComputerService COMPUTER_SERVICE = new ComputerService();
+    private static final CompanyService COMPANY_SERVICE = new CompanyService();
 
     /**
      * To clear the console.
@@ -133,9 +135,10 @@ public class Main {
             sb.append("\t2. List companies\n");
             sb.append("\t3. Show computer details\n");
             sb.append("\t4. Create a computer\n");
-            sb.append("\t5. Update a company\n");
-            sb.append("\t6. Delete a company\n");
-            sb.append("\t7. Exit\n");
+            sb.append("\t5. Update a computer\n");
+            sb.append("\t6. Delete a computer\n");
+            sb.append("\t7. Delete a company (And computer associate)\n");
+            sb.append("\t0. Exit\n");
             Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb);
 
             switch (Main.choiceMainMenu) {
@@ -251,6 +254,24 @@ public class Main {
                     }
                     break;
                 case 7:
+                    sb = new StringBuilder();
+                    sb.append("Remove company ID :\n");
+                    final Optional<Company> companyOpt = Main.COMPANY_SERVICE.get(Company.class,
+                            Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
+                    if (companyOpt.isPresent()) {
+                        Main.COMPANY_SERVICE.remove(companyOpt.get());
+                        Main.companyPage.refresh();
+                        sb = new StringBuilder();
+                        sb.append("The company has been deleted");
+                        System.out.println(sb);
+
+                    } else {
+                        sb = new StringBuilder();
+                        sb.append("The company doens't exist\n");
+                        System.out.println(sb);
+                    }
+                    break;
+                case 0:
                     isContinue = false;
                     System.out.println("------- APP IS CLOSED -------");
                     break;
@@ -272,7 +293,7 @@ public class Main {
             sb.append("\t1. Next Page\n");
             sb.append("\t2. Previous page\n");
             sb.append("\t3. Show page x\n");
-            sb.append("\t4. Pevious menu\n");
+            sb.append("\t0. Pevious menu\n");
             if (Main.choiceMainMenu == 1) {
                 System.out.println(Main.computerPage);
             } else if (Main.choiceMainMenu == 2) {
@@ -306,7 +327,7 @@ public class Main {
                         Main.companyPage.page(pageNumber);
                     }
                     break;
-                case 4:
+                case 0:
                     isContinue = false;
                     break;
                 default:

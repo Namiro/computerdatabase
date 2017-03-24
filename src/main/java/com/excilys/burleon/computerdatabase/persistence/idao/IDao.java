@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
 
 public interface IDao<E extends IEntity> {
 
@@ -35,15 +36,21 @@ public interface IDao<E extends IEntity> {
      * @return boolean Success -> True else false.
      */
     default boolean delete(final E entity) {
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
-                PreparedStatement statement = connection.prepareStatement(
-                        "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
-                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-            statement.setLong(1, entity.getId());
-            statement.executeUpdate();
-        } catch (final SQLException e) {
-            IDao.LOGGER.error(e.getMessage());
-            throw new PersistenceException(e);
+        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
+                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
+                statement.setLong(1, entity.getId());
+                statement.executeUpdate();
+                connection.commit();
+            } catch (final SQLException e) {
+                connection.rollback();
+                IDao.LOGGER.error(e.getMessage());
+                throw new PersistenceException(e);
+            }
+        } catch (final SQLException e1) {
+            IDao.LOGGER.error(e1.getMessage());
+            throw new PersistenceException(e1);
         }
         return true;
     }
@@ -83,9 +90,11 @@ public interface IDao<E extends IEntity> {
      *            The number of record you want from the first
      * @param filterWord
      *            The word that will be used to filter the results
+     * @param orderBy
+     *            The field on which one the result will be sort
      * @return A list with the record comprise between first and last.
      */
-    List<E> findRange(Class<E> c, int first, int nbRecord, String filterWord);
+    List<E> findRange(Class<E> c, int first, int nbRecord, String filterWord, IOrderEnum<E> orderBy);
 
     /**
      *
