@@ -4,6 +4,7 @@
 package com.excilys.burleon.computerdatabase.persistence.dao;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.AfterClass;
@@ -12,6 +13,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.tool.Utility;
 
 /**
@@ -28,6 +31,36 @@ public class ComputerDaoTest {
      */
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
+    }
+
+    /**
+     * Test to fin a range of company.
+     */
+    @Test
+    public void findRange() {
+        final int first = 0;
+        final int nbRecord = 5;
+        final String filterWord = "CM";
+        final IOrderEnum<Computer> order = OrderComputerEnum.NAME;
+
+        final List<Computer> computers = ComputerDaoTest.computerDao.findRange(Computer.class, first, nbRecord,
+                filterWord, order);
+        Assert.assertTrue(computers.get(0).getId() == 14);
+        Assert.assertTrue(computers.get(1).getId() == 3);
+        Assert.assertTrue(computers.get(2).getId() == 2);
+        Assert.assertTrue(computers.get(3).getId() == 5);
+        Assert.assertTrue(computers.get(4).getId() == 4);
+    }
+
+    /**
+     * Test to count the number of computer with a filter word.
+     */
+    @Test
+    public void getNbRecords() {
+        final String filterWord = "CM";
+
+        final long nbComputers = ComputerDaoTest.computerDao.getNbRecords(Computer.class, filterWord);
+        Assert.assertTrue(nbComputers == 5);
     }
 
     /**

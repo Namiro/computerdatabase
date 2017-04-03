@@ -4,6 +4,8 @@
 package com.excilys.burleon.computerdatabase.service.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Optional;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -11,9 +13,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
+import com.excilys.burleon.computerdatabase.persistence.dao.ComputerDao;
+import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
+import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
+import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.tool.Utility;
@@ -22,6 +32,8 @@ import com.excilys.burleon.computerdatabase.tool.Utility;
  * @author Junior Burléon
  *
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({ ComputerDao.class, DaoFactory.class })
 public class ComputerServiceTest {
 
     private static IComputerService computerService;
@@ -80,65 +92,122 @@ public class ComputerServiceTest {
 
     @Test
     public void testGet() {
-        Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class).size() == 200);
+        final ArrayList<Computer> computers = new ArrayList<>();
+        computers.add(new Computer.ComputerBuilder().name("AAA").id(1).build());
+        computers.add(new Computer.ComputerBuilder().name("BBB").id(2).build());
+        computers.add(new Computer.ComputerBuilder().name("CCC").id(3).build());
+
+        final IComputerDao mockComputerDao = PowerMockito.mock(IComputerDao.class);
+        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
+        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
+        PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
+        PowerMockito.when(mockComputerDao.find(Computer.class)).thenReturn(computers);
+        Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class).size() == 3);
+    }
+
+    @Test
+    public void testGetPage() {
+        final ArrayList<Computer> computers = new ArrayList<>();
+        computers.add(new Computer.ComputerBuilder().name("AAA").id(1).build());
+        computers.add(new Computer.ComputerBuilder().name("BBB").id(2).build());
+        computers.add(new Computer.ComputerBuilder().name("CCC").id(3).build());
+
+        final IComputerDao mockComputerDao = PowerMockito.mock(IComputerDao.class);
+        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
+        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
+        PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
+        PowerMockito.when(mockComputerDao.findRange(Computer.class, 0, 3, "CM", OrderComputerEnum.NAME))
+                .thenReturn(computers);
+        Assert.assertTrue(ComputerServiceTest.computerService
+                .getPage(Computer.class, 1, 3, "CM", OrderComputerEnum.NAME).size() == 3);
     }
 
     @Test
     public void testGetWithBadId() {
+        final IComputerDao mockComputerDao = PowerMockito.mock(IComputerDao.class);
+        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
+        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
+        PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
         final int id = -1;
+        PowerMockito.when(mockComputerDao.find(Computer.class, id)).thenReturn(Optional.empty());
+
         Assert.assertFalse(ComputerServiceTest.computerService.get(Computer.class, id).isPresent());
     }
 
     @Test
     public void testGetWithId() {
+        final LocalDateTime now = LocalDateTime.now();
         final int id = 2;
-        Assert.assertTrue(ComputerServiceTest.computerService.get(Computer.class, id).get().getId() == 2);
-        Assert.assertTrue(
-                ComputerServiceTest.computerService.get(Computer.class, id).get().getName().equals("CM-2a"));
+        final IComputerDao mockComputerDao = PowerMockito.mock(IComputerDao.class);
+        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
+        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
+        PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
+        PowerMockito.when(mockComputerDao.find(Computer.class, id)).thenReturn(Optional.ofNullable(
+                new Computer.ComputerBuilder().id(2).name("computer").discontinued(now).introduced(now).build()));
+
+        final Optional<Computer> computer = ComputerServiceTest.computerService.get(Computer.class, id);
+        Assert.assertTrue(computer.isPresent());
+        Assert.assertTrue(computer.get().getId() == 2);
+        Assert.assertTrue(computer.get().getName().equals("computer"));
+        Assert.assertTrue(computer.get().getIntroduced().equals(now));
+        Assert.assertTrue(computer.get().getDiscontinued().equals(now));
     }
 
     @Test
     public void testRemove() {
-        final Computer entity = new Computer();
-        entity.setId(8);
-        Assert.assertTrue(ComputerServiceTest.computerService.remove(entity));
+        final Computer computer = new Computer.ComputerBuilder().id(2).build();
+        final IComputerDao mockComputerDao = PowerMockito.mock(IComputerDao.class);
+        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
+        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
+        PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
+        PowerMockito.when(mockComputerDao.delete(computer)).thenReturn(true);
+
+        Assert.assertTrue(ComputerServiceTest.computerService.remove(computer));
     }
 
     @Test
     public void testRemoveWithBadId() {
-        final Computer entity = new Computer();
-        entity.setId(-1);
-        Assert.assertFalse(ComputerServiceTest.computerService.remove(entity));
+        final Computer computer = new Computer.ComputerBuilder().id(-1).build();
+        final IComputerDao mockComputerDao = PowerMockito.mock(IComputerDao.class);
+        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
+        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
+        PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
+        PowerMockito.when(mockComputerDao.delete(computer)).thenReturn(false);
+
+        Assert.assertFalse(ComputerServiceTest.computerService.remove(computer));
     }
 
     @Test
     public void testSave() {
-        final LocalDateTime localDateTime = LocalDateTime.now().withNano(0);
-        Computer computer = new Computer.ComputerBuilder().name("TestServiceComputer")
-                .introduced(LocalDateTime.now()).discontinued(LocalDateTime.now()).build();
-        computer = ComputerServiceTest.computerService.save(computer).get();
-        Assert.assertTrue(computer != null);
-        Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
-        computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId()).get();
-        Assert.assertTrue(computer.getName().equals("TestServiceComputer"));
-        Assert.assertTrue(computer.getId() != 0);
-        final long idOk = computer.getId();
-        Assert.assertTrue(computer.getCompany().getId() == 0);
-        Assert.assertTrue(computer.getDiscontinued().equals(localDateTime));
-        Assert.assertTrue(computer.getIntroduced().equals(localDateTime));
-        computer.setName("TestServiceComputerUpdated");
-        computer.setDiscontinued(localDateTime.plusYears(2));
-        computer.setIntroduced(localDateTime.plusYears(1));
-        computer.setCompany(new Company.CompanyBuilder().id(2).name("Truurur").build());
-        computer = ComputerServiceTest.computerService.save(computer).get();
-        Assert.assertTrue(computer != null);
-        Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
-        computer = ComputerServiceTest.computerService.get(Computer.class, computer.getId()).get();
-        Assert.assertTrue(computer.getName().equals("TestServiceComputerUpdated"));
-        Assert.assertTrue(computer.getId() == idOk);
-        Assert.assertTrue(computer.getCompany().getId() == 2);
-        Assert.assertTrue(computer.getDiscontinued().equals(localDateTime.plusYears(2)));
-        Assert.assertTrue(computer.getIntroduced().equals(localDateTime.plusYears(1)));
+        final LocalDateTime nowIntro = LocalDateTime.now();
+        final LocalDateTime nowDisco = LocalDateTime.now().plusMonths(2);
+        final Computer computer = new Computer.ComputerBuilder().name("computer").build();
+        final IComputerDao mockComputerDao = PowerMockito.mock(IComputerDao.class);
+        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
+        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
+        PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
+        PowerMockito.when(mockComputerDao.create(computer))
+                .thenReturn(Optional.ofNullable(new Computer.ComputerBuilder().id(2).name("computer")
+                        .introduced(nowIntro).discontinued(nowDisco).build()));
+        PowerMockito.when(mockComputerDao.update(computer))
+                .thenReturn(Optional.ofNullable(new Computer.ComputerBuilder().id(2).name("computeredited")
+                        .introduced(nowIntro).discontinued(nowDisco.plusMonths(1)).build()));
+
+        Optional<Computer> computerOpt = ComputerServiceTest.computerService.save(computer);
+        Assert.assertTrue(computerOpt.isPresent());
+        Assert.assertTrue(computerOpt.get().getId() == 2);
+        Assert.assertTrue(computerOpt.get().getName().equals("computer"));
+        Assert.assertTrue(computerOpt.get().getIntroduced().equals(nowIntro));
+        Assert.assertTrue(computerOpt.get().getDiscontinued().equals(nowDisco));
+
+        computer.setName("computeredited");
+        computer.setId(2);
+        computerOpt = ComputerServiceTest.computerService.save(computer);
+        Assert.assertTrue(computerOpt.isPresent());
+        Assert.assertTrue(computerOpt.get().getId() == 2);
+        Assert.assertTrue(computerOpt.get().getName().equals("computeredited"));
+        Assert.assertTrue(computerOpt.get().getIntroduced().equals(nowIntro));
+        Assert.assertTrue(computerOpt.get().getDiscontinued().equals(nowDisco.plusMonths(1)));
     }
 
 }

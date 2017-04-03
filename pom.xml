@@ -16,7 +16,7 @@
         <version.gson>2.8.0</version.gson>
         <version.slf4j>1.7.24</version.slf4j>
         <version.logback>1.2.1</version.logback>
-        <version.mockito>1.9.5</version.mockito>
+        <version.mockito>2.7.17</version.mockito>
         <version.powermock>1.7.0RC4</version.powermock>
         <version.dbunit>2.4.9</version.dbunit>
         <version.mysql>5.1.6</version.mysql>
@@ -151,7 +151,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
@@ -225,6 +225,7 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>${version.hikaricp}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>
