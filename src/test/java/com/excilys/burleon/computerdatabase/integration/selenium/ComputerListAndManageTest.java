@@ -16,7 +16,7 @@ import org.openqa.selenium.support.ui.Select;
 
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 
-public class CreateComputerTest {
+public class ComputerListAndManageTest {
     @BeforeClass
     public static void setUpBeforeClass() {
         System.setProperty("webdriver.chrome.driver", "/home/excilys/Programs/chromedriver");
