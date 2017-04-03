@@ -106,7 +106,7 @@
                         <c:if test="${100 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>100</option>
                 </select> <span class="help-block"></span> <span
                     class="input-group-btn">
-                    <button class="btn btn-default" type="submit"
+                    <button id="buttonChangeNbPerpage" class="btn btn-default" type="submit"
                         tabindex="-1">
                         <span class="glyphicon glyphicon-ok"
                             aria-hidden="true"></span>

@@ -97,10 +97,10 @@
             </div>
         </form>
         <c:if test="${not empty requestScope[MESSAGE_ERROR]}">
-            <label class="alert alert-danger">${requestScope[MESSAGE_ERROR]}</label>
+            <label id="${MESSAGE_ERROR}" class="alert alert-danger">${requestScope[MESSAGE_ERROR]}</label>
         </c:if>
         <c:if test="${not empty requestScope[MESSAGE_SUCCESS]}">
-            <label class="alert alert-success">${requestScope[MESSAGE_SUCCESS]}</label>
+            <label id="${MESSAGE_SUCCESS}" class="alert alert-success">${requestScope[MESSAGE_SUCCESS]}</label>
         </c:if>
     </div>
 </div>
