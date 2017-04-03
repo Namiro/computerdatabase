@@ -31,15 +31,21 @@ public enum ComputerMapper {
         if (computerDTO.id.equals("")) {
             computerDTO.id = "0";
         }
-        if (computerDTO.company.id.equals("")) {
+        if (computerDTO.company != null && computerDTO.company.id.equals("")) {
             computerDTO.company.id = "0";
         }
-        return new Computer.ComputerBuilder().name(computerDTO.name).id(Long.parseLong(computerDTO.id))
+
+        final Computer computer = new Computer.ComputerBuilder().name(computerDTO.name)
+                .id(Long.parseLong(computerDTO.id))
                 .introduced(Utility.convertStringDateToLocalDateTime(computerDTO.introduced))
-                .discontinued(Utility.convertStringDateToLocalDateTime(computerDTO.discontinued))
-                .company(new Company.CompanyBuilder().id(Long.parseLong(computerDTO.company.id))
-                        .name(computerDTO.company.name).build())
-                .build();
+                .discontinued(Utility.convertStringDateToLocalDateTime(computerDTO.discontinued)).build();
+
+        if (computerDTO.company != null) {
+            computer.setCompany(new Company.CompanyBuilder().id(Long.parseLong(computerDTO.company.id))
+                    .name(computerDTO.company.name).build());
+        }
+
+        return computer;
     }
 
     /**
@@ -69,9 +75,11 @@ public enum ComputerMapper {
         computerDTO.name = computer.getName();
         computerDTO.introduced = Utility.convertToStringDate(computer.getIntroduced());
         computerDTO.discontinued = Utility.convertToStringDate(computer.getDiscontinued());
-        computerDTO.company = companyDTO;
-        companyDTO.id = computer.getCompany().getId() + "";
-        companyDTO.name = computer.getCompany().getName();
+        if (computer.getCompany() != null) {
+            computerDTO.company = companyDTO;
+            companyDTO.id = computer.getCompany().getId() + "";
+            companyDTO.name = computer.getCompany().getName();
+        }
         return computerDTO;
     }
 
