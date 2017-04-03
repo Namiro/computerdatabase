@@ -103,9 +103,12 @@ public class ComputerManageServlet extends HttpServlet {
             this._computer.setIntroduced(request.getParameter(Data.COMPUTER_INTRODUCE_DATE));
             this._computer.setDiscontinued(request.getParameter(Data.COMPUTER_DISCONTINUE_DATE));
             if (request.getParameter(Data.COMPUTER_COMPANY_ID) != null) {
-                final CompanyDTO companyDTO = CompanyMapper.INSTANCE.toCompanyDTO(this.companyService
-                        .get(Company.class, Long.parseLong(request.getParameter(Data.COMPUTER_COMPANY_ID))).get());
-                this._computer.setCompany(companyDTO);
+                final Optional<Company> companyOpt = this.companyService.get(Company.class,
+                        Long.parseLong(request.getParameter(Data.COMPUTER_COMPANY_ID)));
+                if (companyOpt.isPresent()) {
+                    final CompanyDTO companyDTO = CompanyMapper.INSTANCE.toCompanyDTO(companyOpt.get());
+                    this._computer.setCompany(companyDTO);
+                }
             }
         } catch (final ServiceException e) {
             // Error message
