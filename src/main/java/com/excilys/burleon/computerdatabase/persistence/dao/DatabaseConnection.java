@@ -2,8 +2,9 @@ package com.excilys.burleon.computerdatabase.persistence.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.service.tool.PropertiesManager;
@@ -19,9 +20,11 @@ import com.zaxxer.hikari.HikariDataSource;
 public enum DatabaseConnection {
     INSTANCE;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseConnection.class);
     private String url = "";
     private String user = "";
     private String pwd = "";
+
     private HikariDataSource dataSource;
 
     /**
@@ -53,7 +56,6 @@ public enum DatabaseConnection {
             });
 
         } catch (final ClassNotFoundException e) {
-            Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
             throw new PersistenceException(e);
         }
     }
@@ -64,13 +66,32 @@ public enum DatabaseConnection {
      * @return A connection
      */
     public Connection getConnection() {
-        try {
-            final Connection connection = this.dataSource.getConnection();
-            connection.setAutoCommit(false);
-            return connection;
-        } catch (final SQLException e) {
-            Logger.getLogger(DatabaseConnection.class.getName()).log(Level.SEVERE, null, e);
-            throw new PersistenceException(e);
-        }
+        final ThreadLocal<Connection> threadLocal = new ThreadLocal<Connection>() {
+
+            @Override
+            protected Connection initialValue() {
+                try {
+                    final Connection connection = DatabaseConnection.this.dataSource.getConnection();
+                    connection.setAutoCommit(false);
+                    return connection;
+                } catch (final SQLException e) {
+                    DatabaseConnection.LOGGER.error(e.getMessage());
+                    throw new PersistenceException(e);
+                }
+            }
+
+            @Override
+            public void remove() {
+                try {
+                    this.get().close();
+                } catch (final SQLException e) {
+                    DatabaseConnection.LOGGER.error(e.getMessage());
+                    throw new PersistenceException(e);
+                }
+                super.remove();
+            }
+        };
+        return threadLocal.get();
+
     }
 }
