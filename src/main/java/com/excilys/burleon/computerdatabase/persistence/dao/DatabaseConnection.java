@@ -10,6 +10,7 @@ import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceExc
 import com.excilys.burleon.computerdatabase.service.tool.PropertiesManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import com.zaxxer.hikari.pool.HikariPool.PoolInitializationException;
 
 /**
  *
@@ -20,12 +21,15 @@ import com.zaxxer.hikari.HikariDataSource;
 public enum DatabaseConnection {
     INSTANCE;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseConnection.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(DatabaseConnection.class);
     private String url = "";
     private String user = "";
     private String pwd = "";
+    private int maxpoolsize = 20;
 
     private HikariDataSource dataSource;
+
+    private final ThreadLocal<Connection> threadLocal = new ThreadLocal<>();
 
     /**
      * Default constructor.
@@ -38,12 +42,18 @@ public enum DatabaseConnection {
             this.url = PropertiesManager.config.getString("database");
             this.user = PropertiesManager.config.getString("dbuser");
             this.pwd = PropertiesManager.config.getString("dbpassword");
+            try {
+                this.maxpoolsize = Integer.valueOf(PropertiesManager.config.getString("maxpoolsize"));
+            } catch (final NumberFormatException e) {
+                this.maxpoolsize = 20;
+                this.LOGGER.error("Impossible to get the number of max pool size. Default value used is 20", e);
+            }
 
             final HikariConfig config = new HikariConfig();
             config.setJdbcUrl(this.url);
             config.setUsername(this.user);
             config.setPassword(this.pwd);
-            config.setMaximumPoolSize(20);
+            config.setMaximumPoolSize(this.maxpoolsize);
             this.dataSource = new HikariDataSource(config);
             this.dataSource.setAutoCommit(false);
 
@@ -54,8 +64,8 @@ public enum DatabaseConnection {
                     DatabaseConnection.this.dataSource.close();
                 }
             });
-
-        } catch (final ClassNotFoundException e) {
+        } catch (final ClassNotFoundException | PoolInitializationException e) {
+            this.LOGGER.error("Impossible to get a data source", e);
             throw new PersistenceException(e);
         }
     }
@@ -66,31 +76,14 @@ public enum DatabaseConnection {
      * @return A connection
      */
     public Connection getConnection() {
-        final ThreadLocal<Connection> threadLocal = new ThreadLocal<Connection>() {
-
-            @Override
-            protected Connection initialValue() {
-                try {
-                    final Connection connection = DatabaseConnection.this.dataSource.getConnection();
-                    return connection;
-                } catch (final SQLException e) {
-                    DatabaseConnection.LOGGER.error(e.getMessage());
-                    throw new PersistenceException(e);
-                }
+        try {
+            if (this.threadLocal.get() == null || this.threadLocal.get().isClosed()) {
+                this.threadLocal.set(this.dataSource.getConnection());
             }
-
-            @Override
-            public void remove() {
-                try {
-                    this.get().close();
-                } catch (final SQLException e) {
-                    DatabaseConnection.LOGGER.error(e.getMessage());
-                    throw new PersistenceException(e);
-                }
-                super.remove();
-            }
-        };
-        return threadLocal.get();
-
+        } catch (final SQLException e) {
+            this.LOGGER.error("Impossible to get a connection", e);
+            throw new PersistenceException(e);
+        }
+        return this.threadLocal.get();
     }
 }
