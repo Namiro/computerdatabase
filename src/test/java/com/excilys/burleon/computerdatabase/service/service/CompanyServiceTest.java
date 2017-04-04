@@ -83,7 +83,7 @@ public class CompanyServiceTest {
         Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
         PowerMockito.when(mockFactory.getDao(Company.class)).thenReturn(mockCompanyDao);
         final int id = -1;
-        PowerMockito.when(mockCompanyDao.find(Company.class, id)).thenReturn(Optional.empty());
+        PowerMockito.when(mockCompanyDao.findById(Company.class, id)).thenReturn(Optional.empty());
 
         Assert.assertFalse(CompanyServiceTest.companyService.get(Company.class, id).isPresent());
     }
@@ -95,7 +95,7 @@ public class CompanyServiceTest {
         final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
         Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
         PowerMockito.when(mockFactory.getDao(Company.class)).thenReturn(mockCompanyDao);
-        PowerMockito.when(mockCompanyDao.find(Company.class, id))
+        PowerMockito.when(mockCompanyDao.findById(Company.class, id))
                 .thenReturn(Optional.ofNullable(new Company.CompanyBuilder().id(2).name("company").build()));
 
         final Optional<Company> company = CompanyServiceTest.companyService.get(Company.class, id);

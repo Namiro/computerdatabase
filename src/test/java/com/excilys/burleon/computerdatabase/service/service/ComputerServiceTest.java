@@ -21,6 +21,7 @@ import org.powermock.reflect.Whitebox;
 
 import com.excilys.burleon.computerdatabase.persistence.dao.ComputerDao;
 import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
+import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
@@ -129,7 +130,7 @@ public class ComputerServiceTest {
         Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
         PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
         final int id = -1;
-        PowerMockito.when(mockComputerDao.find(Computer.class, id)).thenReturn(Optional.empty());
+        PowerMockito.when(mockComputerDao.findById(Computer.class, id)).thenReturn(Optional.empty());
 
         Assert.assertFalse(ComputerServiceTest.computerService.get(Computer.class, id).isPresent());
     }
@@ -142,7 +143,7 @@ public class ComputerServiceTest {
         final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
         Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
         PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
-        PowerMockito.when(mockComputerDao.find(Computer.class, id)).thenReturn(Optional.ofNullable(
+        PowerMockito.when(mockComputerDao.findById(Computer.class, id)).thenReturn(Optional.ofNullable(
                 new Computer.ComputerBuilder().id(2).name("computer").discontinued(now).introduced(now).build()));
 
         final Optional<Computer> computer = ComputerServiceTest.computerService.get(Computer.class, id);
@@ -160,7 +161,8 @@ public class ComputerServiceTest {
         final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
         Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
         PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
-        PowerMockito.when(mockComputerDao.delete(computer)).thenReturn(true);
+        PowerMockito.when(mockComputerDao.delete(computer, DatabaseConnection.INSTANCE.getConnection()))
+                .thenReturn(true);
 
         Assert.assertTrue(ComputerServiceTest.computerService.remove(computer));
     }
@@ -172,7 +174,8 @@ public class ComputerServiceTest {
         final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
         Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
         PowerMockito.when(mockFactory.getDao(Computer.class)).thenReturn(mockComputerDao);
-        PowerMockito.when(mockComputerDao.delete(computer)).thenReturn(false);
+        PowerMockito.when(mockComputerDao.delete(computer, DatabaseConnection.INSTANCE.getConnection()))
+                .thenReturn(false);
 
         Assert.assertFalse(ComputerServiceTest.computerService.remove(computer));
     }

@@ -9,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
-import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.tool.Utility;
 
 /**
@@ -36,18 +35,6 @@ public class CompanyDaoTest {
     public void setUp() throws Exception {
         CompanyDaoTest.companyDao = CompanyDao.INSTANCE;
         Utility.loadAndResetDatabase();
-    }
-
-    /**
-     * Test delete a company (and the computer linked to this company).
-     */
-    @Test
-    public void testDelete() {
-        CompanyDaoTest.companyDao.delete(new Company.CompanyBuilder().id(1).build());
-        Assert.assertEquals(41, CompanyDaoTest.companyDao.find(Company.class).size());
-        Assert.assertFalse(CompanyDaoTest.companyDao.find(Company.class, 1).isPresent());
-        ComputerDao.INSTANCE.find(Computer.class)
-                .forEach((item) -> Assert.assertFalse(item.getCompany().getId() == 1));
     }
 
     /**
