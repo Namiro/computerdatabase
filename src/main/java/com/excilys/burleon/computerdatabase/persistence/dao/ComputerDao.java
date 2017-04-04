@@ -82,7 +82,6 @@ public enum ComputerDao implements IComputerDao {
                     statement.setLong(4, centity.getCompany().getId());
                 }
                 statement.executeUpdate();
-                connection.commit();
                 try (ResultSet resultSet = statement.getGeneratedKeys();) {
                     resultSet.next();
                     entity.setId(resultSet.getInt(1));

@@ -74,6 +74,7 @@ public enum CompanyDao implements ICompanyDao {
                             ResultSet.CONCUR_UPDATABLE)) {
                 statement.setLong(1, entity.getId());
                 statement1.setLong(1, entity.getId());
+                connection.setAutoCommit(false);
                 statement1.execute();
                 statement.executeUpdate();
                 connection.commit();
@@ -81,6 +82,8 @@ public enum CompanyDao implements ICompanyDao {
                 connection.rollback();
                 IDao.LOGGER.error(e.getMessage());
                 throw new PersistenceException(e);
+            } finally {
+                connection.setAutoCommit(true);
             }
         } catch (final SQLException e1) {
             this.LOGGER.error(e1.getMessage());
@@ -196,10 +199,8 @@ public enum CompanyDao implements ICompanyDao {
                 statement.setString(1, entity.getName());
                 statement.setLong(2, entity.getId());
                 statement.executeUpdate();
-                connection.commit();
                 tmpEntity = entity;
             } catch (final SQLException e) {
-                connection.rollback();
                 this.LOGGER.error(e.getMessage());
                 throw new PersistenceException(e);
             }

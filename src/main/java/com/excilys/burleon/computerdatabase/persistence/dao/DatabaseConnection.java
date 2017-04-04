@@ -72,7 +72,6 @@ public enum DatabaseConnection {
             protected Connection initialValue() {
                 try {
                     final Connection connection = DatabaseConnection.this.dataSource.getConnection();
-                    connection.setAutoCommit(false);
                     return connection;
                 } catch (final SQLException e) {
                     DatabaseConnection.LOGGER.error(e.getMessage());

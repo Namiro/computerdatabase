@@ -42,9 +42,7 @@ public interface IDao<E extends IEntity> {
                     ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
                 statement.setLong(1, entity.getId());
                 statement.executeUpdate();
-                connection.commit();
             } catch (final SQLException e) {
-                connection.rollback();
                 IDao.LOGGER.error(e.getMessage());
                 throw new PersistenceException(e);
             }
