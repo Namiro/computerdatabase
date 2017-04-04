@@ -35,18 +35,15 @@ public class ComputerListServlet extends HttpServlet {
     private final IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
     private final IComputerService computerService = new ComputerService();
 
-    /**
-     * Variable working.
-     */
-    private String filterWord = "";
-    private OrderComputerEnum orderBy = OrderComputerEnum.NAME;
-    private int recordsByPage = 20;
-
     /* METHODE */
 
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+
+        String filterWord = "";
+        OrderComputerEnum orderBy = OrderComputerEnum.NAME;
+        int recordsByPage = 20;
 
         final HttpSession session = request.getSession();
 
@@ -61,23 +58,23 @@ public class ComputerListServlet extends HttpServlet {
             session.setAttribute(Data.ORDER_BY, request.getParameter(Data.ORDER_BY));
         }
 
-        this.filterWord = (String) session.getAttribute(Data.SEARCH_WORD);
+        filterWord = (String) session.getAttribute(Data.SEARCH_WORD);
         if (session.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            this.recordsByPage = Integer.valueOf((String) session.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
+            recordsByPage = Integer.valueOf((String) session.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
         }
         if (session.getAttribute(Data.ORDER_BY) != null) {
             switch ((String) session.getAttribute(Data.ORDER_BY)) {
                 case Data.ORDER_BY_1:
-                    this.orderBy = OrderComputerEnum.NAME;
+                    orderBy = OrderComputerEnum.NAME;
                     break;
                 case Data.ORDER_BY_2:
-                    this.orderBy = OrderComputerEnum.INTRODUCE_DATE;
+                    orderBy = OrderComputerEnum.INTRODUCE_DATE;
                     break;
                 case Data.ORDER_BY_3:
-                    this.orderBy = OrderComputerEnum.DISCONTINUE_DATE;
+                    orderBy = OrderComputerEnum.DISCONTINUE_DATE;
                     break;
                 case Data.ORDER_BY_4:
-                    this.orderBy = OrderComputerEnum.COMPANY_NAME;
+                    orderBy = OrderComputerEnum.COMPANY_NAME;
                     break;
                 default:
                     break;
@@ -86,25 +83,27 @@ public class ComputerListServlet extends HttpServlet {
 
         final int newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
                 ? Integer.parseInt(request.getParameter(Data.PAGINATION_CURRENT_PAGE)) : 1;
-        this.recordsByPage = (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null)
-                ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE)) : this.recordsByPage;
-        this.pageService.setRecordsByPage(this.recordsByPage);
-        this.pageService.setFilterWord(this.filterWord);
-        this.pageService.setOrderBy(this.orderBy);
+        recordsByPage = (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null)
+                ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE)) : recordsByPage;
+        this.pageService.setRecordsByPage(recordsByPage);
+        this.pageService.setFilterWord(filterWord);
+        this.pageService.setOrderBy(orderBy);
         final List<Computer> listComputer = this.pageService.page(newCurrentPage);
 
         request.setAttribute(Data.LIST_COMPUTER, ComputerMapper.INSTANCE.toComputerDTO(listComputer));
         request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
-                this.computerService.getTotalRecords(Computer.class, this.filterWord));
+                this.computerService.getTotalRecords(Computer.class, filterWord));
         request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
         request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
-        request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, this.recordsByPage);
+        request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, recordsByPage);
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
     }
 
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+
+        final String filterWord = "";
 
         try {
             // If it is a deleting
@@ -125,7 +124,7 @@ public class ComputerListServlet extends HttpServlet {
         } finally {
             request.setAttribute(Data.LIST_COMPUTER, this.pageService.refresh());
             request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
-                    this.computerService.getTotalRecords(Computer.class, this.filterWord));
+                    this.computerService.getTotalRecords(Computer.class, filterWord));
             request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
             request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
             request.setAttribute(Data.MESSAGE_SUCCESS, "Remove OK");
