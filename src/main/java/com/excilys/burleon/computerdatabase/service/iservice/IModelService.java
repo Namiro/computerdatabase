@@ -38,6 +38,9 @@ public interface IModelService<E extends IEntity> extends IService {
         if (entity == null) {
             throw new ServiceException("The object hasn't been initialized");
         }
+        if (entity.getId() < 0) {
+            throw new ServiceException("The entity can't have a negative id");
+        }
     }
 
     /**
