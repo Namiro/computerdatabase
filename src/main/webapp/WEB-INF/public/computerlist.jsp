@@ -12,9 +12,18 @@
                     method="GET" class="form-inline">
                     <input type="search" id="${SEARCH_WORD}"
                         name="${SEARCH_WORD}" class="form-control"
-                        placeholder="Search name" /> <input
+                        placeholder="Search name" value="${requestScope[SEARCH_WORD]}" /> <input
                         type="submit" id="${SUBMIT_SEARCH}"
-                        value="Search" class="btn btn-primary" />
+                        value="Search"
+                        class="btn btn-primary" /> <input type="hidden"
+                        name="${ORDER_BY}"
+                        value="${requestScope[ORDER_BY]}" /> <input
+                        type="hidden"
+                        name="${PAGINATION_RECORDS_BY_PAGE}"
+                        value="${requestScope[PAGINATION_RECORDS_BY_PAGE]}" />
+                    <input type="hidden"
+                        name="${PAGINATION_CURRENT_PAGE}"
+                        value="${requestScope[PAGINATION_CURRENT_PAGE]}" />
                 </form>
             </div>
             <div class="pull-right">
@@ -34,8 +43,7 @@
     <div class="container" style="margin-top: 10px;">
         <c:choose>
             <c:when test="${not empty requestScope[LIST_COMPUTER]}">
-                <table
-                    class="table table-striped table-bordered">
+                <table class="table table-striped table-bordered">
                     <thead>
                         <tr>
                             <th class="editMode"
@@ -48,13 +56,13 @@
                                 </a>
                             </span></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}">Name</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Name</a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}">Introduce</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Introduce</a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}">Discontinue</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Discontinue</a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}">Company</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Company</a></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -89,30 +97,23 @@
     </div>
     <div class="row container text-center">
         <mytags:pagination
-            uri="${SERVLET_COMPUTER_LIST}?${PAGINATION_CURRENT_PAGE}=##"
+            uri="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=##"
             maxLinks="5"
             currPage="${requestScope[PAGINATION_CURRENT_PAGE]}"
             totalPages="${requestScope[PAGINATION_TOTAL_PAGE]}" />
 
-        <form action="${SERVLET_COMPUTER_LIST}" method="GET">
-            <div class="pull-right input-group ">
-                <select class="form-control"
-                    name="${PAGINATION_RECORDS_BY_PAGE}">
-                    <option value="20"
-                        <c:if test="${20 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>20</option>
-                    <option value="50"
-                        <c:if test="${50 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>50</option>
-                    <option value="100"
-                        <c:if test="${100 == requestScope[PAGINATION_RECORDS_BY_PAGE]}"> selected </c:if>>100</option>
-                </select> <span class="help-block"></span> <span
-                    class="input-group-btn">
-                    <button id="buttonChangeNbPerpage" class="btn btn-default" type="submit"
-                        tabindex="-1">
-                        <span class="glyphicon glyphicon-ok"
-                            aria-hidden="true"></span>
-                    </button>
-                </span>
-            </div>
-        </form>
+        <div class="btn-group btn-group-sm pull-right" role="group">
+            <ul class="pagination">
+                <li><a
+                    href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=20&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">20</a>
+                </li>
+                <li><a
+                    href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=50&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">50</a>
+                </li>
+                <li><a
+                    href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=100&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">100</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>

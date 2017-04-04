@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
@@ -45,25 +44,23 @@ public class ComputerListServlet extends HttpServlet {
         OrderComputerEnum orderBy = OrderComputerEnum.NAME;
         int recordsByPage = 20;
 
-        final HttpSession session = request.getSession();
-
         if (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            session.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE,
+            request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE,
                     request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE));
         }
         if (request.getParameter(Data.SEARCH_WORD) != null) {
-            session.setAttribute(Data.SEARCH_WORD, request.getParameter(Data.SEARCH_WORD));
+            request.setAttribute(Data.SEARCH_WORD, request.getParameter(Data.SEARCH_WORD));
         }
         if (request.getParameter(Data.ORDER_BY) != null) {
-            session.setAttribute(Data.ORDER_BY, request.getParameter(Data.ORDER_BY));
+            request.setAttribute(Data.ORDER_BY, request.getParameter(Data.ORDER_BY));
         }
 
-        filterWord = (String) session.getAttribute(Data.SEARCH_WORD);
-        if (session.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            recordsByPage = Integer.valueOf((String) session.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
+        filterWord = (String) request.getAttribute(Data.SEARCH_WORD);
+        if (request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
+            recordsByPage = Integer.valueOf((String) request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
         }
-        if (session.getAttribute(Data.ORDER_BY) != null) {
-            switch ((String) session.getAttribute(Data.ORDER_BY)) {
+        if (request.getAttribute(Data.ORDER_BY) != null) {
+            switch ((String) request.getAttribute(Data.ORDER_BY)) {
                 case Data.ORDER_BY_1:
                     orderBy = OrderComputerEnum.NAME;
                     break;
@@ -96,6 +93,7 @@ public class ComputerListServlet extends HttpServlet {
         request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
         request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
         request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, recordsByPage);
+        request.setAttribute(Data.SEARCH_WORD, filterWord);
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
     }
 

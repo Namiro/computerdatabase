@@ -70,7 +70,7 @@ public final class Paginator extends SimpleTagSupport {
             if (pgStart < 1) {
                 pgStart = 1;
             }
-            pgEnd = this.totalPages + 1;
+            pgEnd = this.totalPages;
         }
 
         try {
@@ -83,7 +83,7 @@ public final class Paginator extends SimpleTagSupport {
             }
 
             for (int i = pgStart; i < pgEnd; i++) {
-                if (i < this.totalPages) {
+                if (i <= this.totalPages) {
                     this.getJspContext().getOut().write(this.constructLink(i));
                 }
             }
