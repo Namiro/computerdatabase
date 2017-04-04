@@ -80,16 +80,13 @@ public class ComputerListAndManageTest {
         this.driver.get(this.baseUrl + "/ComputerDatabase/ComputerList");
         Assert.assertTrue(this.driver.findElement(By.tagName("h1")).getText().contains("Computers found"));
 
-        new Select(this.driver.findElement(By.name("paginationRecordsByPage"))).selectByVisibleText("50");
-        this.driver.findElement(By.id("buttonChangeNbPerpage")).click();
+        this.driver.findElement(By.id("paginationRecordsByPage50")).click();
         Assert.assertTrue(this.driver.findElements(By.xpath("//tr")).size() == 51);
 
-        new Select(this.driver.findElement(By.name("paginationRecordsByPage"))).selectByVisibleText("100");
-        this.driver.findElement(By.id("buttonChangeNbPerpage")).click();
+        this.driver.findElement(By.id("paginationRecordsByPage100")).click();
         Assert.assertTrue(this.driver.findElements(By.xpath("//tr")).size() == 101);
 
-        new Select(this.driver.findElement(By.name("paginationRecordsByPage"))).selectByVisibleText("20");
-        this.driver.findElement(By.id("buttonChangeNbPerpage")).click();
+        this.driver.findElement(By.id("paginationRecordsByPage20")).click();
         Assert.assertTrue(this.driver.findElements(By.xpath("//tr")).size() == 21);
     }
 
@@ -115,7 +112,7 @@ public class ComputerListAndManageTest {
         this.driver.findElement(By.id(Data.COMPUTER_INTRODUCE_DATE)).sendKeys("24/02/2010");
         this.driver.findElement(By.id(Data.COMPUTER_DISCONTINUE_DATE)).sendKeys("21/02/2010");
         this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID)).click();
-        new Select(this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID))).selectByVisibleText("RCA");
+        new Select(this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID))).selectByVisibleText("Netronics");
         Assert.assertTrue(this.driver.findElement(By.id(Data.SUBMIT_CREATE)).isEnabled());
 
         this.driver.findElement(By.id(Data.COMPUTER_NAME)).clear();
@@ -148,7 +145,7 @@ public class ComputerListAndManageTest {
         this.driver.findElement(By.id(Data.COMPUTER_INTRODUCE_DATE)).sendKeys("12/02/2010");
         this.driver.findElement(By.id(Data.COMPUTER_DISCONTINUE_DATE)).sendKeys("13/02/2010");
         this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID)).click();
-        new Select(this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID))).selectByVisibleText("RCA");
+        new Select(this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID))).selectByVisibleText("Netronics");
         this.driver.findElement(By.id(Data.SUBMIT_CREATE)).click();
 
         Assert.assertTrue(this.isElementPresent(By.id(Data.MESSAGE_SUCCESS)));
@@ -174,7 +171,7 @@ public class ComputerListAndManageTest {
         this.driver.findElement(By.id(Data.COMPUTER_INTRODUCE_DATE)).sendKeys("12/02/2010");
         this.driver.findElement(By.id(Data.COMPUTER_DISCONTINUE_DATE)).sendKeys("13/02/2010");
         this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID)).click();
-        new Select(this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID))).selectByVisibleText("RCA");
+        new Select(this.driver.findElement(By.id(Data.COMPUTER_COMPANY_ID))).selectByVisibleText("Netronics");
         this.driver.findElement(By.id(Data.SUBMIT_CREATE)).click();
 
         Assert.assertTrue(this.isElementPresent(By.id(Data.MESSAGE_SUCCESS)));
