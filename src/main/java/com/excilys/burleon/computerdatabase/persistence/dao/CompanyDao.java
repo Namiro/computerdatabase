@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.ICompanyDao;
-import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderCompanyEnum;
@@ -40,7 +39,6 @@ public enum CompanyDao implements ICompanyDao {
     public Optional<Company> create(final Company entity) {
         Company tmpEntity = null;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
-
             try (PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + this.getTableName(entity.getClass()) + " SET name = ?",
                     Statement.RETURN_GENERATED_KEYS);) {
@@ -61,36 +59,6 @@ public enum CompanyDao implements ICompanyDao {
             throw new PersistenceException(e1);
         }
         return Optional.ofNullable(tmpEntity);
-    }
-
-    @Override
-    public boolean delete(final Company entity) {
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-                    PreparedStatement statement1 = connection.prepareStatement(
-                            "DELETE FROM computer WHERE company_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
-                            ResultSet.CONCUR_UPDATABLE)) {
-                statement.setLong(1, entity.getId());
-                statement1.setLong(1, entity.getId());
-                connection.setAutoCommit(false);
-                statement1.execute();
-                statement.executeUpdate();
-                connection.commit();
-            } catch (final SQLException e) {
-                connection.rollback();
-                IDao.LOGGER.error(e.getMessage());
-                throw new PersistenceException(e);
-            } finally {
-                connection.setAutoCommit(true);
-            }
-        } catch (final SQLException e1) {
-            this.LOGGER.error(e1.getMessage());
-            throw new PersistenceException(e1);
-        }
-        return true;
-
     }
 
     @Override
@@ -115,7 +83,7 @@ public enum CompanyDao implements ICompanyDao {
     }
 
     @Override
-    public Optional<Company> find(final Class<Company> c, final long id) {
+    public Optional<Company> findById(final Class<Company> c, final long id) {
         Company tmpEntity = null;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(

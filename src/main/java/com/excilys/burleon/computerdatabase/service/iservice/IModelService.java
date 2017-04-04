@@ -1,5 +1,7 @@
 package com.excilys.burleon.computerdatabase.service.iservice;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -7,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
-import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
+import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
@@ -68,7 +70,7 @@ public interface IModelService<E extends IEntity> extends IService {
         IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id);
         if (id > 0) {
             IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND OK");
-            return DaoFactory.INSTANCE.getDao(entityType).find(entityType, id);
+            return DaoFactory.INSTANCE.getDao(entityType).findById(entityType, id);
         } else {
             IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND KO");
             return Optional.empty();
@@ -139,7 +141,11 @@ public interface IModelService<E extends IEntity> extends IService {
     default boolean remove(final E entity) {
         IModelService.LOGGER.trace("remove : entity : " + entity);
         if (entity != null && entity.getId() > 0) {
-            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity);
+            try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+                return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity, connection);
+            } catch (final SQLException e) {
+                throw new ServiceException("Impossible to get a connection", e);
+            }
         } else {
             return false;
         }
@@ -161,14 +167,10 @@ public interface IModelService<E extends IEntity> extends IService {
 
         this.checkDataEntity(entity);
 
-        try {
-            if (entity.getId() != 0) {
-                return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).update(entity);
-            } else {
-                return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).create(entity);
-            }
-        } catch (final PersistenceException e) {
-            throw new ServiceException(e);
+        if (entity.getId() != 0) {
+            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).update(entity);
+        } else {
+            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).create(entity);
         }
     }
 }

@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
+import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
@@ -99,6 +100,28 @@ public enum ComputerDao implements IComputerDao {
     }
 
     @Override
+    public boolean deleteByCompany(final Company entity, final Connection connection) {
+        boolean success = true;
+        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM computer WHERE company_id = ?",
+                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
+            statement.setLong(1, entity.getId());
+            statement.execute();
+            connection.commit();
+        } catch (final SQLException e) {
+            try {
+                connection.rollback();
+                success = false;
+                IDao.LOGGER.error(e.getMessage());
+                throw new PersistenceException(e);
+            } catch (final SQLException e1) {
+                this.LOGGER.error(e1.getMessage());
+                throw new PersistenceException(e1);
+            }
+        }
+        return success;
+    }
+
+    @Override
     public List<Computer> find(final Class<Computer> c) {
         final ArrayList<Computer> entities = new ArrayList<>();
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
@@ -129,7 +152,7 @@ public enum ComputerDao implements IComputerDao {
     }
 
     @Override
-    public Optional<Computer> find(final Class<Computer> c, final long id) {
+    public Optional<Computer> findById(final Class<Computer> c, final long id) {
         Computer entity = null;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
@@ -269,10 +292,8 @@ public enum ComputerDao implements IComputerDao {
                 }
                 statement.setLong(5, entity.getId());
                 statement.executeUpdate();
-                connection.commit();
                 tmpEntity = entity;
             } catch (final SQLException e) {
-                connection.rollback();
                 this.LOGGER.error(e.getMessage());
                 throw new PersistenceException(e);
             }

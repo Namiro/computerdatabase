@@ -33,24 +33,23 @@ public interface IDao<E extends IEntity> {
      *
      * @param entity
      *            Object to delete
+     * @param connection
+     *            The db connection
      * @return boolean Success -> True else false.
      */
-    default boolean delete(final E entity) {
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
-                    ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-                statement.setLong(1, entity.getId());
-                statement.executeUpdate();
-            } catch (final SQLException e) {
-                IDao.LOGGER.error(e.getMessage());
-                throw new PersistenceException(e);
-            }
-        } catch (final SQLException e1) {
-            IDao.LOGGER.error(e1.getMessage());
-            throw new PersistenceException(e1);
+    default boolean delete(final E entity, final Connection connection) {
+        boolean success = true;
+        try (PreparedStatement statement = connection.prepareStatement(
+                "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
+                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
+            statement.setLong(1, entity.getId());
+            statement.executeUpdate();
+        } catch (final SQLException e) {
+            success = false;
+            IDao.LOGGER.error(e.getMessage());
+            throw new PersistenceException(e);
         }
-        return true;
+        return success;
     }
 
     /**
@@ -74,7 +73,7 @@ public interface IDao<E extends IEntity> {
      *            The id of the entity you want get
      * @return E Object of type E. Null if nothing found.
      */
-    Optional<E> find(Class<E> c, long id);
+    Optional<E> findById(Class<E> c, long id);
 
     /**
      * Method to get all element between in a limit from the database The
