@@ -1,9 +1,9 @@
  #-----------------------------------
  #USER RIGHTS MANAGEMENT
  #-----------------------------------
- CREATE USER 'travis'@'172.18.0.1' IDENTIFIED BY 'apql1161713';
+ CREATE USER 'travis'@'%' IDENTIFIED BY 'apql1161713';
 
- GRANT ALL PRIVILEGES ON `computer-database-db`.* TO 'travis'@'172.18.0.1' WITH GRANT OPTION;
+ GRANT ALL PRIVILEGES ON `computer-database-db`.* TO 'travis'@'%' WITH GRANT OPTION;
 
 
  FLUSH PRIVILEGES;
