@@ -46,6 +46,8 @@ public enum ComputerDao implements IComputerDao {
 
     @Override
     public Optional<Computer> create(final Computer entity) {
+        this.LOGGER.trace("create : entity : " + entity);
+
         final Computer centity = entity;
         Computer tmpEntity = null;
 
@@ -101,6 +103,8 @@ public enum ComputerDao implements IComputerDao {
 
     @Override
     public boolean deleteByCompany(final Company entity, final Connection connection) {
+        this.LOGGER.trace("delete : entity : " + entity);
+
         boolean success = true;
         try (PreparedStatement statement = connection.prepareStatement("DELETE FROM computer WHERE company_id = ?",
                 ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
@@ -123,6 +127,8 @@ public enum ComputerDao implements IComputerDao {
 
     @Override
     public List<Computer> find(final Class<Computer> c) {
+        this.LOGGER.trace("find : class : " + c);
+
         final ArrayList<Computer> entities = new ArrayList<>();
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
@@ -153,6 +159,8 @@ public enum ComputerDao implements IComputerDao {
 
     @Override
     public Optional<Computer> findById(final Class<Computer> c, final long id) {
+        this.LOGGER.trace("findById : class : " + c + "\tid : " + id);
+
         Computer entity = null;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
@@ -185,6 +193,9 @@ public enum ComputerDao implements IComputerDao {
     @Override
     public List<Computer> findRange(final Class<Computer> c, final int first, final int nbRecord,
             String filterWord, IOrderEnum<Computer> orderBy) {
+        this.LOGGER.trace("findRange : c : " + c + "\tfirst : " + first + "\tnbRecord : " + nbRecord
+                + "\tfilterWord : " + filterWord + "\torderBy : " + orderBy);
+
         if (filterWord == null) {
             filterWord = "";
         }
@@ -199,11 +210,11 @@ public enum ComputerDao implements IComputerDao {
                         "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
                                 + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
-                                + "LIKE ? OR company.name LIKE ? ORDER BY ISNULL(" + orderBy.toString() + "), "
-                                + orderBy.toString() + " ASC LIMIT ?,?",
+                                + "LIKE ? OR company.name LIKE ? ORDER BY " + orderBy.toString()
+                                + " ASC LIMIT ?,?",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-            statement.setString(1, "%" + filterWord + "%");
-            statement.setString(2, "%" + filterWord + "%");
+            statement.setString(1, filterWord + "%");
+            statement.setString(2, filterWord + "%");
             statement.setInt(3, first);
             statement.setInt(4, nbRecord);
             System.out.println(statement.toString());
@@ -231,6 +242,8 @@ public enum ComputerDao implements IComputerDao {
 
     @Override
     public long getNbRecords(final Class<Computer> c, final String filterWord) {
+        this.LOGGER.trace("getNbRecords : c : " + c + "\tfilterWord : " + filterWord);
+
         long nbTotal = 0;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
@@ -238,8 +251,8 @@ public enum ComputerDao implements IComputerDao {
                                 + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
                                 + "LIKE ? OR company.name LIKE ? ",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-            statement.setString(1, "%" + filterWord + "%");
-            statement.setString(2, "%" + filterWord + "%");
+            statement.setString(1, filterWord + "%");
+            statement.setString(2, filterWord + "%");
             statement.execute();
             try (ResultSet resultSet = statement.getResultSet();) {
                 if (resultSet.first()) {
@@ -255,6 +268,8 @@ public enum ComputerDao implements IComputerDao {
 
     @Override
     public Optional<Computer> update(final Computer entity) {
+        this.LOGGER.trace("update : entity : " + entity);
+
         final Computer centity = entity;
         Computer tmpEntity = null;
 

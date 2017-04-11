@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
@@ -31,6 +34,8 @@ public class ComputerListServlet extends HttpServlet {
 
     private static final long serialVersionUID = -6681257837248708119L;
 
+    Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
+
     private final IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
     private final IComputerService computerService = new ComputerService();
 
@@ -39,6 +44,7 @@ public class ComputerListServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        this.LOGGER.trace("GET /ComputerList \t" + request.getRequestURI());
 
         String filterWord = "";
         OrderComputerEnum orderBy = OrderComputerEnum.NAME;
@@ -78,8 +84,12 @@ public class ComputerListServlet extends HttpServlet {
             }
         }
 
-        final int newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
+        int newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
                 ? Integer.parseInt(request.getParameter(Data.PAGINATION_CURRENT_PAGE)) : 1;
+        if (request.getParameter(Data.SUBMIT_SEARCH) != null) {
+            newCurrentPage = 1;
+        }
+
         recordsByPage = (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null)
                 ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE)) : recordsByPage;
         this.pageService.setRecordsByPage(recordsByPage);
@@ -100,8 +110,9 @@ public class ComputerListServlet extends HttpServlet {
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        this.LOGGER.trace("POST /ComputerList \t" + request.getRequestURI());
 
-        final String filterWord = "";
+        final String filterWord = (String) request.getAttribute(Data.SEARCH_WORD);
 
         try {
             // If it is a deleting
@@ -118,6 +129,7 @@ public class ComputerListServlet extends HttpServlet {
         } catch (final ServiceException e) {
             // Error message
             request.setAttribute(Data.MESSAGE_ERROR, e.getMessage());
+            this.LOGGER.warn("Impossible to delete the computers", e);
             this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
         } finally {
             request.setAttribute(Data.LIST_COMPUTER, this.pageService.refresh());
@@ -125,6 +137,7 @@ public class ComputerListServlet extends HttpServlet {
                     this.computerService.getTotalRecords(Computer.class, filterWord));
             request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
             request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
+            request.setAttribute(Data.SEARCH_WORD, filterWord);
             request.setAttribute(Data.MESSAGE_SUCCESS, "Remove OK");
             this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
         }

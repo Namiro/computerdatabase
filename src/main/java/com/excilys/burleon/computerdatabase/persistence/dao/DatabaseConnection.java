@@ -35,38 +35,45 @@ public enum DatabaseConnection {
      * Default constructor.
      */
     DatabaseConnection() {
-        try {
-            PropertiesManager.load();
-
-            Class.forName("com.mysql.jdbc.Driver");
-            this.url = PropertiesManager.config.getString("database");
-            this.user = PropertiesManager.config.getString("dbuser");
-            this.pwd = PropertiesManager.config.getString("dbpassword");
+        if (this.dataSource == null) {
             try {
-                this.maxpoolsize = Integer.valueOf(PropertiesManager.config.getString("maxpoolsize"));
-            } catch (final NumberFormatException e) {
-                this.maxpoolsize = 20;
-                this.LOGGER.error("Impossible to get the number of max pool size. Default value used is 20", e);
-            }
+                PropertiesManager.load();
 
-            final HikariConfig config = new HikariConfig();
-            config.setJdbcUrl(this.url);
-            config.setUsername(this.user);
-            config.setPassword(this.pwd);
-            config.setMaximumPoolSize(this.maxpoolsize);
-            this.dataSource = new HikariDataSource(config);
-            this.dataSource.setAutoCommit(false);
-
-            // To close the datasource when the server is closing
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    DatabaseConnection.this.dataSource.close();
+                Class.forName("com.mysql.jdbc.Driver");
+                this.url = PropertiesManager.config.getString("database");
+                this.user = PropertiesManager.config.getString("dbuser");
+                this.pwd = PropertiesManager.config.getString("dbpassword");
+                try {
+                    this.maxpoolsize = Integer.valueOf(PropertiesManager.config.getString("maxpoolsize"));
+                } catch (final NumberFormatException e) {
+                    this.maxpoolsize = 20;
+                    this.LOGGER.error("Impossible to get the number of max pool size. Default value used is 20",
+                            e);
                 }
-            });
-        } catch (final ClassNotFoundException | PoolInitializationException e) {
-            this.LOGGER.error("Impossible to get a data source", e);
-            throw new PersistenceException(e);
+
+                final HikariConfig config = new HikariConfig();
+                config.setJdbcUrl(this.url);
+                config.setUsername(this.user);
+                config.setPassword(this.pwd);
+                config.setMaximumPoolSize(this.maxpoolsize);
+                config.setLeakDetectionThreshold(2010);
+                // config.setConnectionTimeout(1200);
+                config.setMinimumIdle(5);
+                config.setDriverClassName("com.mysql.jdbc.Driver");
+                this.dataSource = new HikariDataSource(config);
+                this.dataSource.setAutoCommit(false);
+
+                // To close the datasource when the server is closing
+                Runtime.getRuntime().addShutdownHook(new Thread() {
+                    @Override
+                    public void run() {
+                        DatabaseConnection.this.dataSource.close();
+                    }
+                });
+            } catch (final ClassNotFoundException | PoolInitializationException e) {
+                this.LOGGER.error("Impossible to get a data source", e);
+                throw new PersistenceException(e);
+            }
         }
     }
 

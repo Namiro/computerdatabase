@@ -14,6 +14,7 @@ import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
 
 public interface IDao<E extends IEntity> {
 
@@ -38,6 +39,8 @@ public interface IDao<E extends IEntity> {
      * @return boolean Success -> True else false.
      */
     default boolean delete(final E entity, final Connection connection) {
+        IModelService.LOGGER.trace("delete : entity : " + entity);
+
         boolean success = true;
         try (PreparedStatement statement = connection.prepareStatement(
                 "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
@@ -100,6 +103,8 @@ public interface IDao<E extends IEntity> {
      * @return The number of records for this entity
      */
     default long getNbRecords(final Class<E> c) {
+        IModelService.LOGGER.trace("getNbRecords : class : " + c);
+
         long nbTotal = 0;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(

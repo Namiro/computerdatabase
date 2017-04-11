@@ -13,7 +13,7 @@
                     <input type="search" id="${SEARCH_WORD}"
                         name="${SEARCH_WORD}" class="form-control"
                         placeholder="Search name" value="${requestScope[SEARCH_WORD]}" /> <input
-                        type="submit" id="${SUBMIT_SEARCH}"
+                        type="submit" name="${SUBMIT_SEARCH}" id="${SUBMIT_SEARCH}"
                         value="Search"
                         class="btn btn-primary" /> <input type="hidden"
                         name="${ORDER_BY}"
@@ -65,7 +65,7 @@
                                 href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Company</a></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="results">
                         <c:forEach
                             items="${requestScope[LIST_COMPUTER]}"
                             var="computer" varStatus="vs">

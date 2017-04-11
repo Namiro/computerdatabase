@@ -95,10 +95,19 @@ public interface IModelService<E extends IEntity> extends IService {
      */
     default List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage,
             final String filterWord, final IOrderEnum<E> orderBy) {
-        IModelService.LOGGER.trace("getPage : entityType " + entityType + "\tpageNumber : " + pageNumber
-                + "\trecordsByPage : " + recordsByPage + "\torderBy : " + orderBy);
-        return DaoFactory.INSTANCE.getDao(entityType).findRange(entityType, (pageNumber - 1) * recordsByPage,
-                recordsByPage, filterWord, orderBy);
+        IModelService.LOGGER
+                .trace("getPage : entityType " + entityType + "\tpageNumber : " + pageNumber + "\trecordsByPage : "
+                        + recordsByPage + "\torderBy : " + orderBy + "\tfilterWord : " + filterWord);
+        final List<E> list = DaoFactory.INSTANCE.getDao(entityType).findRange(entityType,
+                (pageNumber - 1) * recordsByPage, recordsByPage, filterWord, orderBy);
+
+        if (list == null || list.isEmpty()) {
+            IModelService.LOGGER.error(
+                    "getPage : entityType " + entityType + "\tpageNumber : " + pageNumber + "\trecordsByPage : "
+                            + recordsByPage + "\torderBy : " + orderBy + "\tfilterWord : " + filterWord);
+        }
+
+        return list;
     }
 
     /**
@@ -162,7 +171,6 @@ public interface IModelService<E extends IEntity> extends IService {
      *             If the check data fail
      */
     default Optional<E> save(final E entity) throws ServiceException {
-
         IModelService.LOGGER.trace("save : entity : " + entity);
 
         this.checkDataEntity(entity);

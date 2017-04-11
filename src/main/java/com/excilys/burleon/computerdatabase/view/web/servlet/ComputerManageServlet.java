@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
@@ -40,6 +43,8 @@ public class ComputerManageServlet extends HttpServlet {
 
     private static final long serialVersionUID = -922272733938052338L;
 
+    Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
+
     public IComputerService computerService = new ComputerService();
     public ICompanyService companyService = new CompanyService();
 
@@ -54,6 +59,7 @@ public class ComputerManageServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        this.LOGGER.trace("GET /ComputerManage \t" + request.getRequestURI());
 
         /* If a computer was selected */
         if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))) {
@@ -86,6 +92,7 @@ public class ComputerManageServlet extends HttpServlet {
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
+        this.LOGGER.trace("POST /ComputerManage \t" + request.getRequestURI());
 
         // If it is an updating or deleting
         if (request.getParameter(Data.COMPUTER_ID) != null && !"".equals(request.getParameter(Data.COMPUTER_ID))
@@ -99,6 +106,8 @@ public class ComputerManageServlet extends HttpServlet {
         }
 
         try {
+            this.LOGGER.debug("gatling 1 \t" + request.getParameter(Data.COMPUTER_NAME));
+
             this._computer.setName(request.getParameter(Data.COMPUTER_NAME));
             this._computer.setIntroduced(request.getParameter(Data.COMPUTER_INTRODUCE_DATE));
             this._computer.setDiscontinued(request.getParameter(Data.COMPUTER_DISCONTINUE_DATE));
@@ -113,6 +122,7 @@ public class ComputerManageServlet extends HttpServlet {
         } catch (final ServiceException e) {
             // Error message
             request.setAttribute(Data.MESSAGE_ERROR, e.getMessage());
+            this.LOGGER.warn("Impossible to get construct a computer from the user entries", e);
             this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
                     response);
         }
@@ -125,11 +135,14 @@ public class ComputerManageServlet extends HttpServlet {
         } else {
             try {
                 // Update and create /!\ For update ID must exist
+                this.LOGGER.trace("Just before Create or Update : entity : " + this._computer);
                 this._computer = ComputerMapper.INSTANCE.toComputerDTO(
                         this.computerService.save(ComputerMapper.INSTANCE.toComputer(this._computer)).get());
+                this.LOGGER.trace("Just after Create or Update : entity : " + this._computer);
                 request.setAttribute(Data.MESSAGE_SUCCESS, "Save OK");
             } catch (final ServiceException e) {
                 // Error message
+                this.LOGGER.warn("Impossible to save computer", e);
                 request.setAttribute(Data.MESSAGE_ERROR, e.getMessage());
             } finally {
                 request.setAttribute(Data.COMPUTER_NAME, this._computer.getName());
@@ -147,6 +160,7 @@ public class ComputerManageServlet extends HttpServlet {
                 this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
                         response);
             }
+
         }
     }
 }

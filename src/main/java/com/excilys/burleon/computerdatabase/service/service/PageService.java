@@ -97,7 +97,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
         this.number++;
         final List<E> records = this.service.getPage(this.entityType, this.number, this.recordsByPage,
                 this.filterWord, this.orderBy);
-        if (records != null && !records.isEmpty()) {
+        if (records != null) {
             this.records = records;
         } else {
             this.number--;
@@ -117,7 +117,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
         if (pageNumber > 0) {
             final List<E> records = this.service.getPage(this.entityType, pageNumber, this.recordsByPage,
                     this.filterWord, this.orderBy);
-            if (records != null && !records.isEmpty()) {
+            if (records != null) {
                 this.records = records;
                 this.number = pageNumber;
             }
@@ -163,6 +163,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
 
     }
 
+    @Override
     public void setOrderBy(final IOrderEnum<E> orderBy) {
         this.orderBy = orderBy;
     }

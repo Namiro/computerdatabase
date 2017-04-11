@@ -1,5 +1,7 @@
 package com.excilys.burleon.computerdatabase.view.model;
 
+import com.google.gson.Gson;
+
 public class ComputerDTO {
     public String id = "";
     public String name = "";
@@ -45,5 +47,10 @@ public class ComputerDTO {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
     }
 }

@@ -37,6 +37,8 @@ public enum CompanyDao implements ICompanyDao {
 
     @Override
     public Optional<Company> create(final Company entity) {
+        this.LOGGER.trace("create : entity : " + entity);
+
         Company tmpEntity = null;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
             try (PreparedStatement statement = connection.prepareStatement(
@@ -63,6 +65,8 @@ public enum CompanyDao implements ICompanyDao {
 
     @Override
     public List<Company> find(final Class<Company> c) {
+        this.LOGGER.trace("find : class : " + c);
+
         final ArrayList<Company> entities = new ArrayList<>();
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
@@ -84,6 +88,8 @@ public enum CompanyDao implements ICompanyDao {
 
     @Override
     public Optional<Company> findById(final Class<Company> c, final long id) {
+        this.LOGGER.trace("findById : class : " + c + "\tid : " + id);
+
         Company tmpEntity = null;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
@@ -106,6 +112,9 @@ public enum CompanyDao implements ICompanyDao {
     @Override
     public List<Company> findRange(final Class<Company> c, final int first, final int nbRecord, String filterWord,
             IOrderEnum<Company> orderBy) {
+        this.LOGGER.trace("findRange : c : " + c + "\tfirst : " + first + "\tnbRecord : " + nbRecord
+                + "\tfilterWord : " + filterWord + "\torderBy : " + orderBy);
+
         if (filterWord == null) {
             filterWord = "";
         }
@@ -117,10 +126,9 @@ public enum CompanyDao implements ICompanyDao {
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT id, name FROM " + this.getTableName(c) + " WHERE company.name "
-                                + "LIKE ? ORDER BY ISNULL(" + orderBy.toString() + "), " + orderBy.toString()
-                                + " ASC LIMIT ?,?",
+                                + "LIKE ? ORDER BY " + orderBy.toString() + " ASC LIMIT ?,?",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-            statement.setString(1, "%" + filterWord + "%");
+            statement.setString(1, filterWord + "%");
             statement.setInt(2, first);
             statement.setInt(3, nbRecord);
             statement.execute();
@@ -138,12 +146,14 @@ public enum CompanyDao implements ICompanyDao {
 
     @Override
     public long getNbRecords(final Class<Company> c, final String filterWord) {
+        this.LOGGER.trace("getNbRecords : c : " + c + "\tfilterWord : " + filterWord);
+
         long nbTotal = 0;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-            statement.setString(1, "%" + filterWord + "%");
+            statement.setString(1, filterWord + "%");
             statement.execute();
             try (ResultSet resultSet = statement.getResultSet();) {
                 if (resultSet.first()) {
@@ -159,6 +169,8 @@ public enum CompanyDao implements ICompanyDao {
 
     @Override
     public Optional<Company> update(final Company entity) {
+        this.LOGGER.trace("update : entity : " + entity);
+
         Company tmpEntity = null;
         try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
             try (PreparedStatement statement = connection.prepareStatement(

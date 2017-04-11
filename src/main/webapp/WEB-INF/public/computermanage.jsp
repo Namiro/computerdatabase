@@ -15,7 +15,7 @@
             role="form" data-toggle="validator">
             <fieldset>
                 <input name="${COMPUTER_ID}" hidden="true"
-                    value="${requestScope[COMPUTER_ID]}" />
+                    value="${requestScope[COMPUTER_ID]}" id="${COMPUTER_ID}"/>
 
                 <div class="form-group has-feedback">
                     <label for="${COMPUTER_NAME}">Computer name</label>
