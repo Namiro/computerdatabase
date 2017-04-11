@@ -19,8 +19,7 @@ public final class Utility {
      */
     public static void loadAndResetDatabase() {
         try {
-            final IDataSet dataSet = new FlatXmlDataSetBuilder().build(new File(
-                    "/home/excilys/Programs/eclipse/workspace/ComputerDatabase/src/test/resources/dataset.xml"));
+            final IDataSet dataSet = new FlatXmlDataSetBuilder().build(new File("src/test/resources/dataset.xml"));
             PropertiesManager.load();
             final IDatabaseTester databaseTester = new JdbcDatabaseTester("com.mysql.jdbc.Driver",
                     PropertiesManager.config.getString("database"), PropertiesManager.config.getString("dbuser"),
