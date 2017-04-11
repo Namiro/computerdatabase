@@ -85,6 +85,7 @@ public class ComputerListAndManageTest {
      * @throws Exception
      *             Exception
      */
+    @Ignore
     @Test
     public void testChangeNumberPerPage() {
         this.driver.get(this.baseUrl + "/ComputerDatabase/ComputerList");
@@ -201,6 +202,7 @@ public class ComputerListAndManageTest {
      * @throws Exception
      *             Exception
      */
+    @Ignore
     @Test
     public void testSearchComputer() {
         this.driver.get(this.baseUrl + "/ComputerDatabase/ComputerList");

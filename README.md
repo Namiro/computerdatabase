@@ -31,19 +31,18 @@ node {
     stage('Checkstyle') {
         step([$class: 'hudson.plugins.checkstyle.CheckStylePublisher', checkstyle: 'checkstyle.xml'])
     }
-    docker.image('mavenjavadock').inside {
-            stage('Build') {
-                // Run the maven build
-                sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean compile"
-            }
-            stage('Test') {
-                // Run the maven build
-                sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean test"
-            }
+    withDockerContainer(args: '-d --name=javamavendock --net=TestNetwork --ip 172.18.0.4 ', image: 'javamavendock') {
+        stage('Build') {
+            // Run the maven build
+            sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean compile"
+        }
+        stage('Test') {
+            // Run the maven build
+            sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean test"
         }
     }
     stage('Results') {
-        junit allowEmptyResults: true, testResults: 'toto'
+        junit '**/target/surfire-reports/TEST-*.xml'
         archive 'target/*.jar'
     }
 }
