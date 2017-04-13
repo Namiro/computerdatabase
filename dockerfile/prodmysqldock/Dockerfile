@@ -1,4 +1,6 @@
 FROM mysql/mysql-server:5.5
+MAINTAINER Junior Burleon
+
 ENV MYSQL_ROOT_PASSWORD=apql1161713
 
 EXPOSE 3306
