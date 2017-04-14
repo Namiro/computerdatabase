@@ -1,5 +1,4 @@
 # Computer - Database
-======
 
 [![Build Status](http://jenkinsmasterdock-1.0c2ef173.cont.dockerapp.io:32771/buildStatus/icon?job=ComputerDatabase)](http://jenkinsmasterdock-1.0c2ef173.cont.dockerapp.io:32771/job/ComputerDatabase/)
 
