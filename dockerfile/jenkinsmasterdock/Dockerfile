@@ -20,5 +20,5 @@ USER jenkins
 #VOLUME ["/usr/bin/docker"]
 
 ENV JAVA_OPTS="-Xmx1024m"
-ENV JENKINS_OPTS="--logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war""
+ENV JENKINS_OPTS="--logfile=/var/log/jenkins/jenkins.log --webroot=/var/cache/jenkins/war"
 
