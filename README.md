@@ -30,38 +30,35 @@ node {
     stage('Docker Preparation') { 
         sh "docker stop mysqldock || true"
         sh "docker rm mysqldock || true"
-        sh "docker run -d --name=mysqldock --net=TestNetwork --ip 172.18.0.2 mysqldock"
-        sh "docker volume create WarTransfer"
-        sh "docker volume create WarTransferProd"
+        sh "docker run -d --name=mysqldock --net=TestNetwork --ip 172.18.0.2 jburleon/mysqldock"
     }
     stage('Checkstyle') {
         step([$class: 'hudson.plugins.checkstyle.CheckStylePublisher', checkstyle: 'checkstyle.xml'])
     }
-    withDockerContainer(args: '-d --name=javamavendock --net=TestNetwork --ip 172.18.0.4 -v WarTransfer:/war -u 0', image: 'javamavendock') {
-        stage('Clean') {
-            sh "'${mvnHome}/bin/mvn' clean"
-        }
+    withDockerContainer(args: '-d --name=javamavendock --net=TestNetwork --ip 172.18.0.4 -v WarTransfer:/war -u 0', image: 'jburleon/javamavendock') {
         stage('Build') {
             sh "'${mvnHome}/bin/mvn' compile"
         }
         stage('Test') {
-            sh "'${mvnHome}/bin/mvn' -Dmaven.main.skip test"
+            sh "'${mvnHome}/bin/mvn' -Dmaven.compile.skip=true test"
         }
+    }
+    stage('Test rapport') {
+        junit '**/target/surefire-reports/TEST-*.xml'
+        archive 'target/*.jar'
+    }
+    withDockerContainer(args: '-d --name=javamavendock --net=TestNetwork --ip 172.18.0.4 -v /war:/war -u 0', image: 'jburleon/javamavendock') {
         stage('Package') {
-            sh "'${mvnHome}/bin/mvn' -Dmaven.main.skip -DskipTests package"
+            sh "'${mvnHome}/bin/mvn' -Dmaven.test.skip=true package"
         }
         stage('Transfer WAR') {
             sh "cp /var/jenkins_home/workspace/ComputerDatabase/target/*.war /war"
         }
     }
-    stage('Deploy WAR') {
+    stage('WAR Deployement') {
         sh "sudo cp /war/* /prod/"
     }
-    stage('Results') {
-        junit '**/target/surefire-reports/TEST-*.xml'
-        archive 'target/*.jar'
-    }
-        stage('Docker finalization') {
+    stage('Docker finalization') {
         sh "docker stop mysqldock"
         sh "docker rm mysqldock"
     }
@@ -82,12 +79,14 @@ On doit la construire l'image.
 Mais elle est run et remove a chaque build par jenkins.
 `docker run -d --name=mysqldock --net=TestNetwork --ip 172.18.0.2 mysqldock`
 `docker stop mysqldock; docker rm mysqldock;` 
+`docker tag mysqldock $DOCKER_ID_USER/mysqldock`
 
 ### La Database de prod (prodmysqldock)
 On construit l'image et la run une fois.
 `docker build -t prodmysqldock ./dockerfile/prodmysqldock`
 `docker run -d --name=prodmysqldock --net=ProdNetwork --ip 172.20.0.2 prodmysqldock`
 `docker stop prodmysqldock; docker rm prodmysqldock;` 
+`docker tag prodmysqldock $DOCKER_ID_USER/prodmysqldock`
 
 ### Maven et Java (javamavendock)
 On doit la construire l'image.
@@ -95,12 +94,14 @@ On doit la construire l'image.
 Mais elle est run et remove a chaque build par jenkins.
 `docker run -d --name=javamavendock --net=TestNetwork --ip 172.18.0.4 -v WarTransfer:/war javamavendock`
 `docker stop javamavendock; docker rm javamavendock;` 
+`docker tag javamavendock $DOCKER_ID_USER/javamavendock`
 
 ### Le Tomcat de prod (tomcatdock)
 On construit l'image et la run une fois.
 `docker build -t tomcatdock ./dockerfile/tomcatdock`
 `docker run -d --name=tomcatdock --net=ProdNetwork --ip 172.20.0.4 -v WarTransferProd:/usr/local/tomcat/webapps tomcatdock`
 `docker stop tomcatdock; docker rm tomcatdock;` 
+`docker tag tomcatdock $DOCKER_ID_USER/tomcatdock`
 
 ## Jenkins
 ### Le Jenkins data (jenkinsdatadock)
@@ -108,18 +109,17 @@ Il permet de conserver les données relative a jenkins master. On le construit e
 Si il est supprimé il sera nécessaire de reconfigurer jenkins. Mais il est possible de sauver les fichiers avant de le supprimer si nécessaire.
 `docker build -t jenkinsdatadock ./dockerfile/jenkinsdatadock`
 `docker run --name=jenkinsdatadock jenkinsdatadock`
+`docker tag jenkinsdatadock $DOCKER_ID_USER/jenkinsdatadock`
 
 ### Le Jenkins master (jenkinsmasterdock)
 `docker build -t jenkinsmasterdock ./dockerfile/jenkinsmasterdock`
 `docker run -p 8082:8080 -p 50000:50000 --name=jenkinsmasterdock --volumes-from=jenkinsdatadock -d -v /var/run/docker.sock:/var/run/docker.sock -v $(which docker):/usr/bin/docker -v WarTransfer:/war -v WarTransferProd:/prod jenkinsmasterdock`
 `docker stop jenkinsmasterdock; docker rm jenkinsmasterdock;`
+`docker tag jenkinsmasterdock $DOCKER_ID_USER/jenkinsmasterdock`
 
 ## Les volumes
 Volume partagé entre javamavendock & jenkinsmasterdock
 `docker volume create WarTransfer`
 Volume partagé entre jenkinsmasterdock & tomcatdock
 `docker volume create WarTransferProd`
-
-
-`docker start jenkinsmasterdock; docker start tomcatdock; docker start prodmysqldock; docker ps -a;`
 
