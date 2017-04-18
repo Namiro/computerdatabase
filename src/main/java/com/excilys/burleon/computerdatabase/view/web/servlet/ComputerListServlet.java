@@ -2,6 +2,7 @@
 package com.excilys.burleon.computerdatabase.view.web.servlet;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,24 +33,122 @@ import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
 @WebServlet("/ComputerList")
 public class ComputerListServlet extends HttpServlet {
 
+    /**
+     * This represent the process result.
+     *
+     */
+    private class ProcessResult {
+        public boolean success = false;
+        public String message = "The process result wasn't initialized";
+
+        /**
+         * The default constructor.
+         */
+        public ProcessResult() {
+        }
+
+        /**
+         * The full constructor.
+         *
+         * @param success
+         *            Process succeed or not
+         * @param message
+         *            The message returned by the process
+         */
+        public ProcessResult(final boolean success, final String message) {
+            this.success = success;
+            this.message = message;
+        }
+    }
+
+    /**
+     * Represent the working variable that we can receive or send with a
+     * request.
+     *
+     */
+    private class ProcessVariables {
+        public String filterWord = "";
+        public OrderComputerEnum orderBy = OrderComputerEnum.NAME;
+        public int recordsByPage = 20;
+        public int newCurrentPage = 1;
+        public List<Computer> listComputer;
+        public String[] split;
+    }
+
     private static final long serialVersionUID = -6681257837248708119L;
 
     Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
-
     private final IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
     private final IComputerService computerService = new ComputerService();
 
-    /* METHODE */
+    /**
+     * Allow to delete the computer.
+     *
+     * @param split
+     *            The list of computer ids that should be deleted
+     */
+    private ProcessResult deleteComputersProcess(final String[] split) {
+        try {
+            for (final String idStr : split) {
+                final Optional<
+                        Computer> computerOpt = this.computerService.get(Computer.class, Long.parseLong(idStr));
+                if (computerOpt.isPresent()) {
+                    this.computerService.remove(computerOpt.get());
+                }
+            }
+            this.LOGGER.info("Remove OK for : " + Arrays.toString(split));
+            return new ProcessResult(true, "Remove OK");
+        } catch (final ServiceException e) {
+            this.LOGGER.warn("Impossible to delete the computers", e);
+            return new ProcessResult(false, e.getMessage());
+        }
+    }
 
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
         this.LOGGER.trace("GET /ComputerList \t" + request.getRequestURI());
 
-        String filterWord = "";
-        OrderComputerEnum orderBy = OrderComputerEnum.NAME;
-        int recordsByPage = 20;
+        final ProcessVariables processVariables = this.getParameters(request);
 
+        this.pageService.setRecordsByPage(processVariables.recordsByPage);
+        this.pageService.setFilterWord(processVariables.filterWord);
+        this.pageService.setOrderBy(processVariables.orderBy);
+        this.pageService.page(processVariables.newCurrentPage);
+
+        this.setParameters(request, processVariables);
+
+        this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
+    }
+
+    @Override
+    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
+        this.LOGGER.trace("POST /ComputerList \t" + request.getRequestURI());
+
+        final ProcessVariables processVariables = this.getParameters(request);
+
+        ProcessResult processResult = new ProcessResult();
+
+        // If it is a deleting
+        if (request.getParameter(Data.SUBMIT_DELETE) != null) {
+            processResult = this.deleteComputersProcess(processVariables.split);
+        }
+
+        this.setParameters(request, processVariables, processResult);
+        this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
+    }
+
+    /**
+     * Allow to get the parameters from the JSP.
+     *
+     * @param request
+     *            The request
+     * @return Return the working variable initialized in function of the data
+     *         received in the request.
+     */
+    private ProcessVariables getParameters(final HttpServletRequest request) {
+        final ProcessVariables processVariables = new ProcessVariables();
         if (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
             request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE,
                     request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE));
@@ -60,86 +159,84 @@ public class ComputerListServlet extends HttpServlet {
         if (request.getParameter(Data.ORDER_BY) != null) {
             request.setAttribute(Data.ORDER_BY, request.getParameter(Data.ORDER_BY));
         }
-
-        filterWord = (String) request.getAttribute(Data.SEARCH_WORD);
         if (request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            recordsByPage = Integer.valueOf((String) request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
+            processVariables.recordsByPage = Integer
+                    .valueOf((String) request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
+        }
+        processVariables.newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
+                ? Integer.parseInt(request.getParameter(Data.PAGINATION_CURRENT_PAGE)) : 1;
+        if (request.getParameter(Data.SUBMIT_SEARCH) != null) {
+            processVariables.newCurrentPage = 1;
         }
         if (request.getAttribute(Data.ORDER_BY) != null) {
             switch ((String) request.getAttribute(Data.ORDER_BY)) {
                 case Data.ORDER_BY_1:
-                    orderBy = OrderComputerEnum.NAME;
+                    processVariables.orderBy = OrderComputerEnum.NAME;
                     break;
                 case Data.ORDER_BY_2:
-                    orderBy = OrderComputerEnum.INTRODUCE_DATE;
+                    processVariables.orderBy = OrderComputerEnum.INTRODUCE_DATE;
                     break;
                 case Data.ORDER_BY_3:
-                    orderBy = OrderComputerEnum.DISCONTINUE_DATE;
+                    processVariables.orderBy = OrderComputerEnum.DISCONTINUE_DATE;
                     break;
                 case Data.ORDER_BY_4:
-                    orderBy = OrderComputerEnum.COMPANY_NAME;
+                    processVariables.orderBy = OrderComputerEnum.COMPANY_NAME;
                     break;
                 default:
                     break;
             }
         }
 
-        int newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
-                ? Integer.parseInt(request.getParameter(Data.PAGINATION_CURRENT_PAGE)) : 1;
-        if (request.getParameter(Data.SUBMIT_SEARCH) != null) {
-            newCurrentPage = 1;
-        }
+        processVariables.filterWord = (String) request.getAttribute(Data.SEARCH_WORD);
 
-        recordsByPage = (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null)
-                ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE)) : recordsByPage;
-        this.pageService.setRecordsByPage(recordsByPage);
-        this.pageService.setFilterWord(filterWord);
-        this.pageService.setOrderBy(orderBy);
-        final List<Computer> listComputer = this.pageService.page(newCurrentPage);
+        processVariables.recordsByPage = (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null)
+                ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE))
+                : processVariables.recordsByPage;
 
-        request.setAttribute(Data.LIST_COMPUTER, ComputerMapper.INSTANCE.toComputerDTO(listComputer));
-        request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
-                this.computerService.getTotalRecords(Computer.class, filterWord));
-        request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
-        request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
-        request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, recordsByPage);
-        request.setAttribute(Data.SEARCH_WORD, filterWord);
-        this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
+        processVariables.split = request.getParameter(Data.SUBMIT_DELETE).split(",");
+
+        return processVariables;
     }
 
-    @Override
-    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
-        this.LOGGER.trace("POST /ComputerList \t" + request.getRequestURI());
+    /**
+     * Allow to set the parameters for the JSP.
+     *
+     * @param request
+     *            The request
+     * @param processVariables
+     *            The working variables
+     */
+    private void setParameters(final HttpServletRequest request, final ProcessVariables processVariables) {
+        this.setParameters(request, null);
+    }
 
-        final String filterWord = (String) request.getAttribute(Data.SEARCH_WORD);
+    /**
+     * Allow to set the parameters for the JSP.
+     *
+     * @param request
+     *            The request
+     * @param processVariables
+     *            The working variables
+     * @param processResult
+     *            The result of a process
+     */
+    private void setParameters(final HttpServletRequest request, final ProcessVariables processVariables,
+            final ProcessResult processResult) {
+        request.setAttribute(Data.LIST_COMPUTER,
+                ComputerMapper.INSTANCE.toComputerDTO(processVariables.listComputer));
+        request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
+                this.computerService.getTotalRecords(Computer.class, processVariables.filterWord));
+        request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
+        request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
+        request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, processVariables.recordsByPage);
+        request.setAttribute(Data.SEARCH_WORD, processVariables.filterWord);
 
-        try {
-            // If it is a deleting
-            if (request.getParameter(Data.SUBMIT_DELETE) != null) {
-                final String[] split = request.getParameter(Data.SUBMIT_DELETE).split(",");
-                for (final String idStr : split) {
-                    final Optional<Computer> computerOpt = this.computerService.get(Computer.class,
-                            Long.parseLong(idStr));
-                    if (computerOpt.isPresent()) {
-                        this.computerService.remove(computerOpt.get());
-                    }
-                }
+        if (processResult != null) {
+            if (processResult.success) {
+                request.setAttribute(Data.MESSAGE_SUCCESS, processResult.message);
+            } else {
+                request.setAttribute(Data.MESSAGE_ERROR, processResult.message);
             }
-        } catch (final ServiceException e) {
-            // Error message
-            request.setAttribute(Data.MESSAGE_ERROR, e.getMessage());
-            this.LOGGER.warn("Impossible to delete the computers", e);
-            this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
-        } finally {
-            request.setAttribute(Data.LIST_COMPUTER, this.pageService.refresh());
-            request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
-                    this.computerService.getTotalRecords(Computer.class, filterWord));
-            request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
-            request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
-            request.setAttribute(Data.SEARCH_WORD, filterWord);
-            request.setAttribute(Data.MESSAGE_SUCCESS, "Remove OK");
-            this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
         }
     }
 }
