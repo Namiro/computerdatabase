@@ -141,7 +141,7 @@ docker stop jenkinsmasterdock; docker rm jenkinsmasterdock;
 docker tag jenkinsmasterdock $DOCKER_ID_USER/jenkinsmasterdock
 ```
 
-### Sonar
+### Sonar (In preparation)
 #### Sonar (sonardock)
 The sonar server to check the quality code.
 ```sh
