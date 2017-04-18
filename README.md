@@ -1,7 +1,6 @@
 # Computer - Database
-
+======
 [![Build Status](http://jenkinsmasterdock-1.0c2ef173.cont.dockerapp.io:32771/buildStatus/icon?job=ComputerDatabase)](http://jenkinsmasterdock-1.0c2ef173.cont.dockerapp.io:32771/job/ComputerDatabase/)
-
 This project is just a simple web site to manage computers and companies.
 Training project to learn and practice :
 - Java JSP
@@ -142,11 +141,11 @@ docker stop jenkinsmasterdock; docker rm jenkinsmasterdock;
 docker tag jenkinsmasterdock $DOCKER_ID_USER/jenkinsmasterdock
 ```
 
-### Sonar (In preparation)
+### Sonar
 #### Sonar (sonardock)
 The sonar server to check the quality code.
 ```sh
-docker build ./dockerfile/sonardock  --tag="jburleon/sonardock" -t sonardock
+docker build -t sonardock ./dockerfile/sonardock --tag="jburleon/sonarqube"
 docker run -p 8082:8080 -p 9000:9000 --link sonarmysqldock:db --name=sonardock  sonardock
 docker stop sonardock; docker rm sonardock;
 docker tag sonardock $DOCKER_ID_USER/sonardock
