@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
-import com.excilys.burleon.computerdatabase.service.tool.PropertiesManager;
+import com.excilys.burleon.computerdatabase.service.util.PropertiesManager;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import com.zaxxer.hikari.pool.HikariPool.PoolInitializationException;

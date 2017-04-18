@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.service.tool;
+package com.excilys.burleon.computerdatabase.service.util;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

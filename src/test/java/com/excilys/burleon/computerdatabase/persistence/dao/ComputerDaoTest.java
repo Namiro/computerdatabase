@@ -15,7 +15,7 @@ import org.junit.Test;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
-import com.excilys.burleon.computerdatabase.tool.Utility;
+import com.excilys.burleon.computerdatabase.util.Utility;
 
 /**
  * @author Junior Burléon

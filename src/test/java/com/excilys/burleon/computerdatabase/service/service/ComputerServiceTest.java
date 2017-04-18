@@ -27,7 +27,7 @@ import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
-import com.excilys.burleon.computerdatabase.tool.Utility;
+import com.excilys.burleon.computerdatabase.util.Utility;
 
 /**
  * @author Junior Burléon

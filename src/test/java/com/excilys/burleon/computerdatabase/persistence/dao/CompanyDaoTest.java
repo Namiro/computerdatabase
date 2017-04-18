@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
-import com.excilys.burleon.computerdatabase.tool.Utility;
+import com.excilys.burleon.computerdatabase.util.Utility;
 
 /**
  * @author Junior Burléon

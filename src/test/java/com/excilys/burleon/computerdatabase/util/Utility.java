@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.tool;
+package com.excilys.burleon.computerdatabase.util;
 
 import java.io.File;
 
@@ -8,7 +8,7 @@ import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 
-import com.excilys.burleon.computerdatabase.service.tool.PropertiesManager;
+import com.excilys.burleon.computerdatabase.service.util.PropertiesManager;
 
 public final class Utility {
 

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
-import com.excilys.burleon.computerdatabase.service.tool.Utility;
+import com.excilys.burleon.computerdatabase.service.util.Utility;
 import com.excilys.burleon.computerdatabase.view.model.CompanyDTO;
 import com.excilys.burleon.computerdatabase.view.model.ComputerDTO;
 
