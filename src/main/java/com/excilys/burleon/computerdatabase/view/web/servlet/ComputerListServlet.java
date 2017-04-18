@@ -25,41 +25,15 @@ import com.excilys.burleon.computerdatabase.service.service.PageService;
 import com.excilys.burleon.computerdatabase.view.model.mapper.ComputerMapper;
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
+import com.excilys.burleon.computerdatabase.view.web.iservlet.IHttpServlet;
+import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
 
 /**
  *
  * @author Junior Burléon
  */
 @WebServlet("/ComputerList")
-public class ComputerListServlet extends HttpServlet {
-
-    /**
-     * This represent the process result.
-     *
-     */
-    private class ProcessResult {
-        public boolean success = false;
-        public String message = "The process result wasn't initialized";
-
-        /**
-         * The default constructor.
-         */
-        public ProcessResult() {
-        }
-
-        /**
-         * The full constructor.
-         *
-         * @param success
-         *            Process succeed or not
-         * @param message
-         *            The message returned by the process
-         */
-        public ProcessResult(final boolean success, final String message) {
-            this.success = success;
-            this.message = message;
-        }
-    }
+public class ComputerListServlet extends HttpServlet implements IHttpServlet {
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -76,9 +50,9 @@ public class ComputerListServlet extends HttpServlet {
     }
 
     private static final long serialVersionUID = -6681257837248708119L;
-
     Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
     private final IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
+
     private final IComputerService computerService = new ComputerService();
 
     /**
@@ -139,15 +113,8 @@ public class ComputerListServlet extends HttpServlet {
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
     }
 
-    /**
-     * Allow to get the parameters from the JSP.
-     *
-     * @param request
-     *            The request
-     * @return Return the working variable initialized in function of the data
-     *         received in the request.
-     */
-    private ProcessVariables getParameters(final HttpServletRequest request) {
+    @Override
+    public ProcessVariables getParameters(final HttpServletRequest request) {
         final ProcessVariables processVariables = new ProcessVariables();
         if (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
             request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE,
@@ -198,45 +165,19 @@ public class ComputerListServlet extends HttpServlet {
         return processVariables;
     }
 
-    /**
-     * Allow to set the parameters for the JSP.
-     *
-     * @param request
-     *            The request
-     * @param processVariables
-     *            The working variables
-     */
-    private void setParameters(final HttpServletRequest request, final ProcessVariables processVariables) {
-        this.setParameters(request, null);
-    }
-
-    /**
-     * Allow to set the parameters for the JSP.
-     *
-     * @param request
-     *            The request
-     * @param processVariables
-     *            The working variables
-     * @param processResult
-     *            The result of a process
-     */
-    private void setParameters(final HttpServletRequest request, final ProcessVariables processVariables,
+    @Override
+    public void setParameters(final HttpServletRequest request, final Object processVariables,
             final ProcessResult processResult) {
+        IHttpServlet.super.setParameters(request, processVariables, processResult);
+
+        final ProcessVariables _processVariables = (ProcessVariables) processVariables;
         request.setAttribute(Data.LIST_COMPUTER,
-                ComputerMapper.INSTANCE.toComputerDTO(processVariables.listComputer));
+                ComputerMapper.INSTANCE.toComputerDTO(_processVariables.listComputer));
         request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
-                this.computerService.getTotalRecords(Computer.class, processVariables.filterWord));
+                this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
         request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
         request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
-        request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, processVariables.recordsByPage);
-        request.setAttribute(Data.SEARCH_WORD, processVariables.filterWord);
-
-        if (processResult != null) {
-            if (processResult.success) {
-                request.setAttribute(Data.MESSAGE_SUCCESS, processResult.message);
-            } else {
-                request.setAttribute(Data.MESSAGE_ERROR, processResult.message);
-            }
-        }
+        request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
+        request.setAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
     }
 }
