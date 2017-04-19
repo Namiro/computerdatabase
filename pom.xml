@@ -4,7 +4,7 @@
     <groupId>com.excilys.burleon</groupId>
     <artifactId>ComputerDatabase</artifactId>
     <packaging>war</packaging>
-    <version>4.0.0-RELEASE</version>
+    <version>4.0.1-SNAPSHOT</version>
     <name>ComputerDatabase Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <properties>
@@ -33,9 +33,9 @@
         <version.plugin.checkstyle>2.17</version.plugin.checkstyle>
         <version.plugin.tomcat>2.2</version.plugin.tomcat>
         <maven-CS.plugin.version>2.17</maven-CS.plugin.version>
-        <version.maven-surefire.plugin>2.18</version.maven-surefire.plugin>
-        <version.maven-failsafe.plugin>2.19.1</version.maven-failsafe.plugin>
-        <version.maven2-cargo.plugin>1.4.16</version.maven2-cargo.plugin>
+        <version.plugin.maven-surefire>2.19.1</version.plugin.maven-surefire>
+        <version.plugin.maven-failsafe>2.19.1</version.plugin.maven-failsafe>
+        <version.plugin.maven2-cargo>1.4.16</version.plugin.maven2-cargo>
     </properties>
     <build>
         <finalName>ComputerDatabase</finalName>
@@ -70,16 +70,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Pjugin to skip test -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19.1</version>
-                <configuration>
-                    <skipTests>${skiptest}</skipTests>
-                </configuration>
-            </plugin>
-
             <!-- Eclipse project -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -94,22 +84,24 @@
                 </configuration>
             </plugin>
 
-            <!-- Exclude integration tests from testing phase -->
+            <!-- Exclude integration tests from testing phase & Plugin to skip test -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${version.maven-surefire.plugin}</version>
+                <version>${version.plugin.maven-surefire}</version>
                 <configuration>
+                    <skipTests>${skiptest}</skipTests>
                     <excludes>
                         <exclude>**/integration/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
+            
             <!-- Include integration tests into integration tests phase -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${version.maven-failsafe.plugin}</version>
+                <version>${version.plugin.maven-failsafe}</version>
                 <configuration>
                     <includes>
                         <include>**/integration/**</include>
@@ -130,7 +122,7 @@
             <plugin>
                 <groupId>org.codehaus.cargo</groupId>
                 <artifactId>cargo-maven2-plugin</artifactId>
-                <version>${version.maven2-cargo.plugin}</version>
+                <version>${version.plugin.maven2-cargo}</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
