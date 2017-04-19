@@ -83,14 +83,14 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
             throws ServletException, IOException {
         this.LOGGER.trace("GET /ComputerList \t" + request.getRequestURI());
 
-        final ProcessVariables processVariables = this.getParameters(request);
+        final ProcessVariables processVariables = this.getProcessVariables(request);
 
         this.pageService.setRecordsByPage(processVariables.recordsByPage);
         this.pageService.setFilterWord(processVariables.filterWord);
         this.pageService.setOrderBy(processVariables.orderBy);
-        this.pageService.page(processVariables.newCurrentPage);
+        processVariables.listComputer = this.pageService.page(processVariables.newCurrentPage);
 
-        this.setParameters(request, processVariables);
+        this.populateRequest(request, processVariables);
 
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
     }
@@ -100,7 +100,7 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
             throws ServletException, IOException {
         this.LOGGER.trace("POST /ComputerList \t" + request.getRequestURI());
 
-        final ProcessVariables processVariables = this.getParameters(request);
+        final ProcessVariables processVariables = this.getProcessVariables(request);
 
         ProcessResult processResult = new ProcessResult();
 
@@ -109,12 +109,13 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
             processResult = this.deleteComputersProcess(processVariables.split);
         }
 
-        this.setParameters(request, processVariables, processResult);
+        processVariables.listComputer = this.pageService.page(processVariables.newCurrentPage);
+        this.populateRequest(request, processVariables, processResult);
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
     }
 
     @Override
-    public ProcessVariables getParameters(final HttpServletRequest request) {
+    public ProcessVariables getProcessVariables(final HttpServletRequest request) {
         final ProcessVariables processVariables = new ProcessVariables();
         if (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
             request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE,
@@ -129,6 +130,9 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
         if (request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
             processVariables.recordsByPage = Integer
                     .valueOf((String) request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
+        }
+        if (request.getParameter(Data.SUBMIT_DELETE) != null) {
+            processVariables.split = request.getParameter(Data.SUBMIT_DELETE).split(",");
         }
         processVariables.newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
                 ? Integer.parseInt(request.getParameter(Data.PAGINATION_CURRENT_PAGE)) : 1;
@@ -160,19 +164,16 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
                 ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE))
                 : processVariables.recordsByPage;
 
-        processVariables.split = request.getParameter(Data.SUBMIT_DELETE).split(",");
-
         return processVariables;
     }
 
     @Override
-    public void setParameters(final HttpServletRequest request, final Object processVariables,
+    public void populateRequest(final HttpServletRequest request, final Object processVariables,
             final ProcessResult processResult) {
-        IHttpServlet.super.setParameters(request, processVariables, processResult);
+        IHttpServlet.super.populateRequest(request, processVariables, processResult);
 
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
-        request.setAttribute(Data.LIST_COMPUTER,
-                ComputerMapper.INSTANCE.toComputerDTO(_processVariables.listComputer));
+        request.setAttribute(Data.LIST_COMPUTER, ComputerMapper.toComputerDTO(_processVariables.listComputer));
         request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
                 this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
         request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());

@@ -16,7 +16,7 @@ public interface IHttpServlet {
      * @return Return the working variable initialized in function of the data
      *         received in the request.
      */
-    Object getParameters(final HttpServletRequest request);
+    Object getProcessVariables(final HttpServletRequest request);
 
     /**
      * Allow to set the parameters for the JSP.
@@ -26,8 +26,8 @@ public interface IHttpServlet {
      * @param processVariables
      *            The working variables
      */
-    default void setParameters(final HttpServletRequest request, final Object processVariables) {
-        this.setParameters(request, null);
+    default void populateRequest(final HttpServletRequest request, final Object processVariables) {
+        this.populateRequest(request, processVariables, null);
     }
 
     /**
@@ -40,11 +40,11 @@ public interface IHttpServlet {
      * @param processResult
      *            The result of a process
      */
-    default void setParameters(final HttpServletRequest request, final Object processVariables,
+    default void populateRequest(final HttpServletRequest request, final Object processVariables,
             final ProcessResult processResult) {
 
         if (processResult != null) {
-            if (processResult.success) {
+            if (processResult.isSuccess) {
                 request.setAttribute(Data.MESSAGE_SUCCESS, processResult.message);
             } else {
                 request.setAttribute(Data.MESSAGE_ERROR, processResult.message);

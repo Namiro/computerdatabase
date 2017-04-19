@@ -6,6 +6,16 @@ public class CompanyDTO {
     public String id = "";
     public String name = "";
 
+    public CompanyDTO() {
+
+    }
+
+    public CompanyDTO(final String id, final String name) {
+        super();
+        this.id = id;
+        this.name = name;
+    }
+
     public String getId() {
         return this.id;
     }

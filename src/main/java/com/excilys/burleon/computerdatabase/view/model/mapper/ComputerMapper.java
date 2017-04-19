@@ -9,16 +9,7 @@ import com.excilys.burleon.computerdatabase.service.util.Utility;
 import com.excilys.burleon.computerdatabase.view.model.CompanyDTO;
 import com.excilys.burleon.computerdatabase.view.model.ComputerDTO;
 
-public enum ComputerMapper {
-
-    INSTANCE;
-
-    /**
-     * Default constructor.
-     */
-    ComputerMapper() {
-
-    }
+public class ComputerMapper {
 
     /**
      * To map a Computer from the view to a Computer for the services.
@@ -27,7 +18,7 @@ public enum ComputerMapper {
      *            The DTO
      * @return The computer for the service
      */
-    public Computer toComputer(final ComputerDTO computerDTO) {
+    public static Computer toComputer(final ComputerDTO computerDTO) {
         if (computerDTO.id.equals("")) {
             computerDTO.id = "0";
         }
@@ -49,26 +40,13 @@ public enum ComputerMapper {
     }
 
     /**
-     * To map a list of computer DTO.
-     *
-     * @param computerDTOs
-     *            A list of computer DTO
-     * @return A list of computer for service
-     */
-    public List<Computer> toComputer(final List<ComputerDTO> computerDTOs) {
-        final List<Computer> computers = new ArrayList<>();
-        computerDTOs.forEach(computerDTO -> computers.add(ComputerMapper.INSTANCE.toComputer(computerDTO)));
-        return computers;
-    }
-
-    /**
      * To map a Computer from the view to a Computer for the services.
      *
      * @param computer
      *            The computer for the service
      * @return The DTO
      */
-    public ComputerDTO toComputerDTO(final Computer computer) {
+    public static ComputerDTO toComputerDTO(final Computer computer) {
         final ComputerDTO computerDTO = new ComputerDTO();
         final CompanyDTO companyDTO = new CompanyDTO();
         computerDTO.id = computer.getId() + "";
@@ -90,9 +68,22 @@ public enum ComputerMapper {
      *            A list of computer for service
      * @return A list of computer DTO
      */
-    public List<ComputerDTO> toComputerDTO(final List<Computer> computers) {
+    public static List<ComputerDTO> toComputerDTO(final List<Computer> computers) {
         final List<ComputerDTO> computerDTOs = new ArrayList<>();
-        computers.forEach(computer -> computerDTOs.add(ComputerMapper.INSTANCE.toComputerDTO(computer)));
+        computers.forEach(computer -> computerDTOs.add(ComputerMapper.toComputerDTO(computer)));
         return computerDTOs;
+    }
+
+    /**
+     * To map a list of computer DTO.
+     *
+     * @param computerDTOs
+     *            A list of computer DTO
+     * @return A list of computer for service
+     */
+    public List<Computer> toComputer(final List<ComputerDTO> computerDTOs) {
+        final List<Computer> computers = new ArrayList<>();
+        computerDTOs.forEach(computerDTO -> computers.add(ComputerMapper.toComputer(computerDTO)));
+        return computers;
     }
 }

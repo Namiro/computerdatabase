@@ -6,16 +6,7 @@ import java.util.List;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.view.model.CompanyDTO;
 
-public enum CompanyMapper {
-
-    INSTANCE;
-
-    /**
-     * Default constructor.
-     */
-    CompanyMapper() {
-
-    }
+public class CompanyMapper {
 
     /**
      * To map a Company from the view to a Company for the services.
@@ -24,7 +15,7 @@ public enum CompanyMapper {
      *            The DTO
      * @return The company for the service
      */
-    public Company toCompany(final CompanyDTO companyDTO) {
+    public static Company toCompany(final CompanyDTO companyDTO) {
         if (companyDTO.id.equals("")) {
             companyDTO.id = "0";
         }
@@ -38,9 +29,9 @@ public enum CompanyMapper {
      *            A list of company DTO
      * @return A list of company for service
      */
-    public List<Company> toCompany(final List<CompanyDTO> companyDTOs) {
+    public static List<Company> toCompany(final List<CompanyDTO> companyDTOs) {
         final List<Company> companys = new ArrayList<>();
-        companyDTOs.forEach(companyDTO -> companys.add(CompanyMapper.INSTANCE.toCompany(companyDTO)));
+        companyDTOs.forEach(companyDTO -> companys.add(CompanyMapper.toCompany(companyDTO)));
         return companys;
     }
 
@@ -51,7 +42,7 @@ public enum CompanyMapper {
      *            The company for the service
      * @return The DTO
      */
-    public CompanyDTO toCompanyDTO(final Company company) {
+    public static CompanyDTO toCompanyDTO(final Company company) {
         final CompanyDTO companyDTO = new CompanyDTO();
         companyDTO.id = company.getId() + "";
         companyDTO.name = company.getName();
@@ -65,9 +56,9 @@ public enum CompanyMapper {
      *            A list of company for service
      * @return A list of company DTO
      */
-    public List<CompanyDTO> toCompanyDTO(final List<Company> companys) {
+    public static List<CompanyDTO> toCompanyDTO(final List<Company> companys) {
         final List<CompanyDTO> companyDTOs = new ArrayList<>();
-        companys.forEach(company -> companyDTOs.add(CompanyMapper.INSTANCE.toCompanyDTO(company)));
+        companys.forEach(company -> companyDTOs.add(CompanyMapper.toCompanyDTO(company)));
         return companyDTOs;
     }
 }
