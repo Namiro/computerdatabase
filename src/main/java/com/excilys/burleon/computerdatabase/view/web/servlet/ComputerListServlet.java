@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
@@ -172,7 +174,9 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
     }
 
     @Override
-    public void init() throws ServletException {
+    public void init(final ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
         this.pageService.setModelService(this.computerService);
     }
 

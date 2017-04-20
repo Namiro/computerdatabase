@@ -8,6 +8,7 @@ package com.excilys.burleon.computerdatabase.view.web.servlet;
 import java.io.IOException;
 import java.util.Optional;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,16 +18,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
-import com.excilys.burleon.computerdatabase.service.service.CompanyService;
-import com.excilys.burleon.computerdatabase.service.service.ComputerService;
-import com.excilys.burleon.computerdatabase.spring.ApplicationContextProvider;
 import com.excilys.burleon.computerdatabase.view.model.CompanyDTO;
 import com.excilys.burleon.computerdatabase.view.model.ComputerDTO;
 import com.excilys.burleon.computerdatabase.view.model.mapper.CompanyMapper;
@@ -56,10 +56,12 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
 
     private static final long serialVersionUID = -922272733938052338L;
     Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
-    public IComputerService computerService = ApplicationContextProvider.getApplicationContext()
-            .getBean(ComputerService.class);
-    public ICompanyService companyService = ApplicationContextProvider.getApplicationContext()
-            .getBean(CompanyService.class);
+
+    @Autowired
+    public IComputerService computerService;
+
+    @Autowired
+    public ICompanyService companyService;
 
     /* METHODE */
     @Override
@@ -144,6 +146,12 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
         }
 
         return processVariables;
+    }
+
+    @Override
+    public void init(final ServletConfig config) throws ServletException {
+        super.init(config);
+        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     /**
@@ -244,20 +252,3 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
         }
     }
 }
-
-/*
- * request.setAttribute(Data.COMPUTER_NAME,
- * processVariables.computer.getName());
- * request.setAttribute(Data.COMPUTER_INTRODUCE_DATE,
- * processVariables.computer.getIntroduced());
- * request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE,
- * processVariables.computer.getDiscontinued());
- * request.setAttribute(Data.LIST_COMPANY,
- * CompanyMapper.INSTANCE.toCompanyDTO(this.companyService.get(Company.class))
- * ); if (processVariables.computer.getCompany() != null) {
- * request.setAttribute(Data.COMPUTER_COMPANY_ID,
- * processVariables.computer.getCompany().getId()); } if
- * (!processVariables.computer.getId().equals("")) {
- * request.setAttribute(Data.COMPUTER_ID, processVariables.computer.getId());
- * }
- */

@@ -23,6 +23,9 @@ public class ApplicationInitializer implements WebApplicationInitializer {
     public void onStartup(final ServletContext servletContext) throws ServletException {
         final WebApplicationContext context = this.getContext();
         servletContext.addListener(new ContextLoaderListener(context));
+
+        // servletContext.setInitParameter("spring.profiles.active",
+        // "javaee");
     }
 
 }
