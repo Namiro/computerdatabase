@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.ICompanyDao;
@@ -22,25 +23,17 @@ import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderC
  * @author Junior Burleon
  *
  */
-public enum CompanyDao implements ICompanyDao {
-
-    INSTANCE;
+@Repository
+public class CompanyDao extends ADao<Company> implements ICompanyDao {
 
     private final Logger LOGGER = LoggerFactory.getLogger(CompanyDao.class);
-
-    /**
-     * Default constructor.
-     */
-    CompanyDao() {
-
-    }
 
     @Override
     public Optional<Company> create(final Company entity) {
         this.LOGGER.trace("create : entity : " + entity);
 
         Company tmpEntity = null;
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+        try (Connection connection = this.databaseConnection.getConnection();) {
             try (PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + this.getTableName(entity.getClass()) + " SET name = ?",
                     Statement.RETURN_GENERATED_KEYS);) {
@@ -68,7 +61,7 @@ public enum CompanyDao implements ICompanyDao {
         this.LOGGER.trace("find : class : " + c);
 
         final ArrayList<Company> entities = new ArrayList<>();
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT id, name FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);) {
@@ -91,7 +84,7 @@ public enum CompanyDao implements ICompanyDao {
         this.LOGGER.trace("findById : class : " + c + "\tid : " + id);
 
         Company tmpEntity = null;
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT id, name FROM " + this.getTableName(c) + " WHERE id = ?",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
@@ -123,7 +116,7 @@ public enum CompanyDao implements ICompanyDao {
         }
 
         final ArrayList<Company> entities = new ArrayList<>();
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT id, name FROM " + this.getTableName(c) + " WHERE company.name "
                                 + "LIKE ? ORDER BY " + orderBy.toString() + " ASC LIMIT ?,?",
@@ -149,7 +142,7 @@ public enum CompanyDao implements ICompanyDao {
         this.LOGGER.trace("getNbRecords : c : " + c + "\tfilterWord : " + filterWord);
 
         long nbTotal = 0;
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT count(*) as total FROM " + this.getTableName(c) + " WHERE name LIKE ?",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
@@ -172,7 +165,7 @@ public enum CompanyDao implements ICompanyDao {
         this.LOGGER.trace("update : entity : " + entity);
 
         Company tmpEntity = null;
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+        try (Connection connection = this.databaseConnection.getConnection();) {
             try (PreparedStatement statement = connection.prepareStatement(
                     "UPDATE " + this.getTableName(entity.getClass()) + " SET name = ? WHERE id = ?",
                     ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {

@@ -1,20 +1,14 @@
 package com.excilys.burleon.computerdatabase.persistence.idao;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
-import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
-import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
 
 public interface IDao<E extends IEntity> {
 
@@ -38,22 +32,7 @@ public interface IDao<E extends IEntity> {
      *            The db connection
      * @return boolean Success -> True else false.
      */
-    default boolean delete(final E entity, final Connection connection) {
-        IModelService.LOGGER.trace("delete : entity : " + entity);
-
-        boolean success = true;
-        try (PreparedStatement statement = connection.prepareStatement(
-                "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
-                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
-            statement.setLong(1, entity.getId());
-            statement.executeUpdate();
-        } catch (final SQLException e) {
-            success = false;
-            IDao.LOGGER.error(e.getMessage());
-            throw new PersistenceException(e);
-        }
-        return success;
-    }
+    boolean delete(final E entity, final Connection connection);
 
     /**
      * Method to get all element from the database.
@@ -102,26 +81,7 @@ public interface IDao<E extends IEntity> {
      *            The type of entity
      * @return The number of records for this entity
      */
-    default long getNbRecords(final Class<E> c) {
-        IModelService.LOGGER.trace("getNbRecords : class : " + c);
-
-        long nbTotal = 0;
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
-                PreparedStatement statement = connection.prepareStatement(
-                        "SELECT count(*) as total FROM " + this.getTableName(c), ResultSet.TYPE_SCROLL_SENSITIVE,
-                        ResultSet.CONCUR_UPDATABLE);) {
-            statement.execute();
-            try (ResultSet resultSet = statement.getResultSet();) {
-                if (resultSet.first()) {
-                    nbTotal = resultSet.getLong("total");
-                }
-            }
-        } catch (final SQLException e) {
-            IDao.LOGGER.error(e.getMessage());
-            throw new PersistenceException(e);
-        }
-        return nbTotal;
-    }
+    long getNbRecords(final Class<E> c);
 
     /**
      *
@@ -144,7 +104,6 @@ public interface IDao<E extends IEntity> {
      * @return The table Name
      */
     default String getTableName(final Class<? extends IEntity> clazz) {
-
         return clazz.getSimpleName().toLowerCase();
     }
 

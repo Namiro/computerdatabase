@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
@@ -31,18 +32,10 @@ import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderC
  * @author Junior Burleon
  *
  */
-public enum ComputerDao implements IComputerDao {
-
-    INSTANCE;
+@Repository
+public class ComputerDao extends ADao<Computer> implements IComputerDao {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ComputerDao.class);
-
-    /**
-     * Default constructor.
-     */
-    ComputerDao() {
-
-    }
 
     @Override
     public Optional<Computer> create(final Computer entity) {
@@ -51,7 +44,7 @@ public enum ComputerDao implements IComputerDao {
         final Computer centity = entity;
         Computer tmpEntity = null;
 
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+        try (Connection connection = this.databaseConnection.getConnection();) {
             try (PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO " + this.getTableName(entity.getClass())
                             + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? ",
@@ -130,7 +123,7 @@ public enum ComputerDao implements IComputerDao {
         this.LOGGER.trace("find : class : " + c);
 
         final ArrayList<Computer> entities = new ArrayList<>();
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
@@ -162,7 +155,7 @@ public enum ComputerDao implements IComputerDao {
         this.LOGGER.trace("findById : class : " + c + "\tid : " + id);
 
         Computer entity = null;
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
@@ -205,7 +198,7 @@ public enum ComputerDao implements IComputerDao {
 
         ArrayList<Computer> entities = new ArrayList<>();
 
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
@@ -245,7 +238,7 @@ public enum ComputerDao implements IComputerDao {
         this.LOGGER.trace("getNbRecords : c : " + c + "\tfilterWord : " + filterWord);
 
         long nbTotal = 0;
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();
+        try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         "SELECT count(*) as total FROM " + this.getTableName(c)
                                 + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
@@ -273,7 +266,7 @@ public enum ComputerDao implements IComputerDao {
         final Computer centity = entity;
         Computer tmpEntity = null;
 
-        try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+        try (Connection connection = this.databaseConnection.getConnection();) {
             try (PreparedStatement statement = connection.prepareStatement(
                     "UPDATE " + this.getTableName(entity.getClass())
                             + " SET name = ?, introduced = ?, discontinued = ?, company_id = ? "
