@@ -1,16 +1,11 @@
 package com.excilys.burleon.computerdatabase.service.iservice;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
-import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
-import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
@@ -52,10 +47,7 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The entity type
      * @return A entity with a type domain class or Null if not exist
      */
-    default List<E> get(final Class<E> entityType) {
-        IModelService.LOGGER.trace("get : entityType : " + entityType);
-        return DaoFactory.INSTANCE.getDao(entityType).find(entityType);
-    }
+    List<E> get(final Class<E> entityType);
 
     /**
      * Get one entity.
@@ -66,16 +58,7 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The entity id
      * @return A entity with a type domain class or Null if not exist
      */
-    default Optional<E> get(final Class<E> entityType, final long id) {
-        IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id);
-        if (id > 0) {
-            IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND OK");
-            return DaoFactory.INSTANCE.getDao(entityType).findById(entityType, id);
-        } else {
-            IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id + " FIND KO");
-            return Optional.empty();
-        }
-    }
+    Optional<E> get(final Class<E> entityType, final long id);
 
     /**
      * To get a page.
@@ -93,22 +76,8 @@ public interface IModelService<E extends IEntity> extends IService {
      * @return A list of entity that match with the page asked and the filter
      *         word.
      */
-    default List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage,
-            final String filterWord, final IOrderEnum<E> orderBy) {
-        IModelService.LOGGER
-                .trace("getPage : entityType " + entityType + "\tpageNumber : " + pageNumber + "\trecordsByPage : "
-                        + recordsByPage + "\torderBy : " + orderBy + "\tfilterWord : " + filterWord);
-        final List<E> list = DaoFactory.INSTANCE.getDao(entityType).findRange(entityType,
-                (pageNumber - 1) * recordsByPage, recordsByPage, filterWord, orderBy);
-
-        if (list == null || list.isEmpty()) {
-            IModelService.LOGGER.error(
-                    "getPage : entityType " + entityType + "\tpageNumber : " + pageNumber + "\trecordsByPage : "
-                            + recordsByPage + "\torderBy : " + orderBy + "\tfilterWord : " + filterWord);
-        }
-
-        return list;
-    }
+    List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage,
+            final String filterWord, final IOrderEnum<E> orderBy);
 
     /**
      * Method to get the table name. The table name is the name of the entity
@@ -131,14 +100,7 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The word that will be used to filter the result
      * @return the total number of records that match with the filter word
      */
-    default long getTotalRecords(final Class<E> entityType, String filterWord) {
-        IModelService.LOGGER
-                .trace("getTotalRecords : entityType : " + entityType + "\tfilterWord : " + filterWord);
-        if (filterWord == null) {
-            filterWord = "";
-        }
-        return DaoFactory.INSTANCE.getDao(entityType).getNbRecords(entityType, filterWord);
-    }
+    long getTotalRecords(final Class<E> entityType, String filterWord);
 
     /**
      * Remove the entity.
@@ -147,18 +109,7 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The entity to remove
      * @return True if OK & False is not OK
      */
-    default boolean remove(final E entity) {
-        IModelService.LOGGER.trace("remove : entity : " + entity);
-        if (entity != null && entity.getId() > 0) {
-            try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
-                return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).delete(entity, connection);
-            } catch (final SQLException e) {
-                throw new ServiceException("Impossible to get a connection", e);
-            }
-        } else {
-            return false;
-        }
-    }
+    boolean remove(final E entity);
 
     /**
      * Create or update the entity.
@@ -170,15 +121,5 @@ public interface IModelService<E extends IEntity> extends IService {
      * @throws ServiceException
      *             If the check data fail
      */
-    default Optional<E> save(final E entity) throws ServiceException {
-        IModelService.LOGGER.trace("save : entity : " + entity);
-
-        this.checkDataEntity(entity);
-
-        if (entity.getId() != 0) {
-            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).update(entity);
-        } else {
-            return ((IDao<E>) DaoFactory.INSTANCE.getDao(entity.getClass())).create(entity);
-        }
-    }
+    Optional<E> save(final E entity) throws ServiceException;
 }

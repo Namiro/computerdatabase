@@ -21,7 +21,7 @@ public interface IPageService<E extends IEntity> extends IService {
      *         by page. (Be careful, if a FilterWord is set, it will be
      *         account)
      */
-    long getMaxPageNumber();
+    long getMaxPageNumber(Class<E> entityType);
 
     /**
      *
@@ -41,7 +41,7 @@ public interface IPageService<E extends IEntity> extends IService {
      * @return The list of record for the new page. (Be careful, if a
      *         FilterWord is set, it will be account)
      */
-    List<E> next();
+    List<E> next(Class<E> entityType);
 
     /**
      * To go to the a specific page.
@@ -51,7 +51,7 @@ public interface IPageService<E extends IEntity> extends IService {
      * @return The list of record for the new page. (Be careful, if a
      *         FilterWord is set, it will be account)
      */
-    List<E> page(int pageNumber);
+    List<E> page(Class<E> entityType, int pageNumber);
 
     /**
      * To go to the previous page.
@@ -59,7 +59,7 @@ public interface IPageService<E extends IEntity> extends IService {
      * @return The list of record for the new page. (Be careful, if a
      *         FilterWord is set, it will be account)
      */
-    List<E> previous();
+    List<E> previous(Class<E> entityType);
 
     /**
      * To refresh the current page. (Be careful, if a FilterWord is set, it
@@ -68,7 +68,7 @@ public interface IPageService<E extends IEntity> extends IService {
      * @return List of records with the same parameter then the last using of
      *         the service
      */
-    List<E> refresh();
+    List<E> refresh(Class<E> entityType);
 
     /**
      * Allow to put a filter in the service. It means the results that you
@@ -78,6 +78,16 @@ public interface IPageService<E extends IEntity> extends IService {
      *            The word that will be used to filter.
      */
     void setFilterWord(String filterWord);
+
+    /**
+     * Allow to set a service that will be used by the PageService. So It's
+     * required to set this service.
+     *
+     * @param modelService
+     *            The model service that will be used. The model must match
+     *            the type of PageService
+     */
+    void setModelService(final IModelService<E> modelService);
 
     /**
      * To set the order.

@@ -2,6 +2,7 @@ package com.excilys.burleon.computerdatabase.service.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
@@ -14,7 +15,8 @@ import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
  * @author Junior Burleon
  *
  */
-public class ComputerService extends ModelService<Computer> implements IComputerService {
+@Service
+public class ComputerService extends AModelService<Computer> implements IComputerService {
 
     static final Logger LOGGER = LoggerFactory.getLogger(ComputerService.class);
 
@@ -22,13 +24,6 @@ public class ComputerService extends ModelService<Computer> implements IComputer
      * A service for the companies.
      */
     private final IModelService<Company> companyService = new CompanyService();
-
-    /**
-     * Default constructor.
-     */
-    public ComputerService() {
-
-    }
 
     @Override
     public void checkDataEntity(final Computer entity) throws ServiceException {

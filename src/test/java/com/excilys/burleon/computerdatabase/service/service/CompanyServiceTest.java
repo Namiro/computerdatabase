@@ -12,27 +12,39 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.excilys.burleon.computerdatabase.persistence.dao.CompanyDao;
-import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
 import com.excilys.burleon.computerdatabase.persistence.idao.ICompanyDao;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
+import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
 
 /**
  * @author Junior Burléon
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ CompanyDao.class, DaoFactory.class })
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebAppConfiguration
+@ActiveProfiles("test")
+@ContextHierarchy({ @ContextConfiguration(classes = MainConfig.class) })
 public class CompanyServiceTest {
 
-    private final static ICompanyService companyService = new CompanyService();
+    @Mock
+    private ICompanyDao mockCompanyDao;
+
+    @InjectMocks
+    @Autowired
+    private ICompanyService companyService;
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
@@ -43,6 +55,7 @@ public class CompanyServiceTest {
      */
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
@@ -51,14 +64,14 @@ public class CompanyServiceTest {
                 .name("rhgughrughguhdfguhfdiguhdfighfughdfguifghfgfhdgidfhgufidhgdfughfghfidghfduighfgudfhgdfuhgufhgdfuioghfioghuifdpghfdlgifdhguiodfghdfogfgdfgfi")
                 .build();
         this.exception.expect(ServiceException.class);
-        CompanyServiceTest.companyService.checkDataEntity(company);
+        this.companyService.checkDataEntity(company);
     }
 
     @Test
     public void testCheckDataEntityNoName() throws ServiceException {
         final Company company = new Company.CompanyBuilder().name("").build();
         this.exception.expect(ServiceException.class);
-        CompanyServiceTest.companyService.checkDataEntity(company);
+        this.companyService.checkDataEntity(company);
     }
 
     @Test
@@ -68,37 +81,25 @@ public class CompanyServiceTest {
         companies.add(new Company.CompanyBuilder().name("BBB").id(2).build());
         companies.add(new Company.CompanyBuilder().name("CCC").id(3).build());
 
-        final ICompanyDao mockCompanyDao = PowerMockito.mock(ICompanyDao.class);
-        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
-        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
-        PowerMockito.when(mockFactory.getDao(Company.class)).thenReturn(mockCompanyDao);
-        PowerMockito.when(mockCompanyDao.find(Company.class)).thenReturn(companies);
-        Assert.assertTrue(CompanyServiceTest.companyService.get(Company.class).size() == 3);
+        Mockito.when(this.mockCompanyDao.find(Company.class)).thenReturn(companies);
+        Assert.assertTrue(this.companyService.get(Company.class).size() == 3);
     }
 
     @Test
     public void testGetWithBadId() {
-        final ICompanyDao mockCompanyDao = PowerMockito.mock(ICompanyDao.class);
-        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
-        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
-        PowerMockito.when(mockFactory.getDao(Company.class)).thenReturn(mockCompanyDao);
         final int id = -1;
-        PowerMockito.when(mockCompanyDao.findById(Company.class, id)).thenReturn(Optional.empty());
+        Mockito.when(this.mockCompanyDao.findById(Company.class, id)).thenReturn(Optional.empty());
 
-        Assert.assertFalse(CompanyServiceTest.companyService.get(Company.class, id).isPresent());
+        Assert.assertFalse(this.companyService.get(Company.class, id).isPresent());
     }
 
     @Test
     public void testGetWithId() {
         final int id = 2;
-        final ICompanyDao mockCompanyDao = PowerMockito.mock(ICompanyDao.class);
-        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
-        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
-        PowerMockito.when(mockFactory.getDao(Company.class)).thenReturn(mockCompanyDao);
-        PowerMockito.when(mockCompanyDao.findById(Company.class, id))
+        Mockito.when(this.mockCompanyDao.findById(Company.class, id))
                 .thenReturn(Optional.ofNullable(new Company.CompanyBuilder().id(2).name("company").build()));
 
-        final Optional<Company> company = CompanyServiceTest.companyService.get(Company.class, id);
+        final Optional<Company> company = this.companyService.get(Company.class, id);
         Assert.assertTrue(company.isPresent());
         Assert.assertTrue(company.get().getId() == 2);
         Assert.assertTrue(company.get().getName().equals("company"));
@@ -107,23 +108,19 @@ public class CompanyServiceTest {
     @Test
     public void testSave() {
         final Company company = new Company.CompanyBuilder().name("company").build();
-        final ICompanyDao mockCompanyDao = PowerMockito.mock(ICompanyDao.class);
-        final DaoFactory mockFactory = PowerMockito.mock(DaoFactory.class);
-        Whitebox.setInternalState(DaoFactory.class, "INSTANCE", mockFactory);
-        PowerMockito.when(mockFactory.getDao(Company.class)).thenReturn(mockCompanyDao);
-        PowerMockito.when(mockCompanyDao.create(company))
+        Mockito.when(this.mockCompanyDao.create(company))
                 .thenReturn(Optional.ofNullable(new Company.CompanyBuilder().id(2).name("company").build()));
-        PowerMockito.when(mockCompanyDao.update(company))
+        Mockito.when(this.mockCompanyDao.update(company))
                 .thenReturn(Optional.ofNullable(new Company.CompanyBuilder().id(2).name("companyedited").build()));
 
-        Optional<Company> companyOpt = CompanyServiceTest.companyService.save(company);
+        Optional<Company> companyOpt = this.companyService.save(company);
         Assert.assertTrue(companyOpt.isPresent());
         Assert.assertTrue(companyOpt.get().getId() == 2);
         Assert.assertTrue(companyOpt.get().getName().equals("company"));
 
         company.setName("companyedited");
         company.setId(2);
-        companyOpt = CompanyServiceTest.companyService.save(company);
+        companyOpt = this.companyService.save(company);
         Assert.assertTrue(companyOpt.isPresent());
         Assert.assertTrue(companyOpt.get().getId() == 2);
         Assert.assertTrue(companyOpt.get().getName().equals("companyedited"));

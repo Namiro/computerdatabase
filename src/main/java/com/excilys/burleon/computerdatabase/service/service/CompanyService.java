@@ -5,14 +5,12 @@ import java.sql.SQLException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.excilys.burleon.computerdatabase.persistence.dao.DaoFactory;
-import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
-import com.excilys.burleon.computerdatabase.persistence.idao.ICompanyDao;
 import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
-import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 
@@ -21,16 +19,13 @@ import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
  * @author Junior Burleon
  *
  */
-public class CompanyService extends ModelService<Company> implements ICompanyService {
+@Service
+public class CompanyService extends AModelService<Company> implements ICompanyService {
 
     static final Logger LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
-    /**
-     * Default constructor.
-     */
-    public CompanyService() {
-
-    }
+    @Autowired
+    IComputerDao computerDao;
 
     @Override
     public void checkDataEntity(final Company entity) throws ServiceException {
@@ -55,12 +50,11 @@ public class CompanyService extends ModelService<Company> implements ICompanySer
         boolean success = true;
         CompanyService.LOGGER.trace("remove : entity : " + entity);
         if (entity != null && entity.getId() > 0) {
-            try (Connection connection = DatabaseConnection.INSTANCE.getConnection();) {
+            try (Connection connection = this.databaseConnection.getConnection();) {
                 connection.setAutoCommit(false);
                 try {
-                    ((IComputerDao) DaoFactory.INSTANCE.getDao(Computer.class)).deleteByCompany(entity,
-                            connection);
-                    ((ICompanyDao) DaoFactory.INSTANCE.getDao(Company.class)).delete(entity, connection);
+                    this.computerDao.deleteByCompany(entity, connection);
+                    this.dao.delete(entity, connection);
                     connection.commit();
                     success = true;
                 } catch (final PersistenceException e) {

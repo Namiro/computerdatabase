@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.service.exception.RequiredServiceException;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
@@ -17,42 +19,26 @@ import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
  * @author Junior Burleon
  *
  */
+@Service
 public class PageService<E extends IEntity> implements IPageService<E> {
 
     static final Logger LOGGER = LoggerFactory.getLogger(PageService.class);
 
-    private int recordsByPage;
-    private int number;
+    private int recordsByPage = 20;
+    private int number = 1;
     private List<E> records;
-    private final IModelService<E> service;
-    private final Class<E> entityType;
     private String filterWord = "";
     private IOrderEnum<E> orderBy = null;
 
-    /**
-     * Constructor.
-     *
-     * @param entityType
-     *            The type of entity that this page will manage
-     * @param recordsByPage
-     *            The number of records by page
-     */
-    public PageService(final Class<E> entityType, final int recordsByPage) {
-        this.entityType = entityType;
-        this.service = new ModelService<>();
-        this.number = 1;
-        this.recordsByPage = recordsByPage;
-        this.records = this.service.getPage(this.entityType, this.number, recordsByPage, this.filterWord,
-                this.orderBy);
-    }
+    private IModelService<E> modelService;
 
     public String getFilterWord() {
         return this.filterWord;
     }
 
     @Override
-    public long getMaxPageNumber() {
-        return (this.service.getTotalRecords(this.entityType, this.filterWord) / this.recordsByPage) + 1;
+    public long getMaxPageNumber(final Class<E> entityType) {
+        return (this.modelService.getTotalRecords(entityType, this.filterWord) / this.recordsByPage) + 1;
     }
 
     public IOrderEnum<E> getOrderBy() {
@@ -85,17 +71,17 @@ public class PageService<E extends IEntity> implements IPageService<E> {
         return this.recordsByPage;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * com.excilys.burleon.computerdatabase.service.service.IPageService#next(
-     * )
-     */
+    private void hasSetModelService() {
+        if (this.modelService == null) {
+            throw new RequiredServiceException("A ModelService must be set before using this function");
+        }
+    }
+
     @Override
-    public List<E> next() {
+    public List<E> next(final Class<E> entityType) {
+        this.hasSetModelService();
         this.number++;
-        final List<E> records = this.service.getPage(this.entityType, this.number, this.recordsByPage,
+        final List<E> records = this.modelService.getPage(entityType, this.number, this.recordsByPage,
                 this.filterWord, this.orderBy);
         if (records != null) {
             this.records = records;
@@ -113,9 +99,10 @@ public class PageService<E extends IEntity> implements IPageService<E> {
      * int)
      */
     @Override
-    public List<E> page(final int pageNumber) {
+    public List<E> page(final Class<E> entityType, final int pageNumber) {
+        this.hasSetModelService();
         if (pageNumber > 0) {
-            final List<E> records = this.service.getPage(this.entityType, pageNumber, this.recordsByPage,
+            final List<E> records = this.modelService.getPage(entityType, pageNumber, this.recordsByPage,
                     this.filterWord, this.orderBy);
             if (records != null) {
                 this.records = records;
@@ -125,32 +112,23 @@ public class PageService<E extends IEntity> implements IPageService<E> {
         return this.records;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.excilys.burleon.computerdatabase.service.service.IPageService#
-     * previous()
-     */
     @Override
-    public List<E> previous() {
+    public List<E> previous(final Class<E> entityType) {
+        this.hasSetModelService();
         if (this.number > 1) {
             this.number--;
-            this.records = this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord,
+            this.records = this.modelService.getPage(entityType, this.number, this.recordsByPage, this.filterWord,
                     this.orderBy);
         }
         return this.records;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.excilys.burleon.computerdatabase.service.service.IPageService#
-     * refresh()
-     */
     @Override
-    public List<E> refresh() {
-        return this.service.getPage(this.entityType, this.number, this.recordsByPage, this.filterWord,
+    public List<E> refresh(final Class<E> entityType) {
+        this.hasSetModelService();
+        this.records = this.modelService.getPage(entityType, this.number, this.recordsByPage, this.filterWord,
                 this.orderBy);
+        return this.records;
     }
 
     @Override
@@ -161,6 +139,11 @@ public class PageService<E extends IEntity> implements IPageService<E> {
             this.filterWord = filterWord;
         }
 
+    }
+
+    @Override
+    public void setModelService(final IModelService<E> modelService) {
+        this.modelService = modelService;
     }
 
     @Override
