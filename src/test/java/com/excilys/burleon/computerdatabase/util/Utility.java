@@ -20,9 +20,10 @@ public final class Utility {
     public static void loadAndResetDatabase() {
         try {
             final IDataSet dataSet = new FlatXmlDataSetBuilder().build(new File("src/test/resources/dataset.xml"));
-            PropertiesManager.load();
-            final IDatabaseTester databaseTester = new JdbcDatabaseTester("com.mysql.jdbc.Driver",
-                    PropertiesManager.config.getString("database"), PropertiesManager.config.getString("dbuser"),
+            PropertiesManager.load("datasource.properties");
+            final IDatabaseTester databaseTester = new JdbcDatabaseTester(
+                    PropertiesManager.config.getString("dbdriver"), PropertiesManager.config.getString("dburl"),
+                    PropertiesManager.config.getString("dbuser"),
                     PropertiesManager.config.getString("dbpassword"));
             databaseTester.setSetUpOperation(DatabaseOperation.CLEAN_INSERT);
             databaseTester.setDataSet(dataSet);
