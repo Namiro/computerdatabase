@@ -14,14 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
-import com.excilys.burleon.computerdatabase.service.service.ComputerService;
-import com.excilys.burleon.computerdatabase.service.service.PageService;
 import com.excilys.burleon.computerdatabase.view.model.mapper.ComputerMapper;
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
@@ -33,6 +33,7 @@ import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
  * @author Junior Burléon
  */
 @WebServlet("/ComputerList")
+@Controller
 public class ComputerListServlet extends HttpServlet implements IHttpServlet {
 
     /**
@@ -51,9 +52,12 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
 
     private static final long serialVersionUID = -6681257837248708119L;
     Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
-    private final IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
 
-    private final IComputerService computerService = new ComputerService();
+    @Autowired
+    private IPageService<Computer> pageService;
+
+    @Autowired
+    private IComputerService computerService;
 
     /**
      * Allow to delete the computer.
@@ -88,7 +92,7 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
         this.pageService.setRecordsByPage(processVariables.recordsByPage);
         this.pageService.setFilterWord(processVariables.filterWord);
         this.pageService.setOrderBy(processVariables.orderBy);
-        processVariables.listComputer = this.pageService.page(processVariables.newCurrentPage);
+        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
 
         this.populateRequest(request, processVariables);
 
@@ -109,7 +113,7 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
             processResult = this.deleteComputersProcess(processVariables.split);
         }
 
-        processVariables.listComputer = this.pageService.page(processVariables.newCurrentPage);
+        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
         this.populateRequest(request, processVariables, processResult);
         this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
     }
@@ -168,6 +172,11 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
     }
 
     @Override
+    public void init() throws ServletException {
+        this.pageService.setModelService(this.computerService);
+    }
+
+    @Override
     public void populateRequest(final HttpServletRequest request, final Object processVariables,
             final ProcessResult processResult) {
         IHttpServlet.super.populateRequest(request, processVariables, processResult);
@@ -177,7 +186,7 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
         request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
                 this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
         request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
-        request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber());
+        request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber(Computer.class));
         request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
         request.setAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
     }

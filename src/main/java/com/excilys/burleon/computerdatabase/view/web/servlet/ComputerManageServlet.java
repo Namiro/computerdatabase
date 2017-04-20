@@ -17,16 +17,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
 
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
-import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.service.CompanyService;
 import com.excilys.burleon.computerdatabase.service.service.ComputerService;
-import com.excilys.burleon.computerdatabase.service.service.PageService;
+import com.excilys.burleon.computerdatabase.spring.ApplicationContextProvider;
 import com.excilys.burleon.computerdatabase.view.model.CompanyDTO;
 import com.excilys.burleon.computerdatabase.view.model.ComputerDTO;
 import com.excilys.burleon.computerdatabase.view.model.mapper.CompanyMapper;
@@ -41,6 +41,7 @@ import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
  * @author Junior
  */
 @WebServlet("/ComputerManage")
+@Controller
 public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
 
     /**
@@ -55,9 +56,10 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
 
     private static final long serialVersionUID = -922272733938052338L;
     Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
-    public IComputerService computerService = new ComputerService();
-    public ICompanyService companyService = new CompanyService();
-    public IPageService<Computer> pageService = new PageService<>(Computer.class, 20);
+    public IComputerService computerService = ApplicationContextProvider.getApplicationContext()
+            .getBean(ComputerService.class);
+    public ICompanyService companyService = ApplicationContextProvider.getApplicationContext()
+            .getBean(CompanyService.class);
 
     /* METHODE */
     @Override

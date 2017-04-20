@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
+import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.service.CompanyService;
 import com.excilys.burleon.computerdatabase.service.service.ComputerService;
@@ -21,12 +23,12 @@ import com.excilys.burleon.computerdatabase.service.service.PageService;
 
 public class Main {
 
+    private static final IPageService<Company> companyPage = new PageService<>();
+    private static final IPageService<Computer> computerPage = new PageService<>();;
+    private static final IComputerService COMPUTER_SERVICE = new ComputerService();
+    private static final ICompanyService COMPANY_SERVICE = new CompanyService();
     private static final Scanner SCAN = new Scanner(System.in);
-    private static IPageService<Company> companyPage;
-    private static IPageService<Computer> computerPage;
     private static int choiceMainMenu;
-    private static final ComputerService COMPUTER_SERVICE = new ComputerService();
-    private static final CompanyService COMPANY_SERVICE = new CompanyService();
 
     /**
      * To clear the console.
@@ -124,8 +126,8 @@ public class Main {
      *             The IOException
      */
     public static void main(final String[] args) throws IOException {
-        Main.companyPage = new PageService<>(Company.class, 5);
-        Main.computerPage = new PageService<>(Computer.class, 5);
+        Main.companyPage.setModelService(Main.COMPANY_SERVICE);
+        Main.computerPage.setModelService(Main.COMPUTER_SERVICE);
 
         boolean isContinue = true;
         boolean isContinueSubMenu = false;
@@ -190,7 +192,7 @@ public class Main {
                                 computer.setDiscontinued(date);
                             }
                             Main.COMPUTER_SERVICE.save(computer);
-                            Main.computerPage.refresh();
+                            Main.computerPage.refresh(Computer.class);
                         } catch (final ServiceException e) {
                             System.out.println(e.getMessage());
                             isContinueSubMenu = true;
@@ -223,7 +225,7 @@ public class Main {
                                     computerOpt.get().setDiscontinued(date);
                                 }
                                 Main.COMPUTER_SERVICE.save(computerOpt.get());
-                                Main.computerPage.refresh();
+                                Main.computerPage.refresh(Computer.class);
                             } catch (final ServiceException e) {
                                 System.out.println(e.getMessage());
                                 isContinueSubMenu = true;
@@ -242,7 +244,7 @@ public class Main {
                             Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
                     if (computerOpt.isPresent()) {
                         Main.COMPUTER_SERVICE.remove(computerOpt.get());
-                        Main.companyPage.refresh();
+                        Main.computerPage.refresh(Computer.class);
                         sb = new StringBuilder();
                         sb.append("The computer has been deleted");
                         System.out.println(sb);
@@ -260,7 +262,7 @@ public class Main {
                             Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
                     if (companyOpt.isPresent()) {
                         Main.COMPANY_SERVICE.remove(companyOpt.get());
-                        Main.companyPage.refresh();
+                        Main.companyPage.refresh(Company.class);
                         sb = new StringBuilder();
                         sb.append("The company has been deleted");
                         System.out.println(sb);
@@ -305,16 +307,16 @@ public class Main {
             switch (choice) {
                 case 1:
                     if (Main.choiceMainMenu == 1) {
-                        Main.computerPage.next();
+                        Main.computerPage.next(Computer.class);
                     } else if (Main.choiceMainMenu == 2) {
-                        Main.companyPage.next();
+                        Main.companyPage.next(Company.class);
                     }
                     break;
                 case 2:
                     if (Main.choiceMainMenu == 1) {
-                        Main.computerPage.previous();
+                        Main.computerPage.previous(Computer.class);
                     } else if (Main.choiceMainMenu == 2) {
-                        Main.companyPage.previous();
+                        Main.companyPage.previous(Company.class);
                     }
                     break;
                 case 3:
@@ -322,9 +324,9 @@ public class Main {
                     sb.append("\tNumber of page : ");
                     final int pageNumber = Main.displayMenyAndGetUserChoice(sb);
                     if (Main.choiceMainMenu == 1) {
-                        Main.computerPage.page(pageNumber);
+                        Main.computerPage.page(Computer.class, pageNumber);
                     } else if (Main.choiceMainMenu == 2) {
-                        Main.companyPage.page(pageNumber);
+                        Main.companyPage.page(Company.class, pageNumber);
                     }
                     break;
                 case 0:
