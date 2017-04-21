@@ -55,7 +55,7 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
     }
 
     private static final long serialVersionUID = -922272733938052338L;
-    Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
 
     @Autowired
     public IComputerService computerService;
@@ -67,7 +67,7 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
-        this.LOGGER.trace("GET /ComputerManage \t" + request.getRequestURI());
+        ComputerManageServlet.LOGGER.trace("GET /ComputerManage \t" + request.getRequestURI());
 
         final ProcessVariables processVariables = this.getProcessVariables(request);
 
@@ -92,7 +92,7 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
-        this.LOGGER.trace("POST /ComputerManage \t" + request.getRequestURI());
+        ComputerManageServlet.LOGGER.trace("POST /ComputerManage \t" + request.getRequestURI());
 
         final ProcessVariables processVariables = this.getProcessVariables(request);
         ProcessResult processResult;
@@ -175,10 +175,10 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
                     processVariables.computer.setCompany(companyDTO);
                 }
             }
-            this.LOGGER.info("Construct OK for " + processVariables.computerReceived);
+            ComputerManageServlet.LOGGER.info("Construct OK for " + processVariables.computerReceived);
             return new ProcessResult(true, "Construct OK");
         } catch (final ServiceException e) {
-            this.LOGGER.warn("Impossible to construct a computer with the user entries", e);
+            ComputerManageServlet.LOGGER.warn("Impossible to construct a computer with the user entries", e);
             return new ProcessResult(false, e.getMessage());
         }
     }
@@ -222,12 +222,12 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
      */
     private ProcessResult removeComputersProcess(final ProcessVariables processVariables) {
         try {
-            this.LOGGER.info("Remove OK for " + processVariables.computerReceived);
+            ComputerManageServlet.LOGGER.info("Remove OK for " + processVariables.computerReceived);
             return new ProcessResult(
                     this.computerService.remove(ComputerMapper.toComputer(processVariables.computer)),
                     "Remove OK");
         } catch (final ServiceException e) {
-            this.LOGGER.warn("Remove KO for " + processVariables.computerReceived, e);
+            ComputerManageServlet.LOGGER.warn("Remove KO for " + processVariables.computerReceived, e);
             return new ProcessResult(false, e.getMessage());
         }
     }
@@ -244,10 +244,10 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
         try {
             processVariables.computer = ComputerMapper.toComputerDTO(
                     this.computerService.save(ComputerMapper.toComputer(processVariables.computer)).get());
-            this.LOGGER.info("Save OK for " + processVariables.computer);
+            ComputerManageServlet.LOGGER.info("Save OK for " + processVariables.computer);
             return new ProcessResult(true, "Save OK");
         } catch (final ServiceException e) {
-            this.LOGGER.warn("Impossible to save computer : " + processVariables.computer, e);
+            ComputerManageServlet.LOGGER.warn("Impossible to save computer : " + processVariables.computer, e);
             return new ProcessResult(true, e.getMessage());
         }
     }

@@ -53,7 +53,7 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
     }
 
     private static final long serialVersionUID = -6681257837248708119L;
-    Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
 
     @Autowired
     private IPageService<Computer> pageService;
@@ -76,10 +76,10 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
                     this.computerService.remove(computerOpt.get());
                 }
             }
-            this.LOGGER.info("Remove OK for : " + Arrays.toString(split));
+            ComputerListServlet.LOGGER.info("Remove OK for : " + Arrays.toString(split));
             return new ProcessResult(true, "Remove OK");
         } catch (final ServiceException e) {
-            this.LOGGER.warn("Impossible to delete the computers", e);
+            ComputerListServlet.LOGGER.warn("Impossible to delete the computers", e);
             return new ProcessResult(false, e.getMessage());
         }
     }
@@ -87,7 +87,7 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
-        this.LOGGER.trace("GET /ComputerList \t" + request.getRequestURI());
+        ComputerListServlet.LOGGER.trace("GET /ComputerList \t" + request.getRequestURI());
 
         final ProcessVariables processVariables = this.getProcessVariables(request);
 
@@ -104,7 +104,7 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
     @Override
     protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
             throws ServletException, IOException {
-        this.LOGGER.trace("POST /ComputerList \t" + request.getRequestURI());
+        ComputerListServlet.LOGGER.trace("POST /ComputerList \t" + request.getRequestURI());
 
         final ProcessVariables processVariables = this.getProcessVariables(request);
 
