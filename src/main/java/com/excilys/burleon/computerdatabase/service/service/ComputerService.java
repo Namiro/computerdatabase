@@ -4,8 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
-import com.excilys.burleon.computerdatabase.persistence.model.Computer;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
+import com.excilys.burleon.computerdatabase.repository.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;

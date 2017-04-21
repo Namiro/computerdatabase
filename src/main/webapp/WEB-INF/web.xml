@@ -44,7 +44,7 @@
     </context-param>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>com.excilys.burleon.computerdatabase.spring.config.MainConfig</param-value>
+        <param-value>com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig</param-value>
     </context-param>
 </web-app>
 

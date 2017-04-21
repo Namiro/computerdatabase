@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.persistence.model;
+package com.excilys.burleon.computerdatabase.repository.model;
 
 import java.time.LocalDateTime;
 

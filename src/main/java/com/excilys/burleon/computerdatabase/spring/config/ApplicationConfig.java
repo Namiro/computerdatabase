@@ -17,9 +17,9 @@ import org.springframework.core.env.Environment;
 @Configuration
 @Import(value = { DataSourceConfig.class, InfrastructureConfig.class, RepositoryConfig.class, ServiceConfig.class,
         SecurityConfig.class, ViewConfig.class })
-public class MainConfig {
+public class ApplicationConfig {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MainConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);
 
     @Autowired
     private Environment environment;
@@ -33,12 +33,12 @@ public class MainConfig {
      */
     @PostConstruct
     public void initApp() {
-        MainConfig.LOGGER.debug("Looking for Spring profiles...");
+        ApplicationConfig.LOGGER.debug("Looking for Spring profiles...");
         if (this.environment.getActiveProfiles().length == 0) {
-            MainConfig.LOGGER.info("No Spring profile configured, running with default configuration.");
+            ApplicationConfig.LOGGER.info("No Spring profile configured, running with default configuration.");
         } else {
             for (final String profile : this.environment.getActiveProfiles()) {
-                MainConfig.LOGGER.info("Detected Spring profile: {}", profile);
+                ApplicationConfig.LOGGER.info("Detected Spring profile: {}", profile);
             }
         }
     }

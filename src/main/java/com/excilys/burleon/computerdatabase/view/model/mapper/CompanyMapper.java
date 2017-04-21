@@ -3,7 +3,7 @@ package com.excilys.burleon.computerdatabase.view.model.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
 import com.excilys.burleon.computerdatabase.view.model.CompanyDTO;
 
 public class CompanyMapper {

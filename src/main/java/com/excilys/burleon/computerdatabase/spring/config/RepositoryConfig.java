@@ -4,7 +4,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ComponentScan(basePackages = { "com.excilys.burleon.computerdatabase.persistence" })
+@ComponentScan(basePackages = { "com.excilys.burleon.computerdatabase.repository" })
 public class RepositoryConfig {
 
 }

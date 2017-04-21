@@ -1,6 +1,6 @@
 package com.excilys.burleon.computerdatabase.service.iservice;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
 
 /**
  *

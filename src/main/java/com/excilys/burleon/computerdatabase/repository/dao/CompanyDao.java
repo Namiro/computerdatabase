@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.persistence.dao;
+package com.excilys.burleon.computerdatabase.repository.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,11 +13,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
-import com.excilys.burleon.computerdatabase.persistence.idao.ICompanyDao;
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderCompanyEnum;
+import com.excilys.burleon.computerdatabase.repository.exception.PersistenceException;
+import com.excilys.burleon.computerdatabase.repository.idao.ICompanyDao;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.OrderCompanyEnum;
 
 /**
  * @author Junior Burleon

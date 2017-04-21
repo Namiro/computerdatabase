@@ -8,10 +8,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
-import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
-import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.repository.dao.DatabaseConnection;
+import com.excilys.burleon.computerdatabase.repository.idao.IDao;
+import com.excilys.burleon.computerdatabase.repository.model.IEntity;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
 

@@ -1,10 +1,9 @@
-package com.excilys.burleon.computerdatabase.persistence.model.enumeration;
+package com.excilys.burleon.computerdatabase.repository.model.enumeration;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Computer;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
 
-public enum OrderComputerEnum implements IOrderEnum<Computer> {
-    INTRODUCE_DATE("computer.introduced"), DISCONTINUE_DATE("computer.discontinued"), NAME("computer.name"),
-    COMPANY_NAME("company.name");
+public enum OrderCompanyEnum implements IOrderEnum<Company> {
+    NAME("company.name");
 
     private final String name;
 
@@ -13,7 +12,7 @@ public enum OrderComputerEnum implements IOrderEnum<Computer> {
      * @param s
      *            The name
      */
-    OrderComputerEnum(final String s) {
+    OrderCompanyEnum(final String s) {
         this.name = s;
     }
 

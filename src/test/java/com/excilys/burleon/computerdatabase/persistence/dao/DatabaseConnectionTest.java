@@ -13,7 +13,8 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
+import com.excilys.burleon.computerdatabase.repository.dao.DatabaseConnection;
+import com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig;
 
 /**
  * @author Junior Burléon
@@ -21,7 +22,7 @@ import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextHierarchy({ @ContextConfiguration(classes = MainConfig.class) })
+@ContextHierarchy({ @ContextConfiguration(classes = ApplicationConfig.class) })
 @ActiveProfiles("test")
 public class DatabaseConnectionTest {
 

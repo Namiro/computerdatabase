@@ -17,13 +17,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
-import com.excilys.burleon.computerdatabase.persistence.model.Computer;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
+import com.excilys.burleon.computerdatabase.repository.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
-import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
+import com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig;
 
 @Component
 public class Main {
@@ -53,7 +53,7 @@ public class Main {
 
         final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
         context.getEnvironment().setActiveProfiles("javaee");
-        context.register(MainConfig.class);
+        context.register(ApplicationConfig.class);
         context.refresh();
 
         final Main p = context.getBean(Main.class);

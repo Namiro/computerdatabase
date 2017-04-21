@@ -2,8 +2,8 @@ package com.excilys.burleon.computerdatabase.service.iservice;
 
 import java.util.List;
 
-import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.repository.model.IEntity;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
 
 /**
  * This service allow to manage the records with pages.

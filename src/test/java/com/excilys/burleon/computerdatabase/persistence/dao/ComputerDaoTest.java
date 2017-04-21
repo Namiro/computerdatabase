@@ -19,10 +19,12 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Computer;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.OrderComputerEnum;
-import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
+import com.excilys.burleon.computerdatabase.repository.dao.ComputerDao;
+import com.excilys.burleon.computerdatabase.repository.dao.DatabaseConnection;
+import com.excilys.burleon.computerdatabase.repository.model.Computer;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.OrderComputerEnum;
+import com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig;
 import com.excilys.burleon.computerdatabase.util.Utility;
 
 /**
@@ -31,7 +33,7 @@ import com.excilys.burleon.computerdatabase.util.Utility;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextHierarchy({ @ContextConfiguration(classes = MainConfig.class) })
+@ContextHierarchy({ @ContextConfiguration(classes = ApplicationConfig.class) })
 @ActiveProfiles("test")
 public class ComputerDaoTest {
     /**

@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.persistence.dao;
+package com.excilys.burleon.computerdatabase.repository.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,9 +7,9 @@ import java.sql.SQLException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
-import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
-import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
+import com.excilys.burleon.computerdatabase.repository.exception.PersistenceException;
+import com.excilys.burleon.computerdatabase.repository.idao.IDao;
+import com.excilys.burleon.computerdatabase.repository.model.IEntity;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
 
 public abstract class ADao<E extends IEntity> implements IDao<E> {

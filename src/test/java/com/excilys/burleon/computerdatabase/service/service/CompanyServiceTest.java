@@ -23,11 +23,11 @@ import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import com.excilys.burleon.computerdatabase.persistence.idao.ICompanyDao;
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
+import com.excilys.burleon.computerdatabase.repository.idao.ICompanyDao;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
-import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
+import com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig;
 
 /**
  * @author Junior Burléon
@@ -36,7 +36,7 @@ import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ActiveProfiles("test")
-@ContextHierarchy({ @ContextConfiguration(classes = MainConfig.class) })
+@ContextHierarchy({ @ContextConfiguration(classes = ApplicationConfig.class) })
 public class CompanyServiceTest {
 
     @Mock

@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.persistence.exception;
+package com.excilys.burleon.computerdatabase.repository.exception;
 
 /**
  * This class allow to trigger an exception for the persistence.

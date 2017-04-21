@@ -8,14 +8,14 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 
-import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
+import com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig;
 
 @javax.servlet.annotation.HandlesTypes(WebApplicationInitializer.class)
 public class ApplicationInitializer implements WebApplicationInitializer {
 
     private AnnotationConfigWebApplicationContext getContext() {
         final AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
-        context.register(MainConfig.class);
+        context.register(ApplicationConfig.class);
         return context;
     }
 

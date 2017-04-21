@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.persistence.idao;
+package com.excilys.burleon.computerdatabase.repository.idao;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,8 +6,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.repository.model.IEntity;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
 
 public interface IDao<E extends IEntity> {
 

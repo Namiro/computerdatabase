@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.persistence.dao;
+package com.excilys.burleon.computerdatabase.repository.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
+import com.excilys.burleon.computerdatabase.repository.exception.PersistenceException;
 import com.zaxxer.hikari.HikariDataSource;
 
 /**

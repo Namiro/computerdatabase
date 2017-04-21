@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
-import com.excilys.burleon.computerdatabase.persistence.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.repository.model.IEntity;
+import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.service.exception.RequiredServiceException;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;

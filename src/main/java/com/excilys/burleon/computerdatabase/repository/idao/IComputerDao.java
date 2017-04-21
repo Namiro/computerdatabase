@@ -1,7 +1,7 @@
-package com.excilys.burleon.computerdatabase.persistence.idao;
+package com.excilys.burleon.computerdatabase.repository.idao;
 
-import com.excilys.burleon.computerdatabase.persistence.model.Company;
-import com.excilys.burleon.computerdatabase.persistence.model.Computer;
+import com.excilys.burleon.computerdatabase.repository.model.Company;
+import com.excilys.burleon.computerdatabase.repository.model.Computer;
 
 public interface IComputerDao extends IDao<Computer> {
 
