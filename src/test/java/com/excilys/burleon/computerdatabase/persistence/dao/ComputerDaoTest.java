@@ -20,7 +20,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import com.excilys.burleon.computerdatabase.repository.dao.ComputerDao;
-import com.excilys.burleon.computerdatabase.repository.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.repository.model.Computer;
 import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.repository.model.enumeration.OrderComputerEnum;
@@ -46,9 +45,6 @@ public class ComputerDaoTest {
 
     @Autowired
     private ComputerDao computerDao;
-
-    @Autowired
-    private DatabaseConnection databaseConnection;
 
     /**
      * Test to fin a range of company.

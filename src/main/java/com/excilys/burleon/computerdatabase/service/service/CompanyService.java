@@ -49,7 +49,6 @@ public class CompanyService extends AModelService<Company> implements ICompanySe
         boolean success = false;
         CompanyService.LOGGER.trace("remove : entity : " + entity);
         if (entity != null && entity.getId() > 0) {
-
             try {
                 this.computerDao.deleteByCompany(entity);
                 this.dao.delete(entity);

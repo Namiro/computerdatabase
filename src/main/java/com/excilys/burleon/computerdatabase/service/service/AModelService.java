@@ -1,14 +1,11 @@
 package com.excilys.burleon.computerdatabase.service.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.excilys.burleon.computerdatabase.repository.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.repository.idao.IDao;
 import com.excilys.burleon.computerdatabase.repository.model.IEntity;
 import com.excilys.burleon.computerdatabase.repository.model.enumeration.IOrderEnum;
@@ -19,9 +16,6 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
 
     @Autowired
     protected IDao<E> dao;
-
-    @Autowired
-    protected DatabaseConnection databaseConnection;
 
     @Override
     @Transactional(readOnly = true)
@@ -79,11 +73,7 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
     public boolean remove(final E entity) {
         IModelService.LOGGER.trace("remove : entity : " + entity);
         if (entity != null && entity.getId() > 0) {
-            try (Connection connection = this.databaseConnection.getConnection();) {
-                return this.dao.delete(entity);
-            } catch (final SQLException e) {
-                throw new ServiceException("Impossible to get a connection", e);
-            }
+            return this.dao.delete(entity);
         } else {
             return false;
         }
