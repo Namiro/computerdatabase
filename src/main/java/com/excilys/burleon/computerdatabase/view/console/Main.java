@@ -11,22 +11,37 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Component;
+
 import com.excilys.burleon.computerdatabase.persistence.model.Company;
 import com.excilys.burleon.computerdatabase.persistence.model.Computer;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
-import com.excilys.burleon.computerdatabase.service.service.CompanyService;
-import com.excilys.burleon.computerdatabase.service.service.ComputerService;
-import com.excilys.burleon.computerdatabase.service.service.PageService;
+import com.excilys.burleon.computerdatabase.spring.config.MainConfig;
 
+@Component
 public class Main {
 
-    private static final IPageService<Company> companyPage = new PageService<>();
-    private static final IPageService<Computer> computerPage = new PageService<>();;
-    private static final IComputerService COMPUTER_SERVICE = new ComputerService();
-    private static final ICompanyService COMPANY_SERVICE = new CompanyService();
+    private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
+
+    @Autowired
+    private IPageService<Company> companyPage;
+
+    @Autowired
+    private IPageService<Computer> computerPage;
+
+    @Autowired
+    private IComputerService computerService;
+
+    @Autowired
+    private ICompanyService companyService;
+
     private static final Scanner SCAN = new Scanner(System.in);
     private static int choiceMainMenu;
 
@@ -44,7 +59,7 @@ public class Main {
      *            The menu shown to the user
      * @return The menu choice done by the user
      */
-    public static int displayMenyAndGetUserChoice(final StringBuilder menuToDisplay) {
+    public int displayMenyAndGetUserChoice(final StringBuilder menuToDisplay) {
         Main.clearConsole();
         System.out.println(menuToDisplay);
         boolean isContinue = true;
@@ -69,7 +84,7 @@ public class Main {
      *
      * @return The localdatetime provide by the user
      */
-    public static LocalDateTime inputDate() {
+    public LocalDateTime inputDate() {
         boolean isContinue = true;
         DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate datee = null;
@@ -96,7 +111,7 @@ public class Main {
      *
      * @return a long
      */
-    private static long inputLong() {
+    private long inputLong() {
         boolean isContinue = true;
         long input = 0;
         do {
@@ -126,8 +141,76 @@ public class Main {
      *             The IOException
      */
     public static void main(final String[] args) throws IOException {
-        Main.companyPage.setModelService(Main.COMPANY_SERVICE);
-        Main.computerPage.setModelService(Main.COMPUTER_SERVICE);
+
+        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.getEnvironment().setActiveProfiles("javaee");
+        context.register(MainConfig.class);
+        context.refresh();
+
+        final Main p = context.getBean(Main.class);
+        p.start(args);
+
+        context.close();
+    }
+
+    /**
+     * To display List of Computer or Company and there menu.
+     */
+    public void showListAndMenu() {
+        boolean isContinue = true;
+        while (isContinue) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("\t1. Next Page\n");
+            sb.append("\t2. Previous page\n");
+            sb.append("\t3. Show page x\n");
+            sb.append("\t0. Pevious menu\n");
+            if (Main.choiceMainMenu == 1) {
+                System.out.println(computerPage);
+            } else if (Main.choiceMainMenu == 2) {
+                System.out.println(companyPage);
+            }
+
+            final int choice = displayMenyAndGetUserChoice(sb);
+
+            switch (choice) {
+                case 1:
+                    if (Main.choiceMainMenu == 1) {
+                        computerPage.next(Computer.class);
+                    } else if (Main.choiceMainMenu == 2) {
+                        companyPage.next(Company.class);
+                    }
+                    break;
+                case 2:
+                    if (Main.choiceMainMenu == 1) {
+                        computerPage.previous(Computer.class);
+                    } else if (Main.choiceMainMenu == 2) {
+                        companyPage.previous(Company.class);
+                    }
+                    break;
+                case 3:
+                    sb = new StringBuilder();
+                    sb.append("\tNumber of page : ");
+                    final int pageNumber = displayMenyAndGetUserChoice(sb);
+                    if (Main.choiceMainMenu == 1) {
+                        computerPage.page(Computer.class, pageNumber);
+                    } else if (Main.choiceMainMenu == 2) {
+                        companyPage.page(Company.class, pageNumber);
+                    }
+                    break;
+                case 0:
+                    isContinue = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void start(final String[] args) {
+
+        Main.LOGGER.debug((companyPage == null) + "    Merdeeeeee");
+        companyPage.setModelService(companyService);
+        computerPage.setModelService(computerService);
 
         boolean isContinue = true;
         boolean isContinueSubMenu = false;
@@ -141,20 +224,20 @@ public class Main {
             sb.append("\t6. Delete a computer\n");
             sb.append("\t7. Delete a company (And computer associate)\n");
             sb.append("\t0. Exit\n");
-            Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb);
+            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb);
 
             switch (Main.choiceMainMenu) {
                 case 1:
-                    Main.showListAndMenu();
+                    showListAndMenu();
                     break;
                 case 2:
-                    Main.showListAndMenu();
+                    showListAndMenu();
                     break;
                 case 3:
                     sb = new StringBuilder();
                     sb.append("Computer ID :\n");
-                    Optional<Computer> computerOpt = Main.COMPUTER_SERVICE.get(Computer.class,
-                            Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
+                    Optional<Computer> computerOpt = computerService.get(Computer.class,
+                            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb));
                     if (computerOpt.isPresent()) {
                         sb = new StringBuilder();
                         sb.append("Detail of : " + computerOpt.get().getId() + "\n");
@@ -177,22 +260,22 @@ public class Main {
                             System.out.print("Name :");
                             computer.setName(Main.SCAN.nextLine());
                             System.out.print("Company Id :");
-                            final long companyId = Main.inputLong();
+                            final long companyId = inputLong();
                             if (companyId != 0) {
                                 computer.setCompany(new Company.CompanyBuilder().id(companyId).build());
                             }
                             System.out.print("Introduce date (yyyy-MM-dd) :");
-                            LocalDateTime date = Main.inputDate();
+                            LocalDateTime date = inputDate();
                             if (date != null) {
                                 computer.setIntroduced(date);
                             }
                             System.out.print("Discontinue date (yyyy-MM-dd) :");
-                            date = Main.inputDate();
+                            date = inputDate();
                             if (date != null) {
                                 computer.setDiscontinued(date);
                             }
-                            Main.COMPUTER_SERVICE.save(computer);
-                            Main.computerPage.refresh(Computer.class);
+                            computerService.save(computer);
+                            computerPage.refresh(Computer.class);
                         } catch (final ServiceException e) {
                             System.out.println(e.getMessage());
                             isContinueSubMenu = true;
@@ -201,7 +284,7 @@ public class Main {
                     break;
                 case 5:
                     System.out.print("Computer update ID :");
-                    computerOpt = Main.COMPUTER_SERVICE.get(Computer.class, Main.inputLong());
+                    computerOpt = computerService.get(Computer.class, inputLong());
                     if (computerOpt.isPresent()) {
                         do {
                             try {
@@ -209,24 +292,24 @@ public class Main {
                                 System.out.print("Name :");
                                 computerOpt.get().setName(Main.SCAN.nextLine());
                                 System.out.print("Company Id :");
-                                final long companyId = Main.inputLong();
+                                final long companyId = inputLong();
                                 if (companyId != 0) {
                                     computerOpt.get()
                                             .setCompany(new Company.CompanyBuilder().id(companyId).build());
                                 }
                                 System.out.print("Introduce date (yyyy-MM-dd) :");
-                                LocalDateTime date = Main.inputDate();
+                                LocalDateTime date = inputDate();
                                 if (date != null) {
                                     computerOpt.get().setIntroduced(date);
                                 }
                                 System.out.print("Discontinue date (yyyy-MM-dd) :");
-                                date = Main.inputDate();
+                                date = inputDate();
                                 if (date != null) {
                                     computerOpt.get().setDiscontinued(date);
                                 }
-                                Main.COMPUTER_SERVICE.save(computerOpt.get());
-                                Main.computerPage.refresh(Computer.class);
-                            } catch (final ServiceException e) {
+                                computerService.save(computerOpt.get());
+                                computerPage.refresh(Computer.class);
+                            } catch(final ServiceException e) {
                                 System.out.println(e.getMessage());
                                 isContinueSubMenu = true;
                             }
@@ -240,11 +323,11 @@ public class Main {
                 case 6:
                     sb = new StringBuilder();
                     sb.append("Remove computer ID :\n");
-                    computerOpt = Main.COMPUTER_SERVICE.get(Computer.class,
-                            Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
+                    computerOpt = computerService.get(Computer.class,
+                            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb));
                     if (computerOpt.isPresent()) {
-                        Main.COMPUTER_SERVICE.remove(computerOpt.get());
-                        Main.computerPage.refresh(Computer.class);
+                        computerService.remove(computerOpt.get());
+                        computerPage.refresh(Computer.class);
                         sb = new StringBuilder();
                         sb.append("The computer has been deleted");
                         System.out.println(sb);
@@ -258,11 +341,11 @@ public class Main {
                 case 7:
                     sb = new StringBuilder();
                     sb.append("Remove company ID :\n");
-                    final Optional<Company> companyOpt = Main.COMPANY_SERVICE.get(Company.class,
-                            Main.choiceMainMenu = Main.displayMenyAndGetUserChoice(sb));
+                    final Optional<Company> companyOpt = companyService.get(Company.class,
+                            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb));
                     if (companyOpt.isPresent()) {
-                        Main.COMPANY_SERVICE.remove(companyOpt.get());
-                        Main.companyPage.refresh(Company.class);
+                        companyService.remove(companyOpt.get());
+                        companyPage.refresh(Company.class);
                         sb = new StringBuilder();
                         sb.append("The company has been deleted");
                         System.out.println(sb);
@@ -281,60 +364,6 @@ public class Main {
                     break;
             }
 
-        }
-
-    }
-
-    /**
-     * To display List of Computer or Company and there menu.
-     */
-    public static void showListAndMenu() {
-        boolean isContinue = true;
-        while (isContinue) {
-            StringBuilder sb = new StringBuilder();
-            sb.append("\t1. Next Page\n");
-            sb.append("\t2. Previous page\n");
-            sb.append("\t3. Show page x\n");
-            sb.append("\t0. Pevious menu\n");
-            if (Main.choiceMainMenu == 1) {
-                System.out.println(Main.computerPage);
-            } else if (Main.choiceMainMenu == 2) {
-                System.out.println(Main.companyPage);
-            }
-
-            final int choice = Main.displayMenyAndGetUserChoice(sb);
-
-            switch (choice) {
-                case 1:
-                    if (Main.choiceMainMenu == 1) {
-                        Main.computerPage.next(Computer.class);
-                    } else if (Main.choiceMainMenu == 2) {
-                        Main.companyPage.next(Company.class);
-                    }
-                    break;
-                case 2:
-                    if (Main.choiceMainMenu == 1) {
-                        Main.computerPage.previous(Computer.class);
-                    } else if (Main.choiceMainMenu == 2) {
-                        Main.companyPage.previous(Company.class);
-                    }
-                    break;
-                case 3:
-                    sb = new StringBuilder();
-                    sb.append("\tNumber of page : ");
-                    final int pageNumber = Main.displayMenyAndGetUserChoice(sb);
-                    if (Main.choiceMainMenu == 1) {
-                        Main.computerPage.page(Computer.class, pageNumber);
-                    } else if (Main.choiceMainMenu == 2) {
-                        Main.companyPage.page(Company.class, pageNumber);
-                    }
-                    break;
-                case 0:
-                    isContinue = false;
-                    break;
-                default:
-                    break;
-            }
         }
     }
 }
