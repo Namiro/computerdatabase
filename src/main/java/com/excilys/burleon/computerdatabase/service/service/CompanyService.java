@@ -1,12 +1,10 @@
 package com.excilys.burleon.computerdatabase.service.service;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.burleon.computerdatabase.persistence.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.persistence.idao.IComputerDao;
@@ -46,31 +44,22 @@ public class CompanyService extends AModelService<Company> implements ICompanySe
      * @return True if OK & False is not OK
      */
     @Override
+    @Transactional("txManager")
     public boolean remove(final Company entity) {
-        boolean success = true;
+        boolean success = false;
         CompanyService.LOGGER.trace("remove : entity : " + entity);
         if (entity != null && entity.getId() > 0) {
-            try (Connection connection = this.databaseConnection.getConnection();) {
-                connection.setAutoCommit(false);
-                try {
-                    this.computerDao.deleteByCompany(entity, connection);
-                    this.dao.delete(entity, connection);
-                    connection.commit();
-                    success = true;
-                } catch (final PersistenceException e) {
-                    success = false;
-                    connection.rollback();
-                    CompanyService.LOGGER.error("Impossible to delete the company (Company ID : " + entity.getId()
-                            + ") and the computer linked with it", e);
-                } finally {
-                    connection.setAutoCommit(true);
-                }
-            } catch (final SQLException e) {
+
+            try {
+                this.computerDao.deleteByCompany(entity);
+                this.dao.delete(entity);
+                success = true;
+            } catch (final PersistenceException e) {
                 success = false;
-                CompanyService.LOGGER.error("Impossible to get a db connection", e);
+                CompanyService.LOGGER.error("Impossible to delete the company (Company ID : " + entity.getId()
+                        + ") and the computer linked with it", e);
             }
-        } else {
-            success = false;
+
         }
         return success;
     }

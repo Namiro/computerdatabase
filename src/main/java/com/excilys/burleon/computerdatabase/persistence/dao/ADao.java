@@ -18,13 +18,14 @@ public abstract class ADao<E extends IEntity> implements IDao<E> {
     protected DatabaseConnection databaseConnection;
 
     @Override
-    public boolean delete(final E entity, final Connection connection) {
+    public boolean delete(final E entity) {
         IModelService.LOGGER.trace("delete : entity : " + entity);
 
         boolean success = true;
-        try (PreparedStatement statement = connection.prepareStatement(
-                "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
-                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
+        try (Connection connection = this.databaseConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        "DELETE FROM " + this.getTableName(entity.getClass()) + " WHERE id = ?",
+                        ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
             statement.setLong(1, entity.getId());
             statement.executeUpdate();
         } catch (final SQLException e) {

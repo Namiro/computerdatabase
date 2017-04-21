@@ -1,6 +1,5 @@
 package com.excilys.burleon.computerdatabase.persistence.idao;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,11 +27,10 @@ public interface IDao<E extends IEntity> {
      *
      * @param entity
      *            Object to delete
-     * @param connection
-     *            The db connection
+     * 
      * @return boolean Success -> True else false.
      */
-    boolean delete(final E entity, final Connection connection);
+    boolean delete(final E entity);
 
     /**
      * Method to get all element from the database.

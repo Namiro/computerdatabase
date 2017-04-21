@@ -156,8 +156,7 @@ public class ComputerServiceTest {
     @Test
     public void testRemove() {
         final Computer computer = new Computer.ComputerBuilder().id(2).build();
-        Mockito.when(this.mockComputerDao.delete(computer, this.databaseConnection.getConnection()))
-                .thenReturn(true);
+        Mockito.when(this.mockComputerDao.delete(computer)).thenReturn(true);
 
         Assert.assertTrue(this.computerService.remove(computer));
     }
@@ -165,8 +164,7 @@ public class ComputerServiceTest {
     @Test
     public void testRemoveWithBadId() {
         final Computer computer = new Computer.ComputerBuilder().id(-1).build();
-        Mockito.when(this.mockComputerDao.delete(computer, this.databaseConnection.getConnection()))
-                .thenReturn(false);
+        Mockito.when(this.mockComputerDao.delete(computer)).thenReturn(false);
 
         Assert.assertFalse(this.computerService.remove(computer));
     }

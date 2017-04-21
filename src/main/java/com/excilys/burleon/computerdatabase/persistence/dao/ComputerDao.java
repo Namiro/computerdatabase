@@ -95,25 +95,31 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
     }
 
     @Override
-    public boolean deleteByCompany(final Company entity, final Connection connection) {
+    public boolean deleteByCompany(final Company entity) {
         this.LOGGER.trace("delete : entity : " + entity);
 
         boolean success = true;
-        try (PreparedStatement statement = connection.prepareStatement("DELETE FROM computer WHERE company_id = ?",
-                ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE)) {
-            statement.setLong(1, entity.getId());
-            statement.execute();
-            connection.commit();
-        } catch (final SQLException e) {
-            try {
-                connection.rollback();
-                success = false;
-                IDao.LOGGER.error(e.getMessage());
-                throw new PersistenceException(e);
-            } catch (final SQLException e1) {
-                this.LOGGER.error(e1.getMessage());
-                throw new PersistenceException(e1);
+        try (Connection connection = this.databaseConnection.getConnection();) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "DELETE FROM computer WHERE company_id = ?", ResultSet.TYPE_SCROLL_SENSITIVE,
+                    ResultSet.CONCUR_UPDATABLE)) {
+                statement.setLong(1, entity.getId());
+                statement.execute();
+                connection.commit();
+            } catch (final SQLException e) {
+                try {
+                    connection.rollback();
+                    success = false;
+                    IDao.LOGGER.error(e.getMessage());
+                    throw new PersistenceException(e);
+                } catch (final SQLException e1) {
+                    this.LOGGER.error(e1.getMessage());
+                    throw new PersistenceException(e1);
+                }
             }
+        } catch (final SQLException e2) {
+            this.LOGGER.error(e2.getMessage());
+            throw new PersistenceException(e2);
         }
         return success;
     }
@@ -125,7 +131,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
         final ArrayList<Computer> entities = new ArrayList<>();
         try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
+                        "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
                                 + " LEFT JOIN company ON computer.company_id=company.id",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
@@ -157,7 +163,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
         Computer entity = null;
         try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
+                        "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
                                 + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.id = ?",
                         ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);) {
@@ -200,7 +206,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
 
         try (Connection connection = this.databaseConnection.getConnection();
                 PreparedStatement statement = connection.prepareStatement(
-                        "SELECT computer.id, computer.name, introduced, discontinued, company_id, "
+                        "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, "
                                 + "company.name as cName FROM " + this.getTableName(c)
                                 + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.name "
                                 + "LIKE ? OR company.name LIKE ? ORDER BY " + orderBy.toString()
@@ -210,7 +216,6 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
             statement.setString(2, filterWord + "%");
             statement.setInt(3, first);
             statement.setInt(4, nbRecord);
-            System.out.println(statement.toString());
             statement.execute();
             try (ResultSet resultSet = statement.getResultSet();) {
                 entities = new ArrayList<>();

@@ -30,19 +30,8 @@ public class Main {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-    @Autowired
-    private IPageService<Company> companyPage;
-
-    @Autowired
-    private IPageService<Computer> computerPage;
-
-    @Autowired
-    private IComputerService computerService;
-
-    @Autowired
-    private ICompanyService companyService;
-
     private static final Scanner SCAN = new Scanner(System.in);
+
     private static int choiceMainMenu;
 
     /**
@@ -51,6 +40,39 @@ public class Main {
     public static void clearConsole() {
 
     }
+
+    /**
+     * The main function.
+     *
+     * @param args
+     *            the args
+     * @throws IOException
+     *             The IOException
+     */
+    public static void main(final String[] args) throws IOException {
+
+        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.getEnvironment().setActiveProfiles("javaee");
+        context.register(MainConfig.class);
+        context.refresh();
+
+        final Main p = context.getBean(Main.class);
+        p.start(args);
+
+        context.close();
+    }
+
+    @Autowired
+    private IPageService<Company> companyPage;
+
+    @Autowired
+    private IPageService<Computer> computerPage;
+
+    @Autowired
+    private ICompanyService companyService;
+
+    @Autowired
+    private IComputerService computerService;
 
     /**
      * To display the menu and get the user choice.
@@ -133,27 +155,6 @@ public class Main {
     }
 
     /**
-     * The main function.
-     *
-     * @param args
-     *            the args
-     * @throws IOException
-     *             The IOException
-     */
-    public static void main(final String[] args) throws IOException {
-
-        final AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.getEnvironment().setActiveProfiles("javaee");
-        context.register(MainConfig.class);
-        context.refresh();
-
-        final Main p = context.getBean(Main.class);
-        p.start(args);
-
-        context.close();
-    }
-
-    /**
      * To display List of Computer or Company and there menu.
      */
     public void showListAndMenu() {
@@ -165,36 +166,36 @@ public class Main {
             sb.append("\t3. Show page x\n");
             sb.append("\t0. Pevious menu\n");
             if (Main.choiceMainMenu == 1) {
-                System.out.println(computerPage);
+                System.out.println(this.computerPage);
             } else if (Main.choiceMainMenu == 2) {
-                System.out.println(companyPage);
+                System.out.println(this.companyPage);
             }
 
-            final int choice = displayMenyAndGetUserChoice(sb);
+            final int choice = this.displayMenyAndGetUserChoice(sb);
 
             switch (choice) {
                 case 1:
                     if (Main.choiceMainMenu == 1) {
-                        computerPage.next(Computer.class);
+                        this.computerPage.next(Computer.class);
                     } else if (Main.choiceMainMenu == 2) {
-                        companyPage.next(Company.class);
+                        this.companyPage.next(Company.class);
                     }
                     break;
                 case 2:
                     if (Main.choiceMainMenu == 1) {
-                        computerPage.previous(Computer.class);
+                        this.computerPage.previous(Computer.class);
                     } else if (Main.choiceMainMenu == 2) {
-                        companyPage.previous(Company.class);
+                        this.companyPage.previous(Company.class);
                     }
                     break;
                 case 3:
                     sb = new StringBuilder();
                     sb.append("\tNumber of page : ");
-                    final int pageNumber = displayMenyAndGetUserChoice(sb);
+                    final int pageNumber = this.displayMenyAndGetUserChoice(sb);
                     if (Main.choiceMainMenu == 1) {
-                        computerPage.page(Computer.class, pageNumber);
+                        this.computerPage.page(Computer.class, pageNumber);
                     } else if (Main.choiceMainMenu == 2) {
-                        companyPage.page(Company.class, pageNumber);
+                        this.companyPage.page(Company.class, pageNumber);
                     }
                     break;
                 case 0:
@@ -208,9 +209,12 @@ public class Main {
 
     private void start(final String[] args) {
 
-        Main.LOGGER.debug((companyPage == null) + "    Merdeeeeee");
-        companyPage.setModelService(companyService);
-        computerPage.setModelService(computerService);
+        this.companyPage.setModelService(this.companyService);
+        this.companyPage.setRecordsByPage(5);
+        this.companyPage.page(Company.class, 1);
+        this.computerPage.setModelService(this.computerService);
+        this.computerPage.setRecordsByPage(5);
+        this.computerPage.page(Computer.class, 1);
 
         boolean isContinue = true;
         boolean isContinueSubMenu = false;
@@ -224,20 +228,20 @@ public class Main {
             sb.append("\t6. Delete a computer\n");
             sb.append("\t7. Delete a company (And computer associate)\n");
             sb.append("\t0. Exit\n");
-            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb);
+            Main.choiceMainMenu = this.displayMenyAndGetUserChoice(sb);
 
             switch (Main.choiceMainMenu) {
                 case 1:
-                    showListAndMenu();
+                    this.showListAndMenu();
                     break;
                 case 2:
-                    showListAndMenu();
+                    this.showListAndMenu();
                     break;
                 case 3:
                     sb = new StringBuilder();
                     sb.append("Computer ID :\n");
-                    Optional<Computer> computerOpt = computerService.get(Computer.class,
-                            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb));
+                    Optional<Computer> computerOpt = this.computerService.get(Computer.class,
+                            Main.choiceMainMenu = this.displayMenyAndGetUserChoice(sb));
                     if (computerOpt.isPresent()) {
                         sb = new StringBuilder();
                         sb.append("Detail of : " + computerOpt.get().getId() + "\n");
@@ -260,22 +264,22 @@ public class Main {
                             System.out.print("Name :");
                             computer.setName(Main.SCAN.nextLine());
                             System.out.print("Company Id :");
-                            final long companyId = inputLong();
+                            final long companyId = this.inputLong();
                             if (companyId != 0) {
                                 computer.setCompany(new Company.CompanyBuilder().id(companyId).build());
                             }
                             System.out.print("Introduce date (yyyy-MM-dd) :");
-                            LocalDateTime date = inputDate();
+                            LocalDateTime date = this.inputDate();
                             if (date != null) {
                                 computer.setIntroduced(date);
                             }
                             System.out.print("Discontinue date (yyyy-MM-dd) :");
-                            date = inputDate();
+                            date = this.inputDate();
                             if (date != null) {
                                 computer.setDiscontinued(date);
                             }
-                            computerService.save(computer);
-                            computerPage.refresh(Computer.class);
+                            this.computerService.save(computer);
+                            this.computerPage.refresh(Computer.class);
                         } catch (final ServiceException e) {
                             System.out.println(e.getMessage());
                             isContinueSubMenu = true;
@@ -284,7 +288,7 @@ public class Main {
                     break;
                 case 5:
                     System.out.print("Computer update ID :");
-                    computerOpt = computerService.get(Computer.class, inputLong());
+                    computerOpt = this.computerService.get(Computer.class, this.inputLong());
                     if (computerOpt.isPresent()) {
                         do {
                             try {
@@ -292,24 +296,24 @@ public class Main {
                                 System.out.print("Name :");
                                 computerOpt.get().setName(Main.SCAN.nextLine());
                                 System.out.print("Company Id :");
-                                final long companyId = inputLong();
+                                final long companyId = this.inputLong();
                                 if (companyId != 0) {
                                     computerOpt.get()
                                             .setCompany(new Company.CompanyBuilder().id(companyId).build());
                                 }
                                 System.out.print("Introduce date (yyyy-MM-dd) :");
-                                LocalDateTime date = inputDate();
+                                LocalDateTime date = this.inputDate();
                                 if (date != null) {
                                     computerOpt.get().setIntroduced(date);
                                 }
                                 System.out.print("Discontinue date (yyyy-MM-dd) :");
-                                date = inputDate();
+                                date = this.inputDate();
                                 if (date != null) {
                                     computerOpt.get().setDiscontinued(date);
                                 }
-                                computerService.save(computerOpt.get());
-                                computerPage.refresh(Computer.class);
-                            } catch(final ServiceException e) {
+                                this.computerService.save(computerOpt.get());
+                                this.computerPage.refresh(Computer.class);
+                            } catch (final ServiceException e) {
                                 System.out.println(e.getMessage());
                                 isContinueSubMenu = true;
                             }
@@ -323,11 +327,11 @@ public class Main {
                 case 6:
                     sb = new StringBuilder();
                     sb.append("Remove computer ID :\n");
-                    computerOpt = computerService.get(Computer.class,
-                            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb));
+                    computerOpt = this.computerService.get(Computer.class,
+                            Main.choiceMainMenu = this.displayMenyAndGetUserChoice(sb));
                     if (computerOpt.isPresent()) {
-                        computerService.remove(computerOpt.get());
-                        computerPage.refresh(Computer.class);
+                        this.computerService.remove(computerOpt.get());
+                        this.computerPage.refresh(Computer.class);
                         sb = new StringBuilder();
                         sb.append("The computer has been deleted");
                         System.out.println(sb);
@@ -341,11 +345,11 @@ public class Main {
                 case 7:
                     sb = new StringBuilder();
                     sb.append("Remove company ID :\n");
-                    final Optional<Company> companyOpt = companyService.get(Company.class,
-                            Main.choiceMainMenu = displayMenyAndGetUserChoice(sb));
+                    final Optional<Company> companyOpt = this.companyService.get(Company.class,
+                            Main.choiceMainMenu = this.displayMenyAndGetUserChoice(sb));
                     if (companyOpt.isPresent()) {
-                        companyService.remove(companyOpt.get());
-                        companyPage.refresh(Company.class);
+                        this.companyService.remove(companyOpt.get());
+                        this.companyPage.refresh(Company.class);
                         sb = new StringBuilder();
                         sb.append("The company has been deleted");
                         System.out.println(sb);

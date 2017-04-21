@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.excilys.burleon.computerdatabase.persistence.model.IEntity;
@@ -20,6 +21,7 @@ import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
  *
  */
 @Service
+@Scope("prototype")
 public class PageService<E extends IEntity> implements IPageService<E> {
 
     static final Logger LOGGER = LoggerFactory.getLogger(PageService.class);
@@ -38,6 +40,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
 
     @Override
     public long getMaxPageNumber(final Class<E> entityType) {
+        PageService.LOGGER.trace("getMaxPageNumber");
         return (this.modelService.getTotalRecords(entityType, this.filterWord) / this.recordsByPage) + 1;
     }
 
@@ -64,10 +67,12 @@ public class PageService<E extends IEntity> implements IPageService<E> {
      */
     @Override
     public List<E> getPageRecords() {
+        PageService.LOGGER.trace("getMaxPageNumber");
         return this.records;
     }
 
     public int getRecordsByPage() {
+        PageService.LOGGER.trace("getRecordsByPage");
         return this.recordsByPage;
     }
 
@@ -79,6 +84,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
 
     @Override
     public List<E> next(final Class<E> entityType) {
+        PageService.LOGGER.trace("next");
         this.hasSetModelService();
         this.number++;
         final List<E> records = this.modelService.getPage(entityType, this.number, this.recordsByPage,
@@ -100,6 +106,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
      */
     @Override
     public List<E> page(final Class<E> entityType, final int pageNumber) {
+        PageService.LOGGER.trace("page");
         this.hasSetModelService();
         if (pageNumber > 0) {
             final List<E> records = this.modelService.getPage(entityType, pageNumber, this.recordsByPage,
@@ -114,6 +121,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
 
     @Override
     public List<E> previous(final Class<E> entityType) {
+        PageService.LOGGER.trace("previous");
         this.hasSetModelService();
         if (this.number > 1) {
             this.number--;
@@ -125,6 +133,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
 
     @Override
     public List<E> refresh(final Class<E> entityType) {
+        PageService.LOGGER.trace("refresh");
         this.hasSetModelService();
         this.records = this.modelService.getPage(entityType, this.number, this.recordsByPage, this.filterWord,
                 this.orderBy);

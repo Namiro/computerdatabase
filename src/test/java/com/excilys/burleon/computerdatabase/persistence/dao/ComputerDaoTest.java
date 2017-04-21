@@ -100,7 +100,7 @@ public class ComputerDaoTest {
     @Test
     public void testDelete() {
         final Optional<Computer> computer = this.computerDao.findById(Computer.class, 7);
-        Assert.assertTrue(this.computerDao.delete(computer.get(), this.databaseConnection.getConnection()));
+        Assert.assertTrue(this.computerDao.delete(computer.get()));
     }
 
     @Test

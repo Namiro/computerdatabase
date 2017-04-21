@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.burleon.computerdatabase.persistence.dao.DatabaseConnection;
 import com.excilys.burleon.computerdatabase.persistence.idao.IDao;
@@ -23,12 +24,14 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
     protected DatabaseConnection databaseConnection;
 
     @Override
+    @Transactional(readOnly = true)
     public List<E> get(final Class<E> entityType) {
         IModelService.LOGGER.trace("get : entityType : " + entityType);
         return this.dao.find(entityType);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<E> get(final Class<E> entityType, final long id) {
         IModelService.LOGGER.trace("get : entityType : " + entityType + "\tid : " + id);
         if (id > 0) {
@@ -41,6 +44,7 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<E> getPage(final Class<E> entityType, final int pageNumber, final int recordsByPage,
             final String filterWord, final IOrderEnum<E> orderBy) {
         IModelService.LOGGER
@@ -59,6 +63,7 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
     }
 
     @Override
+    @Transactional(readOnly = true)
     public long getTotalRecords(final Class<E> entityType, String filterWord) {
         IModelService.LOGGER
                 .trace("getTotalRecords : entityType : " + entityType + "\tfilterWord : " + filterWord);
@@ -70,11 +75,12 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
     }
 
     @Override
+    @Transactional
     public boolean remove(final E entity) {
         IModelService.LOGGER.trace("remove : entity : " + entity);
         if (entity != null && entity.getId() > 0) {
             try (Connection connection = this.databaseConnection.getConnection();) {
-                return this.dao.delete(entity, connection);
+                return this.dao.delete(entity);
             } catch (final SQLException e) {
                 throw new ServiceException("Impossible to get a connection", e);
             }
@@ -84,6 +90,7 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
     }
 
     @Override
+    @Transactional
     public Optional<E> save(final E entity) throws ServiceException {
         IModelService.LOGGER.trace("save : entity : " + entity);
 

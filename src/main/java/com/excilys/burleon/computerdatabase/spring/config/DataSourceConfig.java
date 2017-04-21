@@ -33,6 +33,7 @@ public class DataSourceConfig {
         config.setMaximumPoolSize(Integer.valueOf(PropertiesManager.config.getString("dbmaxpoolsize")));
         config.setLeakDetectionThreshold(2010);
         config.setMinimumIdle(5);
+        config.setAutoCommit(false);
 
         return new HikariDataSource(config);
     }
