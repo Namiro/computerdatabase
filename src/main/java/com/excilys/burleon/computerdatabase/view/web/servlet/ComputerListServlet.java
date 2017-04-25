@@ -1,23 +1,19 @@
 
 package com.excilys.burleon.computerdatabase.view.web.servlet;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.burleon.computerdatabase.repository.model.Computer;
 import com.excilys.burleon.computerdatabase.repository.model.enumeration.OrderComputerEnum;
@@ -34,9 +30,9 @@ import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
  *
  * @author Junior Burléon
  */
-@WebServlet("/ComputerList")
 @Controller
-public class ComputerListServlet extends HttpServlet implements IHttpServlet {
+@RequestMapping("/" + Servlet.SERVLET_COMPUTER_LIST)
+public class ComputerListServlet implements IHttpServlet {
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -52,7 +48,6 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
         public String[] split;
     }
 
-    private static final long serialVersionUID = -6681257837248708119L;
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
 
     @Autowired
@@ -84,69 +79,59 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
         }
     }
 
-    @Override
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
-        ComputerListServlet.LOGGER.trace("GET /ComputerList \t" + request.getRequestURI());
+    @RequestMapping(method = RequestMethod.GET)
+    protected String doGet(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerListServlet.LOGGER.trace("GET /ComputerList \t");
 
-        final ProcessVariables processVariables = this.getProcessVariables(request);
-
+        final ProcessVariables processVariables = this.getProcessVariables(params);
+        this.pageService.setModelService(this.computerService);
         this.pageService.setRecordsByPage(processVariables.recordsByPage);
         this.pageService.setFilterWord(processVariables.filterWord);
         this.pageService.setOrderBy(processVariables.orderBy);
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
 
-        this.populateRequest(request, processVariables);
-
-        this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
+        this.populateModel(model, processVariables);
+        return Servlet.SERVLET_COMPUTER_LIST;
     }
 
-    @Override
-    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
-        ComputerListServlet.LOGGER.trace("POST /ComputerList \t" + request.getRequestURI());
+    @RequestMapping(method = RequestMethod.POST)
+    protected String doPost(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerListServlet.LOGGER.trace("POST /ComputerList \t");
 
-        final ProcessVariables processVariables = this.getProcessVariables(request);
+        this.pageService.setModelService(this.computerService);
+        final ProcessVariables processVariables = this.getProcessVariables(params);
 
         ProcessResult processResult = new ProcessResult();
 
         // If it is a deleting
-        if (request.getParameter(Data.SUBMIT_DELETE) != null) {
+        if (model.get(Data.SUBMIT_DELETE) != null) {
             processResult = this.deleteComputersProcess(processVariables.split);
         }
 
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
-        this.populateRequest(request, processVariables, processResult);
-        this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request, response);
+        this.populateModel(model, processVariables, processResult);
+        return Servlet.SERVLET_COMPUTER_LIST;
     }
 
     @Override
-    public ProcessVariables getProcessVariables(final HttpServletRequest request) {
+    public ProcessVariables getProcessVariables(final Map<String, String> params) {
         final ProcessVariables processVariables = new ProcessVariables();
-        if (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE,
-                    request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE));
+        if (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
+            processVariables.recordsByPage = Integer.valueOf(params.get(Data.PAGINATION_RECORDS_BY_PAGE));
         }
-        if (request.getParameter(Data.SEARCH_WORD) != null) {
-            request.setAttribute(Data.SEARCH_WORD, request.getParameter(Data.SEARCH_WORD));
+        if (params.get(Data.SEARCH_WORD) != null) {
+            processVariables.filterWord = params.get(Data.SEARCH_WORD);
         }
-        if (request.getParameter(Data.ORDER_BY) != null) {
-            request.setAttribute(Data.ORDER_BY, request.getParameter(Data.ORDER_BY));
+        if (params.get(Data.SUBMIT_DELETE) != null) {
+            processVariables.split = params.get(Data.SUBMIT_DELETE).split(",");
         }
-        if (request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            processVariables.recordsByPage = Integer
-                    .valueOf((String) request.getAttribute(Data.PAGINATION_RECORDS_BY_PAGE));
-        }
-        if (request.getParameter(Data.SUBMIT_DELETE) != null) {
-            processVariables.split = request.getParameter(Data.SUBMIT_DELETE).split(",");
-        }
-        processVariables.newCurrentPage = (request.getParameter(Data.PAGINATION_CURRENT_PAGE) != null)
-                ? Integer.parseInt(request.getParameter(Data.PAGINATION_CURRENT_PAGE)) : 1;
-        if (request.getParameter(Data.SUBMIT_SEARCH) != null) {
+        processVariables.newCurrentPage = (params.get(Data.PAGINATION_CURRENT_PAGE) != null)
+                ? Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE)) : 1;
+        if (params.get(Data.SUBMIT_SEARCH) != null) {
             processVariables.newCurrentPage = 1;
         }
-        if (request.getAttribute(Data.ORDER_BY) != null) {
-            switch ((String) request.getAttribute(Data.ORDER_BY)) {
+        if (params.get(Data.ORDER_BY) != null) {
+            switch (params.get(Data.ORDER_BY)) {
                 case Data.ORDER_BY_1:
                     processVariables.orderBy = OrderComputerEnum.NAME;
                     break;
@@ -164,34 +149,24 @@ public class ComputerListServlet extends HttpServlet implements IHttpServlet {
             }
         }
 
-        processVariables.filterWord = (String) request.getAttribute(Data.SEARCH_WORD);
-
-        processVariables.recordsByPage = (request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE) != null)
-                ? Integer.parseInt(request.getParameter(Data.PAGINATION_RECORDS_BY_PAGE))
-                : processVariables.recordsByPage;
+        processVariables.recordsByPage = (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null)
+                ? Integer.parseInt(params.get(Data.PAGINATION_RECORDS_BY_PAGE)) : processVariables.recordsByPage;
 
         return processVariables;
     }
 
     @Override
-    public void init(final ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
-        this.pageService.setModelService(this.computerService);
-    }
-
-    @Override
-    public void populateRequest(final HttpServletRequest request, final Object processVariables,
+    public void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
-        IHttpServlet.super.populateRequest(request, processVariables, processResult);
+        IHttpServlet.super.populateModel(model, processVariables, processResult);
 
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
-        request.setAttribute(Data.LIST_COMPUTER, ComputerMapper.toComputerDTO(_processVariables.listComputer));
-        request.setAttribute(Data.SEARCH_NUMBER_RESULTS,
+        model.addAttribute(Data.LIST_COMPUTER, ComputerMapper.toComputerDTO(_processVariables.listComputer));
+        model.addAttribute(Data.SEARCH_NUMBER_RESULTS,
                 this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
-        request.setAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
-        request.setAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber(Computer.class));
-        request.setAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
-        request.setAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
+        model.addAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
+        model.addAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber(Computer.class));
+        model.addAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
+        model.addAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
     }
 }

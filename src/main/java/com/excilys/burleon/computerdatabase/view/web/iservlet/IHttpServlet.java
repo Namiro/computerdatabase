@@ -1,6 +1,8 @@
 package com.excilys.burleon.computerdatabase.view.web.iservlet;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+
+import org.springframework.ui.ModelMap;
 
 import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
@@ -10,24 +12,24 @@ public interface IHttpServlet {
     /**
      * Allow to get the parameters from the JSP.
      *
-     * @param request
-     *            The request
+     * @param params
+     *            The params
      * @return
      * @return Return the working variable initialized in function of the data
      *         received in the request.
      */
-    Object getProcessVariables(final HttpServletRequest request);
+    Object getProcessVariables(final Map<String, String> params);
 
     /**
      * Allow to set the parameters for the JSP.
      *
-     * @param request
-     *            The request
+     * @param model
+     *            The model
      * @param processVariables
      *            The working variables
      */
-    default void populateRequest(final HttpServletRequest request, final Object processVariables) {
-        this.populateRequest(request, processVariables, null);
+    default void populateModel(final ModelMap model, final Object processVariables) {
+        this.populateModel(model, processVariables, null);
     }
 
     /**
@@ -40,14 +42,14 @@ public interface IHttpServlet {
      * @param processResult
      *            The result of a process
      */
-    default void populateRequest(final HttpServletRequest request, final Object processVariables,
+    default void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
 
         if (processResult != null) {
             if (processResult.isSuccess) {
-                request.setAttribute(Data.MESSAGE_SUCCESS, processResult.message);
+                model.addAttribute(Data.MESSAGE_SUCCESS, processResult.message);
             } else {
-                request.setAttribute(Data.MESSAGE_ERROR, processResult.message);
+                model.addAttribute(Data.MESSAGE_ERROR, processResult.message);
             }
         }
     }

@@ -8,15 +8,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 /**
  *
  * @author Junior Burleon
  *
  */
+@WebAppConfiguration
 @Configuration
-@Import(value = { DataSourceConfig.class, InfrastructureConfig.class, RepositoryConfig.class, ServiceConfig.class,
-        SecurityConfig.class, ViewConfig.class })
+@EnableWebMvc
+@Import(value = { DataSourceConfig.class, InfrastructureConfig.class, RepositoryConfig.class, ViewConfig.class,
+        ServiceConfig.class, SecurityConfig.class })
 public class ApplicationConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfig.class);

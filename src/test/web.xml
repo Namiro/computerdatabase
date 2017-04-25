@@ -6,16 +6,9 @@
 
     <display-name>Computer Database Web App</display-name>
 
-    <welcome-file-list>
-        <welcome-file>ComputerList</welcome-file>
-    </welcome-file-list>
-
     <!-- Header & Footer of Web page -->
     <jsp-config>
-        <taglib>
-            <taglib-uri>http://burleon.excilys.com/jsp/tlds/mytags</taglib-uri>
-            <taglib-location>/WEB-INF/paginator.tld</taglib-location>
-        </taglib>
+
         <jsp-property-group>
             <url-pattern>/jsp/*</url-pattern>
             <url-pattern>/WEB-INF/public/*</url-pattern>
@@ -24,27 +17,6 @@
         </jsp-property-group>
     </jsp-config>
 
-    <!-- Servlet ALL -->
-    <servlet>
-        <servlet-name>ComputerList</servlet-name>
-        <jsp-file>/WEB-INF/public/computerlist.jsp</jsp-file>
-    </servlet>
-    <servlet>
-        <servlet-name>ComputerManage</servlet-name>
-        <jsp-file>/WEB-INF/public/computermanage.jsp</jsp-file>
-    </servlet>
-
-    <context-param>
-        <param-name>contextClass</param-name>
-        <param-value>org.springframework.web.context.support.AnnotationConfigWebApplicationContext</param-value>
-    </context-param>
-    <context-param>
-        <param-name>spring.profiles.active</param-name>
-        <param-value>javaee</param-value>
-    </context-param>
-    <context-param>
-        <param-name>contextConfigLocation</param-name>
-        <param-value>com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig</param-value>
-    </context-param>
+    
 </web-app>
 

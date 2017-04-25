@@ -5,22 +5,18 @@
  */
 package com.excilys.burleon.computerdatabase.view.web.servlet;
 
-import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.burleon.computerdatabase.repository.model.Company;
 import com.excilys.burleon.computerdatabase.repository.model.Computer;
@@ -40,9 +36,9 @@ import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
  *
  * @author Junior
  */
-@WebServlet("/ComputerManage")
 @Controller
-public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
+@RequestMapping("/" + Servlet.SERVLET_COMPUTER_MANAGE)
+public class ComputerManageServlet implements IHttpServlet {
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -54,7 +50,6 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
         public ComputerDTO computerReceived;
     }
 
-    private static final long serialVersionUID = -922272733938052338L;
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
 
     @Autowired
@@ -64,12 +59,12 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
     public ICompanyService companyService;
 
     /* METHODE */
-    @Override
-    protected void doGet(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
-        ComputerManageServlet.LOGGER.trace("GET /ComputerManage \t" + request.getRequestURI());
 
-        final ProcessVariables processVariables = this.getProcessVariables(request);
+    @RequestMapping(method = RequestMethod.GET)
+    protected String doGet(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerManageServlet.LOGGER.trace("GET /ComputerManage \t");
+
+        final ProcessVariables processVariables = this.getProcessVariables(params);
 
         /* If a computer was selected */
         if (StringUtils.isNotBlank(processVariables.computerReceived.id)) {
@@ -79,63 +74,55 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
             if (computerOpt.isPresent()) {
                 processVariables.computer = ComputerMapper.toComputerDTO(computerOpt.get());
             } else {
-                response.sendRedirect(response.encodeRedirectURL(Servlet.SERVLET_COMPUTER_MANAGE));
-                return;
+                return "redirect:/" + Servlet.SERVLET_COMPUTER_MANAGE;
             }
         }
 
-        this.populateRequest(request, processVariables);
+        this.populateModel(model, processVariables);
 
-        this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request, response);
+        return Servlet.SERVLET_COMPUTER_MANAGE;
     }
 
-    @Override
-    protected void doPost(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
-        ComputerManageServlet.LOGGER.trace("POST /ComputerManage \t" + request.getRequestURI());
+    @RequestMapping(method = RequestMethod.POST)
+    protected String doPost(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerManageServlet.LOGGER.trace("POST /ComputerManage \t");
 
-        final ProcessVariables processVariables = this.getProcessVariables(request);
+        final ProcessVariables processVariables = this.getProcessVariables(params);
         ProcessResult processResult;
 
         // Creation of computer from user entries
         processResult = this.initializeComputersProcess(processVariables);
         if (!processResult.isSuccess) {
-            this.populateRequest(request, processVariables, processResult);
-            this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
-                    response);
+            this.populateModel(model, processVariables, processResult);
+            return Servlet.SERVLET_COMPUTER_MANAGE;
         }
 
         // Delete of computer if asked
-        if (request.getParameter(Data.SUBMIT_DELETE) != null) {
+        if (params.get(Data.SUBMIT_DELETE) != null) {
             processResult = this.removeComputersProcess(processVariables);
-            this.populateRequest(request, processVariables, processResult);
+            this.populateModel(model, processVariables, processResult);
             if (processResult.isSuccess) {
-                this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_LIST).forward(request,
-                        response);
+                return Servlet.SERVLET_COMPUTER_LIST;
             } else {
-                this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
-                        response);
+                return Servlet.SERVLET_COMPUTER_MANAGE;
             }
-            return;
         } else { // Save of computer if not delete
             processResult = this.saveComputerProcess(processVariables);
-            this.populateRequest(request, processVariables, processResult);
-            this.getServletContext().getNamedDispatcher(Servlet.SERVLET_COMPUTER_MANAGE).forward(request,
-                    response);
+            this.populateModel(model, processVariables, processResult);
+            return Servlet.SERVLET_COMPUTER_MANAGE;
         }
     }
 
     @Override
-    public ProcessVariables getProcessVariables(final HttpServletRequest request) {
+    public ProcessVariables getProcessVariables(final Map<String, String> params) {
         final ProcessVariables processVariables = new ProcessVariables();
 
         processVariables.computerReceived = new ComputerDTO();
-        processVariables.computerReceived.id = request.getParameter(Data.COMPUTER_ID);
-        processVariables.computerReceived.name = request.getParameter(Data.COMPUTER_NAME);
-        processVariables.computerReceived.introduced = request.getParameter(Data.COMPUTER_INTRODUCE_DATE);
-        processVariables.computerReceived.discontinued = request.getParameter(Data.COMPUTER_DISCONTINUE_DATE);
-        processVariables.computerReceived.company = new CompanyDTO(request.getParameter(Data.COMPUTER_COMPANY_ID),
-                "");
+        processVariables.computerReceived.id = params.get(Data.COMPUTER_ID);
+        processVariables.computerReceived.name = params.get(Data.COMPUTER_NAME);
+        processVariables.computerReceived.introduced = params.get(Data.COMPUTER_INTRODUCE_DATE);
+        processVariables.computerReceived.discontinued = params.get(Data.COMPUTER_DISCONTINUE_DATE);
+        processVariables.computerReceived.company = new CompanyDTO(params.get(Data.COMPUTER_COMPANY_ID), "");
 
         // If it is an updating or deleting
         if (StringUtils.isNotBlank(processVariables.computerReceived.getId())) {
@@ -146,12 +133,6 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
         }
 
         return processVariables;
-    }
-
-    @Override
-    public void init(final ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
     }
 
     /**
@@ -184,32 +165,31 @@ public class ComputerManageServlet extends HttpServlet implements IHttpServlet {
     }
 
     @Override
-    public void populateRequest(final HttpServletRequest request, final Object processVariables,
+    public void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
-        IHttpServlet.super.populateRequest(request, processVariables, processResult);
+        IHttpServlet.super.populateModel(model, processVariables, processResult);
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
 
         // If we have information about a computer
         if (_processVariables.computer != null) {
-            request.setAttribute(Data.COMPUTER_ID, _processVariables.computer.id);
+            model.addAttribute(Data.COMPUTER_ID, _processVariables.computer.id);
             if (StringUtils.isNotBlank(_processVariables.computer.introduced)) {
-                request.setAttribute(Data.COMPUTER_INTRODUCE_DATE, _processVariables.computer.introduced);
+                model.addAttribute(Data.COMPUTER_INTRODUCE_DATE, _processVariables.computer.introduced);
             }
             if (StringUtils.isNotBlank(_processVariables.computer.discontinued)) {
-                request.setAttribute(Data.COMPUTER_DISCONTINUE_DATE, _processVariables.computer.discontinued);
+                model.addAttribute(Data.COMPUTER_DISCONTINUE_DATE, _processVariables.computer.discontinued);
             }
             if (StringUtils.isNotBlank(_processVariables.computer.name)) {
-                request.setAttribute(Data.COMPUTER_NAME, _processVariables.computer.name);
+                model.addAttribute(Data.COMPUTER_NAME, _processVariables.computer.name);
             }
             if (_processVariables.computer.company != null
                     && StringUtils.isNotBlank(_processVariables.computer.company.id)) {
-                request.setAttribute(Data.COMPUTER_COMPANY_ID, _processVariables.computer.company.id);
+                model.addAttribute(Data.COMPUTER_COMPANY_ID, _processVariables.computer.company.id);
             }
 
         }
 
-        request.setAttribute(Data.LIST_COMPANY,
-                CompanyMapper.toCompanyDTO(this.companyService.get(Company.class)));
+        model.addAttribute(Data.LIST_COMPANY, CompanyMapper.toCompanyDTO(this.companyService.get(Company.class)));
     }
 
     /**
