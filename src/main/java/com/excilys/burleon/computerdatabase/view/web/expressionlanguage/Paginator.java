@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.view.web.el;
+package com.excilys.burleon.computerdatabase.view.web.expressionlanguage;
 
 import java.io.IOException;
 

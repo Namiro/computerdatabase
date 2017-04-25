@@ -9,7 +9,7 @@
 	<uri>http://burleon.excilys.com/jsp/tlds/mytags</uri>
 	<tag>
 		<name>pagination</name>
-		<tag-class>com.excilys.burleon.computerdatabase.view.web.el.Paginator</tag-class>
+		<tag-class>com.excilys.burleon.computerdatabase.view.web.expressionlanguage.Paginator</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
 			<name>uri</name>

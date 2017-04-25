@@ -72,7 +72,6 @@ public abstract class Entity implements IEntity {
      *            The id
      */
     Entity(final long id) {
-        super();
         this.id = id;
     }
 
