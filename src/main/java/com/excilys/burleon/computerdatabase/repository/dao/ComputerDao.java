@@ -18,6 +18,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
@@ -67,7 +68,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
             final Map<String, Object> parameters = new HashMap<>();
             parameters.put("name", entity.getName());
             if (centity.getIntroduced() == null) {
-                parameters.put("introduced", java.sql.Types.TIMESTAMP);
+                parameters.put("introduced", null);
             } else {
                 if (centity.getIntroduced()
                         .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
@@ -78,7 +79,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
             }
 
             if (centity.getDiscontinued() == null) {
-                parameters.put("discontinued", java.sql.Types.TIMESTAMP);
+                parameters.put("discontinued", null);
             } else {
                 if (centity.getDiscontinued()
                         .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
@@ -89,7 +90,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
             }
 
             if (centity.getCompany() == null) {
-                parameters.put("company_id", java.sql.Types.INTEGER);
+                parameters.put("company_id", null);
             } else {
                 parameters.put("company_id", centity.getCompany().getId());
             }
@@ -148,6 +149,9 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
                             + "company.name as cName FROM " + this.getTableName(c)
                             + " LEFT JOIN company ON computer.company_id=company.id WHERE computer.id = ?",
                     new ComputerMapper(), id);
+        } catch (final EmptyResultDataAccessException e) {
+            ComputerDao.LOGGER.error(e.getMessage());
+            return Optional.ofNullable(tmpEntity);
         } catch (final DataAccessException e) {
             ComputerDao.LOGGER.error(e.getMessage());
             throw new PersistenceException(e);
@@ -208,10 +212,10 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
 
         try {
             final Object[] params = new Object[5];
-
             params[0] = centity.getName();
+
             if (centity.getIntroduced() == null) {
-                params[1] = java.sql.Types.TIMESTAMP;
+                params[1] = null;
             } else {
                 if (centity.getIntroduced()
                         .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
@@ -222,7 +226,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
             }
 
             if (centity.getDiscontinued() == null) {
-                params[2] = java.sql.Types.TIMESTAMP;
+                params[2] = null;
             } else {
                 if (centity.getDiscontinued()
                         .isAfter(LocalDateTime.of(LocalDate.of(2038, 01, 18), LocalTime.NOON))) {
@@ -231,11 +235,13 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
                 }
                 params[2] = Timestamp.valueOf(centity.getDiscontinued());
             }
+
             if (centity.getCompany() == null) {
-                params[3] = java.sql.Types.INTEGER;
+                params[3] = null;
             } else {
                 params[3] = centity.getCompany().getId();
             }
+
             params[4] = entity.getId();
 
             this.jdbcTemplate.update("UPDATE " + this.getTableName(entity.getClass())
