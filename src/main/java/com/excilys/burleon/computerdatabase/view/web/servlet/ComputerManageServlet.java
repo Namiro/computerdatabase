@@ -88,10 +88,9 @@ public class ComputerManageServlet implements IHttpServlet {
         ComputerManageServlet.LOGGER.trace("POST /ComputerManage \t");
 
         final ProcessVariables processVariables = this.getProcessVariables(params);
-        ProcessResult processResult;
 
         // Creation of computer from user entries
-        processResult = this.initializeComputersProcess(processVariables);
+        ProcessResult processResult = this.initializeComputersProcess(processVariables);
         if (!processResult.isSuccess) {
             this.populateModel(model, processVariables, processResult);
             return Servlet.SERVLET_COMPUTER_MANAGE;

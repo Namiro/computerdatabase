@@ -9,6 +9,7 @@
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime"%>
 <%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags"
     prefix="mytags"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <jsp:useBean id="Data"
     class="com.excilys.burleon.computerdatabase.view.web.constant.Data"
     scope="application" />
@@ -44,7 +45,7 @@
 <c:set var="SEARCH_WORD" value="<%=Data.SEARCH_WORD%>" />
 <c:set var="SEARCH_NUMBER_RESULTS"
     value="<%=Data.SEARCH_NUMBER_RESULTS%>" />
-    <c:set var="ORDER_BY" value="<%=Data.ORDER_BY%>" />
+<c:set var="ORDER_BY" value="<%=Data.ORDER_BY%>" />
 <c:set var="ORDER_BY_1" value="<%=Data.ORDER_BY_1%>" />
 <c:set var="ORDER_BY_2" value="<%=Data.ORDER_BY_2%>" />
 <c:set var="ORDER_BY_3" value="<%=Data.ORDER_BY_3%>" />
@@ -73,7 +74,7 @@
     webshims.polyfill('forms forms-ext');
 </script>
 
-<title>Computer Database</title>
+<title><spring:message code="title"/></title>
 </head>
 <body>
     <nav class="navbar navbar-default" role="navigation">
@@ -86,7 +87,8 @@
                     class="icon-bar"></span> <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="${SERVLET_COMPUTER_LIST}?${SEARCH_WORD}=&${ORDER_BY}=&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=20"><span
+            <a class="navbar-brand"
+                href="${SERVLET_COMPUTER_LIST}?${SEARCH_WORD}=&${ORDER_BY}=&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=20"><span
                 class="glyphicon glyphicon-home"></span></a>
         </div>
 

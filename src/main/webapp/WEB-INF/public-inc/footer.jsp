@@ -6,8 +6,7 @@
 <div id="footer">
     <div class="container">
         <p class="text-muted">
-            Burléon Junior<br /> <a href="mailto:email@hotmail.com">Contacter
-                le webmaster</a>
+            Burléon Junior<br /> <a href="mailto:email@hotmail.com">Contact the webmaster</a>
         </p>
     </div>
 </div>

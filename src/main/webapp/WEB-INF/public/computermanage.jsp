@@ -10,7 +10,7 @@
 <%-- Content page. --%>
 <div class="row">
     <div class="col-xs-8 col-xs-offset-2 box">
-        <h1>Manage Computer</h1>
+        <h1><spring:message code="computermanage_title"/></h1>
         <form action="${SERVLET_COMPUTER_MANAGE}" method="POST"
             role="form" data-toggle="validator">
             <fieldset>
@@ -18,10 +18,10 @@
                     value="${requestScope[COMPUTER_ID]}" id="${COMPUTER_ID}"/>
 
                 <div class="form-group has-feedback">
-                    <label for="${COMPUTER_NAME}">Computer name</label>
+                    <label for="${COMPUTER_NAME}"><spring:message code="computermanage_name"/></label>
                     <input type="text" class="form-control"
                         id="${COMPUTER_NAME}"
-                        placeholder="Computer name"
+                        placeholder=<spring:message code="computermanage_name_placeholder"/>
                         name="${COMPUTER_NAME}"
                         value="${requestScope[COMPUTER_NAME]}"
                         maxlength="550"
@@ -34,8 +34,7 @@
                 </div>
 
                 <div class="form-group has-feedback">
-                    <label for="${COMPUTER_INTRODUCE_DATE}">Introduced
-                        date</label> <input type="date" class="form-control"
+                    <label for="${COMPUTER_INTRODUCE_DATE}"><spring:message code="computermanage_introduced"/></label> <input type="date" class="form-control"
                         id="${COMPUTER_INTRODUCE_DATE}"
                         name="${COMPUTER_INTRODUCE_DATE}"
                         value="${requestScope[COMPUTER_INTRODUCE_DATE]}"
@@ -47,8 +46,7 @@
                 </div>
 
                 <div class="form-group has-feedback">
-                    <label for="${COMPUTER_DISCONTINUE_DATE}">Discontinued
-                        date</label> <input type="date" class="form-control"
+                    <label for="${COMPUTER_DISCONTINUE_DATE}"><spring:message code="computermanage_discontinued"/></label> <input type="date" class="form-control"
                         id="${COMPUTER_DISCONTINUE_DATE}"
                         name="${COMPUTER_DISCONTINUE_DATE}"
                         value="${requestScope[COMPUTER_DISCONTINUE_DATE]}"
@@ -60,13 +58,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="${COMPUTER_COMPANY_ID}">Company</label>
+                    <label for="${COMPUTER_COMPANY_ID}"><spring:message code="computermanage_company"/></label>
                     <select class="form-control"
                         name="${COMPUTER_COMPANY_ID}"
                         id="${COMPUTER_COMPANY_ID}">
                         <option value="0" selected
-                            id="${COMPUTER_COMPANY_ID}">The
-                            company</option>
+                            id="${COMPUTER_COMPANY_ID}"><spring:message code="computermanage_company_placeholder"/></option>
                         <c:forEach items="${requestScope[LIST_COMPANY]}"
                             var="company" varStatus="as">
                             <option value="${company.id}"
@@ -83,15 +80,15 @@
 
                         <input type="submit" class="btn btn-success"
                             style="float: right;" id="${SUBMIT_SAVE}"
-                            name="${SUBMIT_SAVE}" value="Save" />
+                            name="${SUBMIT_SAVE}" value=<spring:message code="button_save"/> />
                         <input type="submit" class="btn btn-danger"
                             style="float: right;" id="${SUBMIT_DELETE}"
-                            name="${SUBMIT_DELETE}" value="Delete" />
+                            name="${SUBMIT_DELETE}" value=<spring:message code="button_delete"/> />
                     </c:when>
                     <c:otherwise>
                         <input type="submit" class="btn btn-primary"
                             style="float: right;" id="${SUBMIT_CREATE}"
-                            name="${SUBMIT_CREATE}" value="Create" />
+                            name="${SUBMIT_CREATE}" value=<spring:message code="button_create"/> />
                     </c:otherwise>
                 </c:choose>
             </div>

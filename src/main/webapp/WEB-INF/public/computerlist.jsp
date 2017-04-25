@@ -5,16 +5,16 @@
 <div class="row">
     <div class="container">
         <h1 id="homeTitle">${requestScope[SEARCH_NUMBER_RESULTS]}
-            Computers found</h1>
+            <spring:message code="computerlist_label_title"/></h1>
         <div id="actions" class="form-horizontal">
             <div class="pull-left">
                 <form id="searchForm" action="${SERVLET_COMPUTER_LIST}"
                     method="GET" class="form-inline">
                     <input type="search" id="${SEARCH_WORD}"
                         name="${SEARCH_WORD}" class="form-control"
-                        placeholder="Search name" value="${requestScope[SEARCH_WORD]}" /> <input
+                        placeholder=<spring:message code="computerlist_placeholder"/> value="${requestScope[SEARCH_WORD]}" /> <input
                         type="submit" name="${SUBMIT_SEARCH}" id="${SUBMIT_SEARCH}"
-                        value="Search"
+                        value=<spring:message code="button_search"/>
                         class="btn btn-primary" /> <input type="hidden"
                         name="${ORDER_BY}"
                         value="${requestScope[ORDER_BY]}" /> <input
@@ -28,9 +28,9 @@
             </div>
             <div class="pull-right">
                 <a class="btn btn-success" id="addComputer"
-                    href="${SERVLET_COMPUTER_MANAGE}">Add Computer</a> <a
+                    href="${SERVLET_COMPUTER_MANAGE}"><spring:message code="computerlist_button_add"/></a> <a
                     class="btn btn-default" id="editComputer" href="#"
-                    onclick="$.fn.toggleEditMode();">Edit</a>
+                    onclick="$.fn.toggleEditMode();"><spring:message code="computerlist_button_edit"/></a>
             </div>
         </div>
     </div>
@@ -56,13 +56,13 @@
                                 </a>
                             </span></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Name</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message code="computerlist_table_name"/></a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Introduce</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message code="computerlist_table_introduced"/></a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Discontinue</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message code="computerlist_table_discontinued"/></a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">Company</a></th>
+                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message code="computerlist_table_company"/></a></th>
                         </tr>
                     </thead>
                     <tbody id="results">
