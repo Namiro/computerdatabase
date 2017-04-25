@@ -4,11 +4,11 @@
     <groupId>com.excilys.burleon</groupId>
     <artifactId>ComputerDatabase</artifactId>
     <packaging>war</packaging>
-    <version>4.4.0-SNAPSHOT</version>
+    <version>5.0.0-RELEASE</version>
     <name>ComputerDatabase Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <properties>
-        <skiptest>false</skiptest>
+        <skiptest>true</skiptest>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
