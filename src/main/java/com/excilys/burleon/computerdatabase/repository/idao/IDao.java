@@ -18,16 +18,28 @@ public interface IDao<E extends IEntity> {
      *
      * @param entity
      *            Object of type E
-     * @return Entity
+     * @return AEntity
      */
     Optional<E> create(E entity);
 
     /**
      * Method to delete an element in the table of specified entity.
      *
+     * @param c
+     *            The type of entity
+     * @param entityId
+     *            The id of entity to delete.
+     *
+     * @return boolean Success -> True else false.
+     */
+    boolean delete(Class<E> c, final long entityId);
+
+    /**
+     * Method to delete an element in the table of specified entity.
+     *
      * @param entity
      *            Object to delete
-     * 
+     *
      * @return boolean Success -> True else false.
      */
     boolean delete(final E entity);
@@ -91,7 +103,7 @@ public interface IDao<E extends IEntity> {
      * @return The number of records for this entity and that match with the
      *         filter word
      */
-    long getNbRecords(Class<E> c, String filterWord);
+    long getNbRecordsByName(Class<E> c, String filterWord);
 
     /**
      * Method to get the table name. The table name is the name of the entity
@@ -110,7 +122,7 @@ public interface IDao<E extends IEntity> {
      *
      * @param entity
      *            Object of type E to update
-     * @return Entity
+     * @return AEntity
      */
     Optional<E> update(E entity);
 

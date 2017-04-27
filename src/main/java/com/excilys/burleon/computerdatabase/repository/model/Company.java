@@ -1,12 +1,16 @@
 package com.excilys.burleon.computerdatabase.repository.model;
 
+import javax.persistence.Table;
+
 /**
  * This class represent a company records.
  *
  * @author Junior Burleon
  *
  */
-public class Company extends Entity implements IEntity {
+@javax.persistence.Entity
+@Table(name = "company")
+public class Company extends AEntity implements IEntity {
     public static class CompanyBuilder extends EntityBuilder<CompanyBuilder, Company> {
         String name;
 
@@ -77,6 +81,11 @@ public class Company extends Entity implements IEntity {
         return true;
     }
 
+    @Override
+    public long getId() {
+        return this.id;
+    }
+
     public String getName() {
         return this.name;
     }
@@ -92,6 +101,11 @@ public class Company extends Entity implements IEntity {
         int result = super.hashCode();
         result = prime * result + ((this.name == null) ? 0 : this.name.hashCode());
         return result;
+    }
+
+    @Override
+    public void setId(final long id) {
+        this.id = id;
     }
 
     public void setName(final String name) {

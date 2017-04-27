@@ -2,13 +2,22 @@ package com.excilys.burleon.computerdatabase.repository.model;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
 /**
  * This class represent a computer record.
  *
  * @author Junior Burleon
  *
  */
-public class Computer extends Entity implements IEntity {
+@javax.persistence.Entity
+@Table(name = "computer")
+public class Computer extends AEntity implements IEntity {
     public static class ComputerBuilder extends EntityBuilder<ComputerBuilder, Computer> {
         private String name;
         private LocalDateTime introduced;
@@ -69,9 +78,16 @@ public class Computer extends Entity implements IEntity {
         }
     }
 
+    @NotNull
     private String name;
+
     private LocalDateTime introduced;
+
     private LocalDateTime discontinued;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_id")
+    // Unirectional OWNER
     private Company company;
 
     /**
@@ -156,6 +172,11 @@ public class Computer extends Entity implements IEntity {
         return this.discontinued;
     }
 
+    @Override
+    public long getId() {
+        return this.id;
+    }
+
     public LocalDateTime getIntroduced() {
         return this.introduced;
     }
@@ -186,6 +207,12 @@ public class Computer extends Entity implements IEntity {
 
     public void setDiscontinued(final LocalDateTime discontinued) {
         this.discontinued = discontinued;
+    }
+
+    @Override
+    public void setId(final long id) {
+        this.id = id;
+
     }
 
     public void setIntroduced(final LocalDateTime introduced) {

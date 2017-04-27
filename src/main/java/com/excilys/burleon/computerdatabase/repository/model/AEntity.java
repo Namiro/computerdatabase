@@ -1,5 +1,13 @@
 package com.excilys.burleon.computerdatabase.repository.model;
 
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.MappedSuperclass;
+
 import com.google.gson.Gson;
 
 /**
@@ -9,7 +17,9 @@ import com.google.gson.Gson;
  * @author Junior Burleon
  *
  */
-public abstract class Entity implements IEntity {
+@MappedSuperclass
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class AEntity implements IEntity {
 
     /**
      * For the builder pattern.
@@ -17,7 +27,7 @@ public abstract class Entity implements IEntity {
      * @author Junior Burleon
      *
      */
-    protected abstract static class EntityBuilder<B extends EntityBuilder<?, ?>, T extends Entity>
+    protected abstract static class EntityBuilder<B extends EntityBuilder<?, ?>, T extends AEntity>
             implements IBuild<T> {
         long id;
 
@@ -56,12 +66,15 @@ public abstract class Entity implements IEntity {
     /**
      * This is the id for all entities.
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     protected long id;
 
     /**
      * Default constructor.
      */
-    public Entity() {
+    public AEntity() {
 
     }
 
@@ -71,7 +84,7 @@ public abstract class Entity implements IEntity {
      * @param id
      *            The id
      */
-    Entity(final long id) {
+    AEntity(final long id) {
         this.id = id;
     }
 
@@ -91,7 +104,7 @@ public abstract class Entity implements IEntity {
         if (this.getClass() != obj.getClass()) {
             return false;
         }
-        final Entity other = (Entity) obj;
+        final AEntity other = (AEntity) obj;
         if (this.id != other.id) {
             return false;
         }
@@ -108,11 +121,6 @@ public abstract class Entity implements IEntity {
         return this.id;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -138,7 +146,7 @@ public abstract class Entity implements IEntity {
      */
     @Override
     public String toString() {
-        return Entity.gson.toJson(this);
+        return AEntity.gson.toJson(this);
     }
 
 }

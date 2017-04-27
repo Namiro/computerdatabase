@@ -11,7 +11,7 @@
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>
-            /home/excilys/Programs/apache-tomcat-8.5.12/logs/ComputerDatabase-log-${byDay}.log
+            /home/excilys/Programs/apache-tomcat-8.5.14/logs/ComputerDatabase-log-${byDay}.log
         </file>
         <append>true</append>
         <encoder>

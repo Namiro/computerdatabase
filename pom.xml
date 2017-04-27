@@ -4,7 +4,7 @@
     <groupId>com.excilys.burleon</groupId>
     <artifactId>ComputerDatabase</artifactId>
     <packaging>war</packaging>
-    <version>5.0.0-RELEASE</version>
+    <version>5.1.0-SNAPSHOT</version>
     <name>ComputerDatabase Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <properties>
@@ -31,6 +31,7 @@
         <version.hikaricp>2.6.1</version.hikaricp>
         <version.spring>4.3.7.RELEASE</version.spring>
         <version.jcl-over-slf4j>1.5.8</version.jcl-over-slf4j>
+        <version.hibernate>5.2.10.Final</version.hibernate>
         <version.plugin.eclipse>2.9</version.plugin.eclipse>
         <version.plugin.checkstyle>2.17</version.plugin.checkstyle>
         <version.plugin.tomcat>2.2</version.plugin.tomcat>
@@ -334,6 +335,12 @@
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${version.spring}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
             <version>${version.spring}</version>
             <scope>compile</scope>
@@ -343,6 +350,29 @@
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${version.hibernate}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>1.1.0.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>5.4.1.Final</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-java8</artifactId>
+            <version>${version.hibernate}</version>
         </dependency>
     </dependencies>
 </project>

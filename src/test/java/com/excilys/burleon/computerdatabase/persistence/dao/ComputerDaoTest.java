@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -72,7 +74,7 @@ public class ComputerDaoTest {
     public void getNbRecords() {
         final String filterWord = "CM";
 
-        final long nbComputers = this.computerDao.getNbRecords(Computer.class, filterWord);
+        final long nbComputers = this.computerDao.getNbRecordsByName(Computer.class, filterWord);
         Assert.assertTrue(nbComputers == 5);
     }
 
@@ -86,6 +88,7 @@ public class ComputerDaoTest {
     }
 
     @Test
+    @Transactional
     public void testCreate() {
 
         final Optional<Computer> computer = this.computerDao
@@ -96,6 +99,7 @@ public class ComputerDaoTest {
     }
 
     @Test
+    @Transactional
     public void testDelete() {
         final Optional<Computer> computer = this.computerDao.findById(Computer.class, 7);
         Assert.assertTrue(this.computerDao.delete(computer.get()));
@@ -121,6 +125,7 @@ public class ComputerDaoTest {
     }
 
     @Test
+    @Transactional
     public void testUpdate() {
         final Optional<Computer> computer = this.computerDao.findById(Computer.class, 6);
         Assert.assertTrue(computer.get().getId() == 6 && computer.get().getName().equals("MacBook Pro"));
