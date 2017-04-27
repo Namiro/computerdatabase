@@ -31,6 +31,7 @@ import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
 import com.excilys.burleon.computerdatabase.view.web.iservlet.IHttpServlet;
 import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
+import com.google.gson.Gson;
 
 /**
  *
@@ -131,6 +132,7 @@ public class ComputerManageServlet implements IHttpServlet {
             processVariables.computer = new ComputerDTO();
         }
 
+        ComputerManageServlet.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
     }
 
@@ -144,6 +146,7 @@ public class ComputerManageServlet implements IHttpServlet {
      */
     private ProcessResult initializeComputersProcess(final ProcessVariables processVariables) {
         try {
+            processVariables.computer.id = processVariables.computerReceived.id;
             processVariables.computer.name = processVariables.computerReceived.name;
             processVariables.computer.introduced = processVariables.computerReceived.introduced;
             processVariables.computer.discontinued = processVariables.computerReceived.discontinued;
@@ -155,7 +158,8 @@ public class ComputerManageServlet implements IHttpServlet {
                     processVariables.computer.setCompany(companyDTO);
                 }
             }
-            ComputerManageServlet.LOGGER.info("Construct OK for " + processVariables.computerReceived);
+            ComputerManageServlet.LOGGER
+                    .trace("Construct OK for " + new Gson().toJson(processVariables.computerReceived));
             return new ProcessResult(true, "Construct OK");
         } catch (final ServiceException e) {
             ComputerManageServlet.LOGGER.warn("Impossible to construct a computer with the user entries", e);
@@ -221,13 +225,14 @@ public class ComputerManageServlet implements IHttpServlet {
      */
     private ProcessResult saveComputerProcess(final ProcessVariables processVariables) {
         try {
-            processVariables.computer = ComputerMapper.toComputerDTO(
-                    this.computerService.save(ComputerMapper.toComputer(processVariables.computer)).get());
+            Computer computer = ComputerMapper.toComputer(processVariables.computer);
+            computer = this.computerService.save(computer).get();
+            processVariables.computer = ComputerMapper.toComputerDTO(computer);
             ComputerManageServlet.LOGGER.info("Save OK for " + processVariables.computer);
             return new ProcessResult(true, "Save OK");
         } catch (final ServiceException e) {
             ComputerManageServlet.LOGGER.warn("Impossible to save computer : " + processVariables.computer, e);
-            return new ProcessResult(true, e.getMessage());
+            return new ProcessResult(false, e.getMessage());
         }
     }
 }

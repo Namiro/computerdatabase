@@ -36,11 +36,11 @@ public class ComputerService extends AModelService<Computer> implements ICompute
         }
         if (entity.getDiscontinued() != null && entity.getIntroduced() != null
                 && entity.getDiscontinued().isBefore(entity.getIntroduced())) {
-            throw new ServiceException("The discontinued date must be after then the introduced date");
+            throw new ServiceException("The discontinued date must be after the introduced date");
         }
         if (entity.getDiscontinued() != null && entity.getIntroduced() != null
                 && entity.getIntroduced().isAfter(entity.getDiscontinued())) {
-            throw new ServiceException("The introduced date must be before then discontinued date.");
+            throw new ServiceException("The introduced date must be before the discontinued date.");
         }
         if (entity.getCompany() != null) {
             this.companyService.checkDataEntity(entity.getCompany());

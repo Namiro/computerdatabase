@@ -25,6 +25,7 @@ import com.excilys.burleon.computerdatabase.view.web.constant.Data;
 import com.excilys.burleon.computerdatabase.view.web.constant.Servlet;
 import com.excilys.burleon.computerdatabase.view.web.iservlet.IHttpServlet;
 import com.excilys.burleon.computerdatabase.view.web.servlet.util.ProcessResult;
+import com.google.gson.Gson;
 
 /**
  *
@@ -152,6 +153,7 @@ public class ComputerListServlet implements IHttpServlet {
         processVariables.recordsByPage = (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null)
                 ? Integer.parseInt(params.get(Data.PAGINATION_RECORDS_BY_PAGE)) : processVariables.recordsByPage;
 
+        ComputerListServlet.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
     }
 

@@ -64,7 +64,7 @@ public abstract class AModelService<E extends IEntity> implements IModelService<
         if (filterWord == null) {
             filterWord = "";
         }
-        return this.dao.getNbRecords(entityType, filterWord);
+        return this.dao.getNbRecordsByName(entityType, filterWord);
 
     }
 

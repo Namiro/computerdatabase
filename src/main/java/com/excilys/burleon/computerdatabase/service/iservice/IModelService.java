@@ -31,7 +31,7 @@ public interface IModelService<E extends IEntity> extends IService {
      *             If the entity is null
      */
     default void checkDataEntity(final E entity) throws ServiceException {
-        IModelService.LOGGER.trace("checkDataEntity : Entity : " + entity);
+        IModelService.LOGGER.trace("checkDataEntity : AEntity : " + entity);
         if (entity == null) {
             throw new ServiceException("The object hasn't been initialized");
         }

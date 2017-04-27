@@ -28,6 +28,7 @@ import com.excilys.burleon.computerdatabase.spring.config.ApplicationConfig;
 @Component
 public class Main {
 
+    @SuppressWarnings("unused")
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
     private static final Scanner SCAN = new Scanner(System.in);
