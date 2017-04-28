@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="ComputerDatabase-WebApp">
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
+        <dependent-module archiveName="ComputerDatabase-Service-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ComputerDatabase-Service/ComputerDatabase-Service">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ComputerDatabase-Repository-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ComputerDatabase-Repository/ComputerDatabase-Repository">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="ComputerDatabase-Core-1.0-SNAPSHOT.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ComputerDatabase-Core/ComputerDatabase-Core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="context-root" value="ComputerDatabase-WebApp"/>
+        <property name="java-output-path" value="/ComputerDatabase-WebApp/target/classes"/>
+    </wb-module>
+</project-modules>
