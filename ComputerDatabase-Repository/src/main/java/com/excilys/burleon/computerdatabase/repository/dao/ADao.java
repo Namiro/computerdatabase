@@ -44,6 +44,7 @@ public abstract class ADao<E extends IEntity> implements IDao<E> {
             this.entityManager.remove(entity);
             return true;
         } else {
+            ADao.LOGGER.warn("The entity (Type : " + c + " ) with the id : " + entityId + " doesn't exist");
             throw new PersistenceException(
                     "The entity (Type : " + c + " ) with the id : " + entityId + " doesn't exist");
         }

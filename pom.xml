@@ -27,6 +27,8 @@
         <version.computerdatabase.core>1.0-SNAPSHOT</version.computerdatabase.core>
         <version.computerdatabase.repository>1.0-SNAPSHOT</version.computerdatabase.repository>
         <version.computerdatabase.service>1.0-SNAPSHOT</version.computerdatabase.service>
+        <version.computerdatabase.webapp>1.0-SNAPSHOT</version.computerdatabase.webapp>
+        <version.computerdatabase.console>1.0-SNAPSHOT</version.computerdatabase.console>
         <version.junit>4.12</version.junit>
         <version.gson>2.8.0</version.gson>
         <version.slf4j>1.7.24</version.slf4j>
@@ -45,6 +47,7 @@
         <version.spring>4.3.7.RELEASE</version.spring>
         <version.jcl-over-slf4j>1.5.8</version.jcl-over-slf4j>
         <version.hibernate>5.2.10.Final</version.hibernate>
+        <version.spring-security>4.2.2.RELEASE</version.spring-security>
         <version.plugin.eclipse>2.9</version.plugin.eclipse>
         <version.plugin.checkstyle>2.17</version.plugin.checkstyle>
         <version.plugin.tomcat>2.2</version.plugin.tomcat>
@@ -274,6 +277,17 @@
                 <artifactId>spring-orm</artifactId>
                 <version>${version.spring}</version>
                 <scope>compile</scope>
+            </dependency>
+            <!-- Spring Security Dependencies -->
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-web</artifactId>
+                <version>${version.spring-security}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-config</artifactId>
+                <version>${version.spring-security}</version>
             </dependency>
 
             <!-- Hibernate Dependencies -->

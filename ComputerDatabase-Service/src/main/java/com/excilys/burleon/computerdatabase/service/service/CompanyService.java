@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.repository.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.repository.idao.IComputerDao;
+import com.excilys.burleon.computerdatabase.service.exception.DataValidationException;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 
@@ -29,10 +30,10 @@ public class CompanyService extends AModelService<Company> implements ICompanySe
     public void checkDataEntity(final Company entity) throws ServiceException {
         ICompanyService.super.checkDataEntity(entity);
         if (entity.getName().length() < 1) {
-            throw new ServiceException("The name of company must be longer (More then 1 caracter)");
+            throw new DataValidationException("The name of company must be longer (More then 1 caracter)");
         }
         if (entity.getName().length() > 50) {
-            throw new ServiceException("The name of company must be shorter (Less then 50 caracter)");
+            throw new DataValidationException("The name of company must be shorter (Less then 50 caracter)");
         }
     }
 

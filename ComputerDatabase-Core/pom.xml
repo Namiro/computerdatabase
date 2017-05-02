@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>ComputerDatabase-Core</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${version.computerdatabase.core}</version>
     <name>ComputerDatabase-Core</name>
     <url>http://maven.apache.org</url>
 
