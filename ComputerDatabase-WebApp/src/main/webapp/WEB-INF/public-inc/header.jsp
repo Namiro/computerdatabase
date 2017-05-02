@@ -74,7 +74,7 @@
     webshims.polyfill('forms forms-ext');
 </script>
 
-<title><spring:message code="title"/></title>
+<title><spring:message code="title" /></title>
 </head>
 <body>
     <nav class="navbar navbar-default" role="navigation">
@@ -95,13 +95,20 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse"
             id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav">
-
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" data-toggle="modal"
+                    data-target="#myModalSignup"><span
+                        class="glyphicon glyphicon-user"></span>
+                        <spring:message code="computerlist_button_signup" /></a></li>
+                <li><a href="#" data-toggle="modal"
+                    data-target="#myModalLogin"><span
+                        class="glyphicon glyphicon-log-in"></span>
+                        <spring:message code="computerlist_button_login" /></a></li>
             </ul>
-
         </div>
         <!-- /.navbar-collapse -->
     </nav>
 
     <div style="background-color: #eee; padding: 30px;">
         <div class="container">
+        
