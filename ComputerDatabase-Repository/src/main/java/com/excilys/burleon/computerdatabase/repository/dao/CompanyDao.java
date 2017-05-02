@@ -37,7 +37,7 @@ public class CompanyDao extends ADao<Company> implements ICompanyDao {
 
         final TypedQuery<Company> query = this.entityManager
                 .createQuery("select company from Company company where company.name like ? order by "
-                        + orderBy.toString() + " asc limit ?, ?", Company.class);
+                        + orderBy.toString() + " asc", Company.class);
         query.setParameter(0, filterWord + "%").setMaxResults(nbRecord).setFirstResult(first);
 
         return query.getResultList();

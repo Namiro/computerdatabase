@@ -41,6 +41,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
             query.executeUpdate();
         } catch (final Exception e) {
             success = false;
+            ComputerDao.LOGGER.warn(e.getMessage());
             throw new PersistenceException(e);
         }
 

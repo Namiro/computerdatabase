@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.naming.AuthenticationException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.burleon.computerdatabase.core.model.Computer;
+import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
+import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
 import com.excilys.burleon.computerdatabase.webapp.constant.Servlet;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.ComputerMapper;
@@ -32,7 +36,7 @@ import com.google.gson.Gson;
  * @author Junior Burléon
  */
 @Controller
-@RequestMapping("/" + Servlet.SERVLET_COMPUTER_LIST)
+@RequestMapping(value = { "/", "/" + Servlet.SERVLET_COMPUTER_LIST })
 public class ComputerListServlet implements IHttpServlet {
 
     /**
@@ -47,6 +51,9 @@ public class ComputerListServlet implements IHttpServlet {
         public int newCurrentPage = 1;
         public List<Computer> listComputer;
         public String[] split;
+        public String username = "";
+        public String password = "";
+        public String passworrepeated = "";
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
@@ -56,6 +63,9 @@ public class ComputerListServlet implements IHttpServlet {
 
     @Autowired
     private IComputerService computerService;
+
+    @Autowired
+    private IUserService userService;
 
     /**
      * Allow to delete the computer.
@@ -108,6 +118,14 @@ public class ComputerListServlet implements IHttpServlet {
         if (model.get(Data.SUBMIT_DELETE) != null) {
             processResult = this.deleteComputersProcess(processVariables.split);
         }
+        // If it is a login
+        else if (model.get(Data.SUBMIT_LOGIN) != null) {
+            processResult = this.loginProcess(processVariables);
+        }
+        // If it is a sign up
+        else if (model.get(Data.SUBMIT_SIGNUP) != null) {
+            processResult = this.signupProcess(processVariables);
+        }
 
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
         this.populateModel(model, processVariables, processResult);
@@ -130,6 +148,15 @@ public class ComputerListServlet implements IHttpServlet {
                 ? Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE)) : 1;
         if (params.get(Data.SUBMIT_SEARCH) != null) {
             processVariables.newCurrentPage = 1;
+        }
+        if (params.get(Data.USER_USERNAME) != null) {
+            processVariables.username = params.get(Data.USER_USERNAME);
+        }
+        if (params.get(Data.USER_PASSWORD) != null) {
+            processVariables.password = params.get(Data.USER_PASSWORD);
+        }
+        if (params.get(Data.USER_PASSWORD2) != null) {
+            processVariables.passworrepeated = params.get(Data.USER_PASSWORD2);
         }
         if (params.get(Data.ORDER_BY) != null) {
             switch (params.get(Data.ORDER_BY)) {
@@ -157,6 +184,17 @@ public class ComputerListServlet implements IHttpServlet {
         return processVariables;
     }
 
+    private ProcessResult loginProcess(final ProcessVariables processVariables) {
+        try {
+            final User user = this.userService.login(new User.UserBuilder().username(processVariables.username)
+                    .password(processVariables.password).build());
+            return new ProcessResult(true, "Login successful", user);
+        } catch (final AuthenticationException e) {
+            ComputerListServlet.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, "Login fail. " + e.getMessage());
+        }
+    }
+
     @Override
     public void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
@@ -170,5 +208,16 @@ public class ComputerListServlet implements IHttpServlet {
         model.addAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber(Computer.class));
         model.addAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
         model.addAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
+    }
+
+    private ProcessResult signupProcess(final ProcessVariables processVariables) {
+        try {
+            final User user = this.userService.register(new User.UserBuilder().username(processVariables.username)
+                    .password(processVariables.password).build(), processVariables.passworrepeated);
+            return new ProcessResult(true, "Signup successful", user);
+        } catch (final AuthenticationException e) {
+            ComputerListServlet.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, "Signup fail. " + e.getMessage());
+        }
     }
 }

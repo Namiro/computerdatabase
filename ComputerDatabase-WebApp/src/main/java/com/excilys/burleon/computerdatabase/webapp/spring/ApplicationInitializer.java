@@ -29,7 +29,7 @@ public class ApplicationInitializer implements WebApplicationInitializer {
     @Override
     public void onStartup(final ServletContext servletContext) throws ServletException {
         ApplicationInitializer.LOGGER.trace("onStartup Loading");
-        
+
         final WebApplicationContext context = this.getContext();
         servletContext.setInitParameter("spring.profiles.active", "javaee");
         servletContext.addListener(new ContextLoaderListener(context));
@@ -38,9 +38,10 @@ public class ApplicationInitializer implements WebApplicationInitializer {
                 new DispatcherServlet(context));
 
         servlet.setLoadOnStartup(1);
+        servlet.addMapping("/");
         servlet.addMapping("/" + Servlet.SERVLET_COMPUTER_LIST);
         servlet.addMapping("/" + Servlet.SERVLET_COMPUTER_MANAGE);
-        
+
         ApplicationInitializer.LOGGER.trace("onStartup Loaded");
     }
 

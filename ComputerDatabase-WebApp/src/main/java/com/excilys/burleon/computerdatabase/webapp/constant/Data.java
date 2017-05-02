@@ -21,6 +21,13 @@ public final class Data {
     public static final String COMPUTER_DISCONTINUE_DATE = "computerDiscontinueDate";
     public static final String COMPUTER_COMPANY_ID = "computerCompanyId";
 
+    /* USER */
+    public static final String USER = "user";
+    public static final String USER_ID = "userId";
+    public static final String USER_USERNAME = "userUsername";
+    public static final String USER_PASSWORD = "userPassword";
+    public static final String USER_PASSWORD2 = "userPassword2";
+
     /* ALL */
     public static final String MESSAGE_SUCCESS = "successMessage";
     public static final String MESSAGE_ERROR = "errorMessage";
@@ -31,6 +38,8 @@ public final class Data {
     public static final String SUBMIT_SAVE = "submtiSave";
     public static final String SUBMIT_DELETE = "submitDelete";
     public static final String SUBMIT_SEARCH = "submitSearch";
+    public static final String SUBMIT_LOGIN = "submitLogin";
+    public static final String SUBMIT_SIGNUP = "submitSignup";
 
     /* DIVERS */
     public static final String SEARCH_WORD = "searchWord";
