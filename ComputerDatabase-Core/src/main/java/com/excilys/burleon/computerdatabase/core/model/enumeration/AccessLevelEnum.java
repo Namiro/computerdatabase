@@ -1,6 +1,8 @@
 package com.excilys.burleon.computerdatabase.core.model.enumeration;
 
-public enum AccessLevelEnum {
+import org.springframework.security.core.GrantedAuthority;
+
+public enum AccessLevelEnum implements GrantedAuthority {
     ADMIN("ADMIN"), USER("USER"), ANONYMOUS("ANONYMOUS");
 
     private final String name;
@@ -22,6 +24,11 @@ public enum AccessLevelEnum {
      */
     public boolean equalsName(final String otherName) {
         return this.name.equals(otherName);
+    }
+
+    @Override
+    public String getAuthority() {
+        return this.name;
     }
 
     @Override

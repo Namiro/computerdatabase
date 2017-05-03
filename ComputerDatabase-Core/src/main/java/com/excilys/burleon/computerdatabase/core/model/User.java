@@ -1,10 +1,16 @@
 package com.excilys.burleon.computerdatabase.core.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import com.excilys.burleon.computerdatabase.core.model.enumeration.AccessLevelEnum;
 
@@ -16,7 +22,7 @@ import com.excilys.burleon.computerdatabase.core.model.enumeration.AccessLevelEn
  */
 @javax.persistence.Entity
 @Table(name = "user")
-public class User extends AEntity implements IEntity {
+public class User extends AEntity implements IEntity, UserDetails {
     public static class UserBuilder extends EntityBuilder<UserBuilder, User> {
         String username;
         String password;
@@ -50,6 +56,11 @@ public class User extends AEntity implements IEntity {
             return this;
         }
     }
+
+    /**
+     *
+     */
+    private static final long serialVersionUID = -5052141661407910742L;
 
     @NotNull
     @Column(unique = true)
@@ -124,14 +135,23 @@ public class User extends AEntity implements IEntity {
     }
 
     @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        final Collection<AccessLevelEnum> authorities = new ArrayList<>();
+        authorities.add(this.accessLevel);
+        return authorities;
+    }
+
+    @Override
     public long getId() {
         return this.id;
     }
 
+    @Override
     public String getPassword() {
         return this.password;
     }
 
+    @Override
     public String getUsername() {
         return this.username;
     }
@@ -148,6 +168,26 @@ public class User extends AEntity implements IEntity {
         result = prime * result + ((this.password == null) ? 0 : this.password.hashCode());
         result = prime * result + ((this.username == null) ? 0 : this.username.hashCode());
         return result;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 
     public void setAccessLevel(final AccessLevelEnum accessLevel) {

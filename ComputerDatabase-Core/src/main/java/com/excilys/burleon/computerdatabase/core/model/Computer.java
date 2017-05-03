@@ -85,7 +85,7 @@ public class Computer extends AEntity implements IEntity {
 
     private LocalDateTime discontinued;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "company_id")
     // Unirectional OWNER
     private Company company;

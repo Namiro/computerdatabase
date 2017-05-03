@@ -7,6 +7,8 @@ import javax.naming.AuthenticationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +56,17 @@ public class UserService extends AModelService<User> implements IUserService {
     public Optional<User> getByUsername(final String username) {
         UserService.LOGGER.trace("getByUsername : username : " + username);
         return ((IUserDao) this.dao).findByUsername(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+        UserService.LOGGER.trace("loadUserByUsername : username : " + username);
+        final Optional<User> userOpt = this.getByUsername(username);
+        if (userOpt.isPresent()) {
+            return userOpt.get();
+        } else {
+            throw new UsernameNotFoundException("There is no user with the username : " + username);
+        }
     }
 
     @Override
