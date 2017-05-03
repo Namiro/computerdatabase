@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.service.spring.config;
+package com.excilys.burleon.computerdatabase.webapp.spring.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
@@ -23,11 +22,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Qualifier("customUserDetailsService")
     UserDetailsService userDetailsService;
 
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         final DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(this.userDetailsService);
-        authenticationProvider.setPasswordEncoder(this.passwordEncoder());
+        authenticationProvider.setPasswordEncoder(this.passwordEncoder);
         return authenticationProvider;
     }
 
@@ -45,10 +47,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.authenticationProvider(this.authenticationProvider());
         auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
         auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }
