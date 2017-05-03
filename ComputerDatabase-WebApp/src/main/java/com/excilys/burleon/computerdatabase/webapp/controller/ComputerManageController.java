@@ -39,7 +39,7 @@ import com.google.gson.Gson;
  */
 @Controller
 @RequestMapping("/" + View.VIEW_COMPUTER_MANAGE)
-public class ComputerManageServlet implements IController {
+public class ComputerManageController implements IController {
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -51,7 +51,7 @@ public class ComputerManageServlet implements IController {
         public ComputerDTO computerReceived;
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
 
     @Autowired
     public IComputerService computerService;
@@ -63,7 +63,7 @@ public class ComputerManageServlet implements IController {
 
     @RequestMapping(method = RequestMethod.GET)
     protected String doGet(final ModelMap model, @RequestParam final Map<String, String> params) {
-        ComputerManageServlet.LOGGER.trace("GET /ComputerManage \t");
+        ComputerManageController.LOGGER.trace("GET /ComputerManage \t");
 
         final ProcessVariables processVariables = this.getProcessVariables(params);
 
@@ -86,7 +86,7 @@ public class ComputerManageServlet implements IController {
 
     @RequestMapping(method = RequestMethod.POST)
     protected String doPost(final ModelMap model, @RequestParam final Map<String, String> params) {
-        ComputerManageServlet.LOGGER.trace("POST /ComputerManage \t");
+        ComputerManageController.LOGGER.trace("POST /ComputerManage \t");
 
         final ProcessVariables processVariables = this.getProcessVariables(params);
 
@@ -132,7 +132,7 @@ public class ComputerManageServlet implements IController {
             processVariables.computer = new ComputerDTO();
         }
 
-        ComputerManageServlet.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
+        ComputerManageController.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
     }
 
@@ -158,11 +158,11 @@ public class ComputerManageServlet implements IController {
                     processVariables.computer.setCompany(companyDTO);
                 }
             }
-            ComputerManageServlet.LOGGER
+            ComputerManageController.LOGGER
                     .trace("Construct OK for " + new Gson().toJson(processVariables.computerReceived));
             return new ProcessResult(true, "Construct OK");
         } catch (final ServiceException e) {
-            ComputerManageServlet.LOGGER.warn("Impossible to construct a computer with the user entries", e);
+            ComputerManageController.LOGGER.warn("Impossible to construct a computer with the user entries", e);
             return new ProcessResult(false, e.getMessage());
         }
     }
@@ -205,12 +205,12 @@ public class ComputerManageServlet implements IController {
      */
     private ProcessResult removeComputersProcess(final ProcessVariables processVariables) {
         try {
-            ComputerManageServlet.LOGGER.info("Remove OK for " + processVariables.computerReceived);
+            ComputerManageController.LOGGER.info("Remove OK for " + processVariables.computerReceived);
             return new ProcessResult(
                     this.computerService.remove(ComputerMapper.toComputer(processVariables.computer)),
                     "Remove OK");
         } catch (final ServiceException e) {
-            ComputerManageServlet.LOGGER.warn("Remove KO for " + processVariables.computerReceived, e);
+            ComputerManageController.LOGGER.warn("Remove KO for " + processVariables.computerReceived, e);
             return new ProcessResult(false, e.getMessage());
         }
     }
@@ -228,10 +228,10 @@ public class ComputerManageServlet implements IController {
             Computer computer = ComputerMapper.toComputer(processVariables.computer);
             computer = this.computerService.save(computer).get();
             processVariables.computer = ComputerMapper.toComputerDTO(computer);
-            ComputerManageServlet.LOGGER.info("Save OK for " + processVariables.computer);
+            ComputerManageController.LOGGER.info("Save OK for " + processVariables.computer);
             return new ProcessResult(true, "Save OK");
         } catch (final ServiceException e) {
-            ComputerManageServlet.LOGGER.warn("Impossible to save computer : " + processVariables.computer, e);
+            ComputerManageController.LOGGER.warn("Impossible to save computer : " + processVariables.computer, e);
             return new ProcessResult(false, e.getMessage());
         }
     }

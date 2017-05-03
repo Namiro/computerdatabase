@@ -1,4 +1,3 @@
-
 package com.excilys.burleon.computerdatabase.webapp.controller;
 
 import java.util.Arrays;
@@ -37,7 +36,7 @@ import com.google.gson.Gson;
  */
 @Controller
 @RequestMapping(value = { "/", "/" + View.VIEW_COMPUTER_LIST })
-public class ComputerListServlet implements IController {
+public class ComputerListController implements IController {
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -56,7 +55,7 @@ public class ComputerListServlet implements IController {
         public String passworrepeated = "";
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
 
     @Autowired
     private IPageService<Computer> pageService;
@@ -82,17 +81,17 @@ public class ComputerListServlet implements IController {
                     this.computerService.remove(computerOpt.get());
                 }
             }
-            ComputerListServlet.LOGGER.info("Remove OK for : " + Arrays.toString(split));
+            ComputerListController.LOGGER.info("Remove OK for : " + Arrays.toString(split));
             return new ProcessResult(true, "Remove OK");
         } catch (final ServiceException e) {
-            ComputerListServlet.LOGGER.warn("Impossible to delete the computers", e);
+            ComputerListController.LOGGER.warn("Impossible to delete the computers", e);
             return new ProcessResult(false, e.getMessage());
         }
     }
 
     @RequestMapping(method = RequestMethod.GET)
     protected String doGet(final ModelMap model, @RequestParam final Map<String, String> params) {
-        ComputerListServlet.LOGGER.trace("GET /ComputerList \t");
+        ComputerListController.LOGGER.trace("GET /ComputerList \t");
 
         final ProcessVariables processVariables = this.getProcessVariables(params);
         this.pageService.setModelService(this.computerService);
@@ -107,23 +106,24 @@ public class ComputerListServlet implements IController {
 
     @RequestMapping(method = RequestMethod.POST)
     protected String doPost(final ModelMap model, @RequestParam final Map<String, String> params) {
-        ComputerListServlet.LOGGER.trace("POST /ComputerList \t");
+        ComputerListController.LOGGER.trace("POST /ComputerList \t");
 
         this.pageService.setModelService(this.computerService);
         final ProcessVariables processVariables = this.getProcessVariables(params);
-
         ProcessResult processResult = new ProcessResult();
-
         // If it is a deleting
-        if (model.get(Data.SUBMIT_DELETE) != null) {
+        if (params.get(Data.SUBMIT_DELETE) != null) {
+            ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_DELETE");
             processResult = this.deleteComputersProcess(processVariables.split);
         }
         // If it is a login
-        else if (model.get(Data.SUBMIT_LOGIN) != null) {
+        else if (params.get(Data.SUBMIT_LOGIN) != null) {
+            ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_LOGIN");
             processResult = this.loginProcess(processVariables);
         }
         // If it is a sign up
-        else if (model.get(Data.SUBMIT_SIGNUP) != null) {
+        else if (params.get(Data.SUBMIT_SIGNUP) != null) {
+            ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_SIGNUP");
             processResult = this.signupProcess(processVariables);
         }
 
@@ -180,7 +180,7 @@ public class ComputerListServlet implements IController {
         processVariables.recordsByPage = (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null)
                 ? Integer.parseInt(params.get(Data.PAGINATION_RECORDS_BY_PAGE)) : processVariables.recordsByPage;
 
-        ComputerListServlet.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
+        ComputerListController.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
     }
 
@@ -190,7 +190,7 @@ public class ComputerListServlet implements IController {
                     .password(processVariables.password).build());
             return new ProcessResult(true, "Login successful", user);
         } catch (final AuthenticationException e) {
-            ComputerListServlet.LOGGER.info(e.getMessage());
+            ComputerListController.LOGGER.info(e.getMessage());
             return new ProcessResult(false, "Login fail. " + e.getMessage());
         }
     }
@@ -198,6 +198,7 @@ public class ComputerListServlet implements IController {
     @Override
     public void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
+        ComputerListController.LOGGER.trace("populateModel /ComputerList \t");
         IController.super.populateModel(model, processVariables, processResult);
 
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
@@ -215,8 +216,8 @@ public class ComputerListServlet implements IController {
             final User user = this.userService.register(new User.UserBuilder().username(processVariables.username)
                     .password(processVariables.password).build(), processVariables.passworrepeated);
             return new ProcessResult(true, "Signup successful", user);
-        } catch (final AuthenticationException e) {
-            ComputerListServlet.LOGGER.info(e.getMessage());
+        } catch (final ServiceException | AuthenticationException e) {
+            ComputerListController.LOGGER.info(e.getMessage());
             return new ProcessResult(false, "Signup fail. " + e.getMessage());
         }
     }

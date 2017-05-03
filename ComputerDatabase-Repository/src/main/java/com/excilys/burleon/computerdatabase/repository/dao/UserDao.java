@@ -37,6 +37,8 @@ public class UserDao extends ADao<User> implements IUserDao {
         } catch (final NonUniqueResultException e) {
             UserDao.LOGGER.warn(e.getMessage());
             throw new PersistenceException(e);
+        } catch (final Exception noException) {
+            return Optional.ofNullable(user);
         }
 
         return Optional.ofNullable(user);

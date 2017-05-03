@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.AccessLevelEnum;
@@ -43,6 +44,7 @@ public class UserService extends AModelService<User> implements IUserService {
         }
     }
 
+    @Transactional(readOnly = true)
     private boolean exist(final User user) {
 
         if (((IUserDao) this.dao).findByUsername(user.getUsername()).isPresent()) {
@@ -53,12 +55,14 @@ public class UserService extends AModelService<User> implements IUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> getByUsername(final String username) {
         UserService.LOGGER.trace("getByUsername : username : " + username);
         return ((IUserDao) this.dao).findByUsername(username);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
         UserService.LOGGER.trace("loadUserByUsername : username : " + username);
         final Optional<User> userOpt = this.getByUsername(username);
@@ -70,6 +74,7 @@ public class UserService extends AModelService<User> implements IUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User login(final User user) throws AuthenticationException {
         UserService.LOGGER.trace("login : user : " + user);
         final Optional<User> userOpt = ((IUserDao) this.dao).findByUsername(user.getUsername());
@@ -90,11 +95,13 @@ public class UserService extends AModelService<User> implements IUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public void logout(final User user) {
         UserService.LOGGER.trace("logout : user : " + user);
     }
 
     @Override
+    @Transactional
     public User register(final User user, final String passwordRepeated) throws AuthenticationException {
         if (this.exist(user)) {
             throw new DataValidationException("This user already exist");

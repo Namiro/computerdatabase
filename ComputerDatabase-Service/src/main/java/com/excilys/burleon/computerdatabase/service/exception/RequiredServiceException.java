@@ -6,7 +6,7 @@ package com.excilys.burleon.computerdatabase.service.exception;
  * @author Junior Burleon
  *
  */
-public class RequiredServiceException extends RuntimeException {
+public class RequiredServiceException extends ServiceException {
 
     /**
      *
