@@ -1,4 +1,4 @@
-package com.excilys.burleon.computerdatabase.webapp.servlet.util;
+package com.excilys.burleon.computerdatabase.webapp.controller.util;
 
 /**
  * This represent the process result.

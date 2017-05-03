@@ -1,13 +1,13 @@
-package com.excilys.burleon.computerdatabase.webapp.iservlet;
+package com.excilys.burleon.computerdatabase.webapp.icontroller;
 
 import java.util.Map;
 
 import org.springframework.ui.ModelMap;
 
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
-import com.excilys.burleon.computerdatabase.webapp.servlet.util.ProcessResult;
+import com.excilys.burleon.computerdatabase.webapp.controller.util.ProcessResult;
 
-public interface IHttpServlet {
+public interface IController {
 
     /**
      * Allow to get the parameters from the JSP.

@@ -3,7 +3,7 @@
  * Properties. To change this template file, choose Tools | Templates and open
  * the template in the editor.
  */
-package com.excilys.burleon.computerdatabase.webapp.servlet;
+package com.excilys.burleon.computerdatabase.webapp.controller;
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,12 +25,12 @@ import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
 import com.excilys.burleon.computerdatabase.webapp.constant.View;
+import com.excilys.burleon.computerdatabase.webapp.controller.util.ProcessResult;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.CompanyDTO;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.ComputerDTO;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.CompanyMapper;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.ComputerMapper;
-import com.excilys.burleon.computerdatabase.webapp.iservlet.IHttpServlet;
-import com.excilys.burleon.computerdatabase.webapp.servlet.util.ProcessResult;
+import com.excilys.burleon.computerdatabase.webapp.icontroller.IController;
 import com.google.gson.Gson;
 
 /**
@@ -39,7 +39,7 @@ import com.google.gson.Gson;
  */
 @Controller
 @RequestMapping("/" + View.VIEW_COMPUTER_MANAGE)
-public class ComputerManageServlet implements IHttpServlet {
+public class ComputerManageServlet implements IController {
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -170,7 +170,7 @@ public class ComputerManageServlet implements IHttpServlet {
     @Override
     public void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
-        IHttpServlet.super.populateModel(model, processVariables, processResult);
+        IController.super.populateModel(model, processVariables, processResult);
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
 
         // If we have information about a computer

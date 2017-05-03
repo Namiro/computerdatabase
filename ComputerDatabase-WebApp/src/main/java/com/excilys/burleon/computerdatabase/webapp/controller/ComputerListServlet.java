@@ -1,5 +1,5 @@
 
-package com.excilys.burleon.computerdatabase.webapp.servlet;
+package com.excilys.burleon.computerdatabase.webapp.controller;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,9 +26,9 @@ import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
 import com.excilys.burleon.computerdatabase.webapp.constant.View;
+import com.excilys.burleon.computerdatabase.webapp.controller.util.ProcessResult;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.ComputerMapper;
-import com.excilys.burleon.computerdatabase.webapp.iservlet.IHttpServlet;
-import com.excilys.burleon.computerdatabase.webapp.servlet.util.ProcessResult;
+import com.excilys.burleon.computerdatabase.webapp.icontroller.IController;
 import com.google.gson.Gson;
 
 /**
@@ -37,7 +37,7 @@ import com.google.gson.Gson;
  */
 @Controller
 @RequestMapping(value = { "/", "/" + View.VIEW_COMPUTER_LIST })
-public class ComputerListServlet implements IHttpServlet {
+public class ComputerListServlet implements IController {
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -198,7 +198,7 @@ public class ComputerListServlet implements IHttpServlet {
     @Override
     public void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
-        IHttpServlet.super.populateModel(model, processVariables, processResult);
+        IController.super.populateModel(model, processVariables, processResult);
 
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
         model.addAttribute(Data.LIST_COMPUTER, ComputerMapper.toComputerDTO(_processVariables.listComputer));
