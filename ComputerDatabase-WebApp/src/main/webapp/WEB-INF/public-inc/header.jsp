@@ -4,21 +4,15 @@
     import="com.excilys.burleon.computerdatabase.webapp.constant.Session"%>
 <%@ page
     import="com.excilys.burleon.computerdatabase.webapp.constant.Data"%>
+<%@ page
+    import="com.excilys.burleon.computerdatabase.webapp.constant.View"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime"%>
 <%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags"
     prefix="mytags"%>
 <%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<jsp:useBean id="Data"
-    class="com.excilys.burleon.computerdatabase.webapp.constant.Data"
-    scope="application" />
-<jsp:useBean id="Servlet"
-    class="com.excilys.burleon.computerdatabase.webapp.constant.Servlet"
-    scope="application" />
-<jsp:useBean id="Session"
-    class="com.excilys.burleon.computerdatabase.webapp.constant.Session"
-    scope="application" />
+
 
 <%-- Content for all page. --%>
 <c:set var="MESSAGE_SUCCESS" value="<%=Data.MESSAGE_SUCCESS%>" />
@@ -32,10 +26,10 @@
 <c:set var="SUBMIT_SEARCH" value="<%=Data.SUBMIT_SEARCH%>" />
 
 <%-- Name of all servlets. --%>
-<c:set var="SERVLET_COMPUTER_LIST"
-    value="<%=Servlet.SERVLET_COMPUTER_LIST%>" />
-<c:set var="SERVLET_COMPUTER_MANAGE"
-    value="<%=Servlet.SERVLET_COMPUTER_MANAGE%>" />
+<c:set var="VIEW_COMPUTER_LIST"
+    value="<%=View.VIEW_COMPUTER_LIST%>" />
+<c:set var="VIEW_COMPUTER_MANAGE"
+    value="<%=View.VIEW_COMPUTER_MANAGE%>" />
 
 <%-- The list. --%>
 <c:set var="LIST_COMPUTER" value="<%=Data.LIST_COMPUTER%>" />
@@ -88,7 +82,7 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand"
-                href="${SERVLET_COMPUTER_LIST}?${SEARCH_WORD}=&${ORDER_BY}=&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=20"><span
+                href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=&${ORDER_BY}=&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=20"><span
                 class="glyphicon glyphicon-home"></span></a>
         </div>
 

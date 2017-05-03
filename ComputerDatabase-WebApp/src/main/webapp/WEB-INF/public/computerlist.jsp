@@ -11,7 +11,7 @@
         </h1>
         <div id="actions" class="form-horizontal">
             <div class="pull-left">
-                <form id="searchForm" action="${SERVLET_COMPUTER_LIST}"
+                <form id="searchForm" action="${VIEW_COMPUTER_LIST}"
                     method="GET" class="form-inline">
                     <input type="search" id="${SEARCH_WORD}"
                         name="${SEARCH_WORD}" class="form-control"
@@ -33,7 +33,7 @@
             </div>
             <div class="pull-right">
                 <a class="btn btn-success" id="addComputer"
-                    href="${SERVLET_COMPUTER_MANAGE}"><spring:message
+                    href="${VIEW_COMPUTER_MANAGE}"><spring:message
                         code="computerlist_button_add" /></a> <a
                     class="btn btn-default" id="editComputer" href="#"
                     onclick="$.fn.toggleEditMode();"><spring:message
@@ -42,7 +42,7 @@
         </div>
     </div>
 
-    <form id="deleteForm" action="${SERVLET_COMPUTER_LIST}"
+    <form id="deleteForm" action="${VIEW_COMPUTER_LIST}"
         method="POST">
         <input type="hidden" name="${SUBMIT_DELETE}" value="">
     </form>
@@ -63,16 +63,16 @@
                                 </a>
                             </span></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
                                         code="computerlist_table_name" /></a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
                                         code="computerlist_table_introduced" /></a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
                                         code="computerlist_table_discontinued" /></a></th>
                             <th><a
-                                href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
                                         code="computerlist_table_company" /></a></th>
                         </tr>
                     </thead>
@@ -85,7 +85,7 @@
                                     type="checkbox" name="cb" class="cb"
                                     value='<c:out value="${computer.id}"/>'></td>
                                 <td><a
-                                    href="${SERVLET_COMPUTER_MANAGE}?${COMPUTER_ID}=${computer.id}"><c:out
+                                    href="${VIEW_COMPUTER_MANAGE}?${COMPUTER_ID}=${computer.id}"><c:out
                                             value="${computer.name}" /></a></td>
                                 <td><c:out
                                         value='${computer.introduced}' />
@@ -108,7 +108,7 @@
     </div>
     <div class="row container text-center">
         <mytags:pagination
-            uri="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=##"
+            uri="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=##"
             maxLinks="5"
             currPage="${requestScope[PAGINATION_CURRENT_PAGE]}"
             totalPages="${requestScope[PAGINATION_TOTAL_PAGE]}" />
@@ -116,13 +116,13 @@
         <div class="btn-group btn-group-sm pull-right" role="group">
             <ul class="pagination">
                 <li><a id="paginationRecordsByPage20"
-                    href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=20&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">20</a>
+                    href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=20&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">20</a>
                 </li>
                 <li><a id="paginationRecordsByPage50"
-                    href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=50&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">50</a>
+                    href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=50&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">50</a>
                 </li>
                 <li><a id="paginationRecordsByPage100"
-                    href="${SERVLET_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=100&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">100</a>
+                    href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=100&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">100</a>
                 </li>
             </ul>
         </div>
@@ -137,7 +137,7 @@
 <div class="modal fade" tabindex="-1" role="dialog"
     aria-labelledby="gridSystemModalLabel" id="myModalSignup">
     <form class="form-horizontal" method="post"
-        action="${SERVLET_LIST_COMPUTER}">
+        action="${VIEW_COMPUTER_LIST}">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -196,7 +196,7 @@
 <div class="modal fade" tabindex="-1" role="dialog"
     aria-labelledby="gridSystemModalLabel" id="myModalLogin">
     <form class="form-horizontal" method="post"
-        action="${SERVLET_LIST_COMPUTER}">
+        action="${VIEW_COMPUTER_LIST}">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

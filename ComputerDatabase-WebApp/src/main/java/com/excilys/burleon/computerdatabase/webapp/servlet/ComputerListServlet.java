@@ -25,7 +25,7 @@ import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
-import com.excilys.burleon.computerdatabase.webapp.constant.Servlet;
+import com.excilys.burleon.computerdatabase.webapp.constant.View;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.ComputerMapper;
 import com.excilys.burleon.computerdatabase.webapp.iservlet.IHttpServlet;
 import com.excilys.burleon.computerdatabase.webapp.servlet.util.ProcessResult;
@@ -36,7 +36,7 @@ import com.google.gson.Gson;
  * @author Junior Burléon
  */
 @Controller
-@RequestMapping(value = { "/", "/" + Servlet.SERVLET_COMPUTER_LIST })
+@RequestMapping(value = { "/", "/" + View.VIEW_COMPUTER_LIST })
 public class ComputerListServlet implements IHttpServlet {
 
     /**
@@ -102,7 +102,7 @@ public class ComputerListServlet implements IHttpServlet {
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
 
         this.populateModel(model, processVariables);
-        return Servlet.SERVLET_COMPUTER_LIST;
+        return View.VIEW_COMPUTER_LIST;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -129,7 +129,7 @@ public class ComputerListServlet implements IHttpServlet {
 
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
         this.populateModel(model, processVariables, processResult);
-        return Servlet.SERVLET_COMPUTER_LIST;
+        return View.VIEW_COMPUTER_LIST;
     }
 
     @Override

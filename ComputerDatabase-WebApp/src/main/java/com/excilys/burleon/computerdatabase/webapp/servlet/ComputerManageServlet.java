@@ -24,7 +24,7 @@ import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
-import com.excilys.burleon.computerdatabase.webapp.constant.Servlet;
+import com.excilys.burleon.computerdatabase.webapp.constant.View;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.CompanyDTO;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.ComputerDTO;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.CompanyMapper;
@@ -38,7 +38,7 @@ import com.google.gson.Gson;
  * @author Junior
  */
 @Controller
-@RequestMapping("/" + Servlet.SERVLET_COMPUTER_MANAGE)
+@RequestMapping("/" + View.VIEW_COMPUTER_MANAGE)
 public class ComputerManageServlet implements IHttpServlet {
 
     /**
@@ -75,13 +75,13 @@ public class ComputerManageServlet implements IHttpServlet {
             if (computerOpt.isPresent()) {
                 processVariables.computer = ComputerMapper.toComputerDTO(computerOpt.get());
             } else {
-                return "redirect:/" + Servlet.SERVLET_COMPUTER_MANAGE;
+                return "redirect:/" + View.VIEW_COMPUTER_MANAGE;
             }
         }
 
         this.populateModel(model, processVariables);
 
-        return Servlet.SERVLET_COMPUTER_MANAGE;
+        return View.VIEW_COMPUTER_MANAGE;
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -94,7 +94,7 @@ public class ComputerManageServlet implements IHttpServlet {
         ProcessResult processResult = this.initializeComputersProcess(processVariables);
         if (!processResult.isSuccess) {
             this.populateModel(model, processVariables, processResult);
-            return Servlet.SERVLET_COMPUTER_MANAGE;
+            return View.VIEW_COMPUTER_MANAGE;
         }
 
         // Delete of computer if asked
@@ -102,14 +102,14 @@ public class ComputerManageServlet implements IHttpServlet {
             processResult = this.removeComputersProcess(processVariables);
             this.populateModel(model, processVariables, processResult);
             if (processResult.isSuccess) {
-                return Servlet.SERVLET_COMPUTER_LIST;
+                return View.VIEW_COMPUTER_LIST;
             } else {
-                return Servlet.SERVLET_COMPUTER_MANAGE;
+                return View.VIEW_COMPUTER_MANAGE;
             }
         } else { // Save of computer if not delete
             processResult = this.saveComputerProcess(processVariables);
             this.populateModel(model, processVariables, processResult);
-            return Servlet.SERVLET_COMPUTER_MANAGE;
+            return View.VIEW_COMPUTER_MANAGE;
         }
     }
 

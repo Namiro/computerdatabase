@@ -7,11 +7,11 @@ package com.excilys.burleon.computerdatabase.webapp.constant;
  * @author Junior Burleon
  *
  */
-public final class Servlet {
+public final class View {
 
     /**
      * The value of each constant must be the name of servlet.
      **/
-    public static final String SERVLET_COMPUTER_MANAGE = "computermanage";
-    public static final String SERVLET_COMPUTER_LIST = "computerlist";
+    public static final String VIEW_COMPUTER_MANAGE = "computermanage";
+    public static final String VIEW_COMPUTER_LIST = "computerlist";
 }
