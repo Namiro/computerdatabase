@@ -119,6 +119,9 @@ public class ComputerListController implements IController {
         else if (params.get(Data.SUBMIT_LOGIN) != null) {
             ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_LOGIN");
             processResult = this.loginProcess(processVariables);
+            if (!processResult.isSuccess) {
+                processVariables.popup = Data.POPUP_LOGIN;
+            }
         }
         // If it is a sign up
         else if (params.get(Data.SUBMIT_SIGNUP) != null) {

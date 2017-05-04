@@ -79,17 +79,16 @@ public class UserService extends AModelService<User> implements IUserService {
         final Optional<User> userOpt = ((IUserDao) this.dao).findByUsername(user.getUsername());
         if (userOpt.isPresent()) {
             final User _user = userOpt.get();
-            if (_user.getPassword().equals(this.passwordEncoder.encode(user.getPassword()))) {
+            if (this.passwordEncoder.matches(user.getPassword(), _user.getPassword())) {
                 return user;
             } else {
                 UserService.LOGGER.warn("Password inccorect fior the username : " + user.getUsername());
-                throw new AuthenticationException(
-                        "This username doesn't match with the password given (Password incorrect");
+                throw new AuthenticationException("Password incorrect");
             }
 
         } else {
             UserService.LOGGER.warn("No user with the username: " + user.getUsername());
-            throw new AuthenticationException("There is no user with this username (Username incorrect)");
+            throw new AuthenticationException("Username incorrect");
         }
     }
 

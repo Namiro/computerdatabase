@@ -36,10 +36,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/", "/" + View.VIEW_COMPUTER_LIST)
-                .access("hasRole('USER') or hasRole('ADMIN')").and().formLogin().loginPage("/login")
-                .usernameParameter(Data.USER_USERNAME).passwordParameter(Data.USER_PASSWORD).and()
-                .exceptionHandling().accessDeniedPage("/Access_Denied");
+        http.authorizeRequests().antMatchers("/css/**").permitAll().antMatchers("/fonts/**").permitAll()
+                .antMatchers("/i18/**").permitAll().antMatchers("/js/**").permitAll()
+                .antMatchers("/" + View.VIEW_COMPUTER_LIST).permitAll().anyRequest().authenticated().and()
+                .formLogin().loginPage("/" + View.VIEW_COMPUTER_LIST).usernameParameter(Data.USER_USERNAME)
+                .passwordParameter(Data.USER_PASSWORD).permitAll().and().logout().permitAll();
+
+        // .authorizeRequests().antMatchers("/", "/" +
+        // View.VIEW_COMPUTER_LIST)
+        // .access("hasRole('USER') or
+        // hasRole('ADMIN')").and().formLogin().loginPage("/login")
+        // .usernameParameter(Data.USER_USERNAME).passwordParameter(Data.USER_PASSWORD)
     }
 
     @Autowired
