@@ -38,7 +38,6 @@ public class ApplicationInitializer implements WebApplicationInitializer {
                 new DispatcherServlet(context));
 
         servlet.setLoadOnStartup(1);
-        servlet.addMapping("/");
         servlet.addMapping("/" + View.VIEW_COMPUTER_LIST);
         servlet.addMapping("/" + View.VIEW_COMPUTER_MANAGE);
 

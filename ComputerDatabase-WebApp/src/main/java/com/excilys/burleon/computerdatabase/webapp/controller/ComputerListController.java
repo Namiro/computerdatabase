@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.naming.AuthenticationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +51,7 @@ public class ComputerListController implements IController {
         public String username = "";
         public String password = "";
         public String passworrepeated = "";
+        public String popup = "";
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
@@ -125,6 +124,9 @@ public class ComputerListController implements IController {
         else if (params.get(Data.SUBMIT_SIGNUP) != null) {
             ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_SIGNUP");
             processResult = this.signupProcess(processVariables);
+            if (!processResult.isSuccess) {
+                processVariables.popup = Data.POPUP_SIGNUP;
+            }
         }
 
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
@@ -189,7 +191,7 @@ public class ComputerListController implements IController {
             final User user = this.userService.login(new User.UserBuilder().username(processVariables.username)
                     .password(processVariables.password).build());
             return new ProcessResult(true, "Login successful", user);
-        } catch (final AuthenticationException e) {
+        } catch (final ServiceException e) {
             ComputerListController.LOGGER.info(e.getMessage());
             return new ProcessResult(false, "Login fail. " + e.getMessage());
         }
@@ -209,6 +211,7 @@ public class ComputerListController implements IController {
         model.addAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber(Computer.class));
         model.addAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
         model.addAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
+        model.addAttribute(Data.POPUP, _processVariables.popup);
     }
 
     private ProcessResult signupProcess(final ProcessVariables processVariables) {
@@ -216,7 +219,7 @@ public class ComputerListController implements IController {
             final User user = this.userService.register(new User.UserBuilder().username(processVariables.username)
                     .password(processVariables.password).build(), processVariables.passworrepeated);
             return new ProcessResult(true, "Signup successful", user);
-        } catch (final ServiceException | AuthenticationException e) {
+        } catch (final ServiceException e) {
             ComputerListController.LOGGER.info(e.getMessage());
             return new ProcessResult(false, "Signup fail. " + e.getMessage());
         }

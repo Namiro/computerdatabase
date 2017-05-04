@@ -2,8 +2,6 @@ package com.excilys.burleon.computerdatabase.service.service;
 
 import java.util.Optional;
 
-import javax.naming.AuthenticationException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.AccessLevelEnum;
 import com.excilys.burleon.computerdatabase.repository.idao.IUserDao;
+import com.excilys.burleon.computerdatabase.service.exception.AuthenticationException;
 import com.excilys.burleon.computerdatabase.service.exception.DataValidationException;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;

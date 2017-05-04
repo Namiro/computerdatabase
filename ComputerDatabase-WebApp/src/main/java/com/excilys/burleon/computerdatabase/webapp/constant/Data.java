@@ -41,6 +41,11 @@ public final class Data {
     public static final String SUBMIT_LOGIN = "submitLogin";
     public static final String SUBMIT_SIGNUP = "submitSignup";
 
+    /* POPUP */
+    public static final String POPUP = "popup";
+    public static final String POPUP_SIGNUP = "popupsignup";
+    public static final String POPUP_LOGIN = "popuplogin";
+
     /* DIVERS */
     public static final String SEARCH_WORD = "searchWord";
     public static final String SEARCH_NUMBER_RESULTS = "searchNumberResults";

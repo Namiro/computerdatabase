@@ -5,6 +5,12 @@
 
 <%-- Content page. --%>
 <div class="row">
+    <c:if test="${not empty requestScope[MESSAGE_ERROR]}">
+        <label id="${MESSAGE_ERROR}" class="alert alert-danger">${requestScope[MESSAGE_ERROR]}</label>
+    </c:if>
+    <c:if test="${not empty requestScope[MESSAGE_SUCCESS]}">
+        <label id="${MESSAGE_SUCCESS}" class="alert alert-success">${requestScope[MESSAGE_SUCCESS]}</label>
+    </c:if>
     <div class="container">
         <h1 id="homeTitle">${requestScope[SEARCH_NUMBER_RESULTS]}
             <spring:message code="computerlist_label_title" />
@@ -42,8 +48,7 @@
         </div>
     </div>
 
-    <form id="deleteForm" action="${VIEW_COMPUTER_LIST}"
-        method="POST">
+    <form id="deleteForm" action="${VIEW_COMPUTER_LIST}" method="POST">
         <input type="hidden" name="${SUBMIT_DELETE}" value="">
     </form>
 
@@ -130,114 +135,3 @@
 </div>
 
 <%@include file="../public-inc/footer.jsp"%>
-
-
-
-<%-- MODAL Sign up --%>
-<div class="modal fade" tabindex="-1" role="dialog"
-    aria-labelledby="gridSystemModalLabel" id="myModalSignup">
-    <form class="form-horizontal" method="post"
-        action="${VIEW_COMPUTER_LIST}">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close"
-                        data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h2 class="modal-title" id="gridSystemModalLabel">
-                        <spring:message
-                            code="computerlist_modal_signup_title" />
-                    </h2>
-                </div>
-                <div class="modal-body">
-                    <fieldset>
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <input type="text" class="form-control"
-                                    name="${USER_USERNAME}"
-                                    placeholder="<spring:message code="computerlist_modal_placeholder_username" />" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <input type="password"
-                                    class="form-control"
-                                    name="${USER_PASSWORD}"
-                                    placeholder="<spring:message code="computerlist_modal_placeholder_password" />" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <input type="password"
-                                    class="form-control"
-                                    name="${USER_PASSWORD2}"
-                                    placeholder="<spring:message code="computerlist_modal_placeholder_passwordrepeate" />" />
-                            </div>
-                        </div>
-                    </fieldset>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-success"
-                        name="${SUBMIT_SIGNUP}" id="${SUBMIT_SIGNUP}"
-                        value="<spring:message code="computerlist_modal_button_signup" />"
-                        style="float: right;" />
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-    </form>
-    <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
-
-
-<%-- MODAL Login --%>
-<div class="modal fade" tabindex="-1" role="dialog"
-    aria-labelledby="gridSystemModalLabel" id="myModalLogin">
-    <form class="form-horizontal" method="post"
-        action="${VIEW_COMPUTER_LIST}">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close"
-                        data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    <h2 class="modal-title" id="gridSystemModalLabel">
-                        <spring:message
-                            code="computerlist_modal_login_title" />
-                    </h2>
-                </div>
-                <div class="modal-body">
-                    <fieldset>
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <input type="text" class="form-control"
-                                    name="${USER_USERNAME}"
-                                    placeholder="<spring:message code="computerlist_modal_placeholder_username" />" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-12">
-                                <input type="password"
-                                    class="form-control"
-                                    name="${USER_PASSWORD}"
-                                    placeholder="<spring:message code="computerlist_modal_placeholder_password" />" />
-                            </div>
-                        </div>
-                    </fieldset>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-success"
-                        name="${SUBMIT_LOGIN}" id="${SUBMIT_LOGIN}"
-                        value="<spring:message code="computerlist_modal_button_login" />"
-                        style="float: right;" />
-                </div>
-            </div>
-            <!-- /.modal-content -->
-        </div>
-    </form>
-    <!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
