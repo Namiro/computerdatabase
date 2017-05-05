@@ -62,7 +62,7 @@ public class Utility {
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             return LocalDateTime.parse(dateStr, formatter);
         } catch (final DateTimeParseException e) {
-            throw new ServiceException(e);
+            throw new ServiceException("Invalide date format. It must be : yyyy-MM-dd HH:mm");
         }
     }
 
@@ -82,7 +82,7 @@ public class Utility {
             final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             return LocalDateTime.of(LocalDate.parse(dateStr, formatter), LocalTime.NOON);
         } catch (final DateTimeParseException e) {
-            throw new ServiceException(e);
+            throw new ServiceException("Invalide date format. It must be : yyyy-MM-dd");
         }
     }
 
