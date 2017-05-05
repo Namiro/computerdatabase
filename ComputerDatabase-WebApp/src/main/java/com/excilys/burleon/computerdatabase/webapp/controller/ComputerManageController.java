@@ -26,8 +26,8 @@ import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
 import com.excilys.burleon.computerdatabase.webapp.constant.View;
 import com.excilys.burleon.computerdatabase.webapp.controller.util.ProcessResult;
-import com.excilys.burleon.computerdatabase.webapp.dtomodel.CompanyDTO;
-import com.excilys.burleon.computerdatabase.webapp.dtomodel.ComputerDTO;
+import com.excilys.burleon.computerdatabase.webapp.dtomodel.CompanyDto;
+import com.excilys.burleon.computerdatabase.webapp.dtomodel.ComputerDto;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.CompanyMapper;
 import com.excilys.burleon.computerdatabase.webapp.dtomodel.mapper.ComputerMapper;
 import com.excilys.burleon.computerdatabase.webapp.icontroller.IController;
@@ -47,8 +47,8 @@ public class ComputerManageController implements IController {
      *
      */
     private class ProcessVariables {
-        public ComputerDTO computer;
-        public ComputerDTO computerReceived;
+        public ComputerDto computer;
+        public ComputerDto computerReceived;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
@@ -73,7 +73,7 @@ public class ComputerManageController implements IController {
             final Optional<Computer> computerOpt = this.computerService.get(Computer.class, id);
             /* If the computer exist, we get its data */
             if (computerOpt.isPresent()) {
-                processVariables.computer = ComputerMapper.toComputerDTO(computerOpt.get());
+                processVariables.computer = ComputerMapper.toDto(computerOpt.get());
             } else {
                 return "redirect:/" + View.VIEW_COMPUTER_MANAGE;
             }
@@ -117,19 +117,19 @@ public class ComputerManageController implements IController {
     public ProcessVariables getProcessVariables(final Map<String, String> params) {
         final ProcessVariables processVariables = new ProcessVariables();
 
-        processVariables.computerReceived = new ComputerDTO();
+        processVariables.computerReceived = new ComputerDto();
         processVariables.computerReceived.id = params.get(Data.COMPUTER_ID);
         processVariables.computerReceived.name = params.get(Data.COMPUTER_NAME);
         processVariables.computerReceived.introduced = params.get(Data.COMPUTER_INTRODUCE_DATE);
         processVariables.computerReceived.discontinued = params.get(Data.COMPUTER_DISCONTINUE_DATE);
-        processVariables.computerReceived.company = new CompanyDTO(params.get(Data.COMPUTER_COMPANY_ID), "");
+        processVariables.computerReceived.company = new CompanyDto(params.get(Data.COMPUTER_COMPANY_ID), "");
 
         // If it is an updating or deleting
         if (StringUtils.isNotBlank(processVariables.computerReceived.getId())) {
-            processVariables.computer = ComputerMapper.toComputerDTO(this.computerService
+            processVariables.computer = ComputerMapper.toDto(this.computerService
                     .get(Computer.class, Long.parseLong(processVariables.computerReceived.getId())).get());
         } else { // If it is a creating
-            processVariables.computer = new ComputerDTO();
+            processVariables.computer = new ComputerDto();
         }
 
         ComputerManageController.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
@@ -154,8 +154,8 @@ public class ComputerManageController implements IController {
                 final Optional<Company> companyOpt = this.companyService.get(Company.class,
                         Long.parseLong(processVariables.computerReceived.company.id));
                 if (companyOpt.isPresent()) {
-                    final CompanyDTO companyDTO = CompanyMapper.toCompanyDTO(companyOpt.get());
-                    processVariables.computer.setCompany(companyDTO);
+                    final CompanyDto companyDto = CompanyMapper.toDto(companyOpt.get());
+                    processVariables.computer.setCompany(companyDto);
                 }
             }
             ComputerManageController.LOGGER
@@ -192,7 +192,7 @@ public class ComputerManageController implements IController {
 
         }
 
-        model.addAttribute(Data.LIST_COMPANY, CompanyMapper.toCompanyDTO(this.companyService.get(Company.class)));
+        model.addAttribute(Data.LIST_COMPANY, CompanyMapper.toDto(this.companyService.get(Company.class)));
     }
 
     /**
@@ -227,7 +227,7 @@ public class ComputerManageController implements IController {
         try {
             Computer computer = ComputerMapper.toComputer(processVariables.computer);
             computer = this.computerService.save(computer).get();
-            processVariables.computer = ComputerMapper.toComputerDTO(computer);
+            processVariables.computer = ComputerMapper.toDto(computer);
             ComputerManageController.LOGGER.info("Save OK for " + processVariables.computer);
             return new ProcessResult(true, "Save OK");
         } catch (final ServiceException e) {

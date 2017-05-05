@@ -2,15 +2,15 @@ package com.excilys.burleon.computerdatabase.webapp.dtomodel;
 
 import com.google.gson.Gson;
 
-public class CompanyDTO {
+public class CompanyDto {
     public String id = "";
     public String name = "";
 
-    public CompanyDTO() {
+    public CompanyDto() {
 
     }
 
-    public CompanyDTO(final String id, final String name) {
+    public CompanyDto(final String id, final String name) {
         super();
         this.id = id;
         this.name = name;

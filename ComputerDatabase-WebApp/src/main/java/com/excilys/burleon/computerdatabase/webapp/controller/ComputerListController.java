@@ -207,7 +207,7 @@ public class ComputerListController implements IController {
         IController.super.populateModel(model, processVariables, processResult);
 
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
-        model.addAttribute(Data.LIST_COMPUTER, ComputerMapper.toComputerDTO(_processVariables.listComputer));
+        model.addAttribute(Data.LIST_COMPUTER, ComputerMapper.toDto(_processVariables.listComputer));
         model.addAttribute(Data.SEARCH_NUMBER_RESULTS,
                 this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
         model.addAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());

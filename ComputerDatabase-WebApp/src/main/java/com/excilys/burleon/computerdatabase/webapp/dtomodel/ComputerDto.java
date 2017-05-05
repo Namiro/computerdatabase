@@ -2,14 +2,14 @@ package com.excilys.burleon.computerdatabase.webapp.dtomodel;
 
 import com.google.gson.Gson;
 
-public class ComputerDTO {
+public class ComputerDto {
     public String id = "";
     public String name = "";
     public String introduced = "";
     public String discontinued = "";
-    public CompanyDTO company;
+    public CompanyDto company;
 
-    public CompanyDTO getCompany() {
+    public CompanyDto getCompany() {
         return this.company;
     }
 
@@ -29,7 +29,7 @@ public class ComputerDTO {
         return this.name;
     }
 
-    public void setCompany(final CompanyDTO company) {
+    public void setCompany(final CompanyDto company) {
         this.company = company;
     }
 
