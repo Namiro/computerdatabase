@@ -5,29 +5,38 @@ import com.excilys.burleon.computerdatabase.core.model.Company;
 public enum OrderCompanyEnum implements IOrderEnum<Company> {
     NAME("company.name");
 
-    private final String name;
+    public static OrderCompanyEnum fromName(final String name) {
+        switch (name) {
+            case "company.name":
+                return NAME;
+            default:
+                throw new IllegalArgumentException(name + "doesn't match with one of the enum");
+        }
+    }
+
+    private final String value;
 
     /**
      *
      * @param s
-     *            The name
+     *            The value
      */
     OrderCompanyEnum(final String s) {
-        this.name = s;
+        this.value = s;
     }
 
     /**
      *
      * @param otherName
-     *            The orther name
+     *            The orther value
      * @return True or false
      */
     public boolean equalsName(final String otherName) {
-        return this.name.equals(otherName);
+        return this.value.equals(otherName);
     }
 
     @Override
     public String toString() {
-        return this.name;
+        return this.value;
     }
 }

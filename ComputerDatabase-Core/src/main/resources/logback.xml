@@ -12,7 +12,7 @@
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>
-            /home/excilys/Programs/apache-tomcat-8.5.14/logs/ComputerDatabase-log-${byDay}.log
+            ${user.home}/logs/tomcat/computerdatabase/ComputerDatabase-log-${byDay}.log
         </file>
         <append>true</append>
         <encoder>
@@ -21,8 +21,23 @@
         </encoder>
     </appender>
 
-    <root level="TRACE">
+    <appender name="FILE_FULL" class="ch.qos.logback.core.FileAppender">
+        <file>
+            ${user.home}/logs/tomcat/computerdatabase/ComputerDatabase-log-full-${byDay}.log
+        </file>
+        <append>true</append>
+        <encoder>
+            <pattern>%-5level %logger{35} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.excilys.burleon" level="TRACE" >
         <appender-ref ref="FILE" />
+    </logger>
+
+    <root level="TRACE">
+        <appender-ref ref="FILE_FULL" />
     </root>
 
 </configuration>

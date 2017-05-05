@@ -5,7 +5,7 @@
 
     <groupId>com.excilys.burleon.computerdatabase</groupId>
     <artifactId>ComputerDatabase</artifactId>
-    <version>6.1.0-SNAPSHOT</version>
+    <version>6.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>ComputerDatabase</name>
@@ -17,6 +17,7 @@
         <module>ComputerDatabase-Service</module>
         <module>ComputerDatabase-WebApp</module>
         <module>ComputerDatabase-Console</module>
+        <module>ComputerDatabase-WebService</module>
     </modules>
 
     <properties>
@@ -29,6 +30,7 @@
         <version.computerdatabase.service>1.5-SNAPSHOT</version.computerdatabase.service>
         <version.computerdatabase.console>1.2-SNAPSHOT</version.computerdatabase.console>
         <version.computerdatabase.webapp>1.14-SNAPSHOT</version.computerdatabase.webapp>
+        <version.computerdatabase.webservice>1.0-SNAPSHOT</version.computerdatabase.webservice>
         <version.junit>4.12</version.junit>
         <version.gson>2.8.0</version.gson>
         <version.slf4j>1.7.24</version.slf4j>
@@ -75,7 +77,7 @@
                     <linkXRef>false</linkXRef>
                 </configuration>
             </plugin>
-            
+
             <!-- Exclude integration tests from testing phase & Plugin to 
                 skip test -->
             <plugin>

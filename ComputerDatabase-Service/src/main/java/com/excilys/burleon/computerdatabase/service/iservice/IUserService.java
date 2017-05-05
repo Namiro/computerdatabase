@@ -2,7 +2,6 @@ package com.excilys.burleon.computerdatabase.service.iservice;
 
 import java.util.Optional;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.excilys.burleon.computerdatabase.core.model.User;
@@ -41,7 +40,6 @@ public interface IUserService extends IModelService<User>, UserDetailsService {
      * @param user
      *            The user to log out
      */
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     void logout(User user);
 
     /**
