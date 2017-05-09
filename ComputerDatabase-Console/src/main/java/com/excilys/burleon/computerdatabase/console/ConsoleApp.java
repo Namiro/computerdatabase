@@ -333,7 +333,6 @@ public class ConsoleApp {
                 default:
                     break;
             }
-
         }
     }
 }
