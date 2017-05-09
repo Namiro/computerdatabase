@@ -15,7 +15,7 @@
         <h1>
             <spring:message code="computermanage_title" />
         </h1>
-        <form action="${SERVLET_COMPUTER_MANAGE}" method="POST"
+        <form action="${VIEW_COMPUTER_MANAGE}" method="POST"
             role="form" data-toggle="validator">
             <fieldset>
                 <input name="${COMPUTER_ID}" hidden="true"

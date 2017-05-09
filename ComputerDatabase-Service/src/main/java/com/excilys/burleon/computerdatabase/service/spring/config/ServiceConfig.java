@@ -5,14 +5,15 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.env.Environment;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @ComponentScan(basePackages = { "com.excilys.burleon.computerdatabase" })
-@Import({ SecurityConfig.class })
 public class ServiceConfig {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(ServiceConfig.class);
@@ -39,4 +40,8 @@ public class ServiceConfig {
         }
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

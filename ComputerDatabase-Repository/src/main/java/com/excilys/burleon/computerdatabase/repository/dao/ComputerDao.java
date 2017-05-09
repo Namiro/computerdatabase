@@ -35,7 +35,7 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
         boolean success = true;
 
         final Query query = this.entityManager
-                .createQuery("delete from Computer computer where computer.company_id = ?");
+                .createQuery("delete from Computer computer where computer.company.id = ?");
         query.setParameter(0, company.getId());
         try {
             query.executeUpdate();

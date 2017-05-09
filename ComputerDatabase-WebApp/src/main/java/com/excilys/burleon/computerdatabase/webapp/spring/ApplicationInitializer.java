@@ -12,7 +12,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import com.excilys.burleon.computerdatabase.webapp.constant.Servlet;
+import com.excilys.burleon.computerdatabase.webapp.constant.View;
 import com.excilys.burleon.computerdatabase.webapp.spring.config.WebAppConfig;
 
 @javax.servlet.annotation.HandlesTypes(WebApplicationInitializer.class)
@@ -38,9 +38,8 @@ public class ApplicationInitializer implements WebApplicationInitializer {
                 new DispatcherServlet(context));
 
         servlet.setLoadOnStartup(1);
-        servlet.addMapping("/");
-        servlet.addMapping("/" + Servlet.SERVLET_COMPUTER_LIST);
-        servlet.addMapping("/" + Servlet.SERVLET_COMPUTER_MANAGE);
+        servlet.addMapping("/" + View.VIEW_COMPUTER_LIST);
+        servlet.addMapping("/" + View.VIEW_COMPUTER_MANAGE);
 
         ApplicationInitializer.LOGGER.trace("onStartup Loaded");
     }

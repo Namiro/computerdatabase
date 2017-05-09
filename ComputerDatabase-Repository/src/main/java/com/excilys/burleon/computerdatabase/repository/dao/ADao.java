@@ -53,7 +53,7 @@ public abstract class ADao<E extends IEntity> implements IDao<E> {
     @Override
     public boolean delete(final E entity) {
         ADao.LOGGER.trace("delete : entity : " + entity);
-        this.entityManager.remove(entity);
+        this.entityManager.remove(this.entityManager.contains(entity) ? entity : this.entityManager.merge(entity));
         return true;
     }
 

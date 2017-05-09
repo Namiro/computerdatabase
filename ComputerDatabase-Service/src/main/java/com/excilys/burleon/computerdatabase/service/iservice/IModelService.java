@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.excilys.burleon.computerdatabase.core.model.IEntity;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.IOrderEnum;
@@ -110,7 +109,6 @@ public interface IModelService<E extends IEntity> extends IService {
      *            The entity to remove
      * @return True if OK & False is not OK
      */
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     boolean remove(final E entity);
 
     /**
@@ -123,6 +121,5 @@ public interface IModelService<E extends IEntity> extends IService {
      * @throws ServiceException
      *             If the check data fail
      */
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     Optional<E> save(final E entity) throws ServiceException;
 }

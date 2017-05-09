@@ -6,7 +6,7 @@ package com.excilys.burleon.computerdatabase.service.exception;
  * @author Junior Burleon
  *
  */
-public class DataValidationException extends RuntimeException {
+public class DataValidationException extends ServiceException {
 
     /**
      *

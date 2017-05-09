@@ -6,7 +6,7 @@ package com.excilys.burleon.computerdatabase.service.exception;
  * @author Junior Burleon
  *
  */
-public class AuthenticationException extends RuntimeException {
+public class AuthenticationException extends ServiceException {
 
     /**
      *

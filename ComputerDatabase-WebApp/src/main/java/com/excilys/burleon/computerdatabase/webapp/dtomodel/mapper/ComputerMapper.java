@@ -6,34 +6,34 @@ import java.util.List;
 import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.core.model.Computer;
 import com.excilys.burleon.computerdatabase.service.util.Utility;
-import com.excilys.burleon.computerdatabase.webapp.dtomodel.CompanyDTO;
-import com.excilys.burleon.computerdatabase.webapp.dtomodel.ComputerDTO;
+import com.excilys.burleon.computerdatabase.webapp.dtomodel.CompanyDto;
+import com.excilys.burleon.computerdatabase.webapp.dtomodel.ComputerDto;
 
 public class ComputerMapper {
 
     /**
      * To map a Computer from the view to a Computer for the services.
      *
-     * @param computerDTO
+     * @param computerDto
      *            The DTO
      * @return The computer for the service
      */
-    public static Computer toComputer(final ComputerDTO computerDTO) {
-        if (computerDTO.id.equals("")) {
-            computerDTO.id = "0";
+    public static Computer toComputer(final ComputerDto computerDto) {
+        if (computerDto.id.equals("")) {
+            computerDto.id = "0";
         }
-        if (computerDTO.company != null && computerDTO.company.id.equals("")) {
-            computerDTO.company.id = "0";
+        if (computerDto.company != null && computerDto.company.id.equals("")) {
+            computerDto.company.id = "0";
         }
 
-        final Computer computer = new Computer.ComputerBuilder().name(computerDTO.name)
-                .id(Long.parseLong(computerDTO.id))
-                .introduced(Utility.convertStringDateToLocalDateTime(computerDTO.introduced))
-                .discontinued(Utility.convertStringDateToLocalDateTime(computerDTO.discontinued)).build();
+        final Computer computer = new Computer.ComputerBuilder().name(computerDto.name)
+                .id(Long.parseLong(computerDto.id))
+                .introduced(Utility.convertStringDateToLocalDateTime(computerDto.introduced))
+                .discontinued(Utility.convertStringDateToLocalDateTime(computerDto.discontinued)).build();
 
-        if (computerDTO.company != null) {
-            computer.setCompany(new Company.CompanyBuilder().id(Long.parseLong(computerDTO.company.id))
-                    .name(computerDTO.company.name).build());
+        if (computerDto.company != null) {
+            computer.setCompany(new Company.CompanyBuilder().id(Long.parseLong(computerDto.company.id))
+                    .name(computerDto.company.name).build());
         }
 
         return computer;
@@ -46,19 +46,19 @@ public class ComputerMapper {
      *            The computer for the service
      * @return The DTO
      */
-    public static ComputerDTO toComputerDTO(final Computer computer) {
-        final ComputerDTO computerDTO = new ComputerDTO();
-        final CompanyDTO companyDTO = new CompanyDTO();
-        computerDTO.id = computer.getId() + "";
-        computerDTO.name = computer.getName();
-        computerDTO.introduced = Utility.convertToStringDate(computer.getIntroduced());
-        computerDTO.discontinued = Utility.convertToStringDate(computer.getDiscontinued());
+    public static ComputerDto toDto(final Computer computer) {
+        final ComputerDto computerDto = new ComputerDto();
+        final CompanyDto companyDto = new CompanyDto();
+        computerDto.id = computer.getId() + "";
+        computerDto.name = computer.getName();
+        computerDto.introduced = Utility.convertToStringDate(computer.getIntroduced());
+        computerDto.discontinued = Utility.convertToStringDate(computer.getDiscontinued());
         if (computer.getCompany() != null) {
-            computerDTO.company = companyDTO;
-            companyDTO.id = computer.getCompany().getId() + "";
-            companyDTO.name = computer.getCompany().getName();
+            computerDto.company = companyDto;
+            companyDto.id = computer.getCompany().getId() + "";
+            companyDto.name = computer.getCompany().getName();
         }
-        return computerDTO;
+        return computerDto;
     }
 
     /**
@@ -68,22 +68,22 @@ public class ComputerMapper {
      *            A list of computer for service
      * @return A list of computer DTO
      */
-    public static List<ComputerDTO> toComputerDTO(final List<Computer> computers) {
-        final List<ComputerDTO> computerDTOs = new ArrayList<>();
-        computers.forEach(computer -> computerDTOs.add(ComputerMapper.toComputerDTO(computer)));
-        return computerDTOs;
+    public static List<ComputerDto> toDto(final List<Computer> computers) {
+        final List<ComputerDto> computerDtos = new ArrayList<>();
+        computers.forEach(computer -> computerDtos.add(ComputerMapper.toDto(computer)));
+        return computerDtos;
     }
 
     /**
      * To map a list of computer DTO.
      *
-     * @param computerDTOs
+     * @param computerDtos
      *            A list of computer DTO
      * @return A list of computer for service
      */
-    public List<Computer> toComputer(final List<ComputerDTO> computerDTOs) {
+    public List<Computer> toComputer(final List<ComputerDto> computerDtos) {
         final List<Computer> computers = new ArrayList<>();
-        computerDTOs.forEach(computerDTO -> computers.add(ComputerMapper.toComputer(computerDTO)));
+        computerDtos.forEach(computerDTO -> computers.add(ComputerMapper.toComputer(computerDTO)));
         return computers;
     }
 }
