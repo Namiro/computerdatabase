@@ -49,6 +49,7 @@
     </div>
 
     <form id="deleteForm" action="${VIEW_COMPUTER_LIST}" method="POST">
+    	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         <input type="hidden" name="${SUBMIT_DELETE}" value="">
     </form>
 
