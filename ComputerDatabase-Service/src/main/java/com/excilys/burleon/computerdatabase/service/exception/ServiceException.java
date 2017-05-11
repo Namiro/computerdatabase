@@ -20,7 +20,6 @@ public class ServiceException extends RuntimeException {
     }
 
     /**
-     *
      * @param s
      *            Message to display
      */
@@ -29,23 +28,20 @@ public class ServiceException extends RuntimeException {
     }
 
     /**
-     *
      * @param s
      *            Message to display
      * @param e
-     *            Previous excpetion
+     *            Previous exception
      */
     public ServiceException(final String s, final Throwable e) {
         super(s, e);
     }
 
     /**
-     *
      * @param e
-     *            Previous excpetion
+     *            Previous exception
      */
     public ServiceException(final Throwable e) {
         super(e);
     }
-
 }

@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import com.excilys.burleon.computerdatabase.core.model.IEntity;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.EntityWithNegativeIdServiceException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.ObjectNotInitializedException;
 
 /**
  * Interface for the global methods for the services.
@@ -33,10 +35,10 @@ public interface IModelService<E extends IEntity> extends IService {
     default void checkDataEntity(final E entity) throws ServiceException {
         IModelService.LOGGER.trace("checkDataEntity : AEntity : " + entity);
         if (entity == null) {
-            throw new ServiceException("The object hasn't been initialized");
+            throw new ObjectNotInitializedException("The object hasn't been initialized");
         }
         if (entity.getId() < 0) {
-            throw new ServiceException("The entity can't have a negative id");
+            throw new EntityWithNegativeIdServiceException("The entity can't have a negative id");
         }
     }
 
