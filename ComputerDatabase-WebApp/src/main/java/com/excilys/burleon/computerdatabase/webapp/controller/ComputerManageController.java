@@ -231,8 +231,9 @@ public class ComputerManageController implements IController {
             ComputerManageController.LOGGER.info("Save OK for " + processVariables.computer);
             return new ProcessResult(true, "Save OK");
         } catch (final ServiceException e) {
-            ComputerManageController.LOGGER.warn("Impossible to save computer : " + processVariables.computer, e);
+            ComputerManageController.LOGGER.warn("Impossible to save computer :" + processVariables.computer, e);
             return new ProcessResult(false, e.getMessage());
         }
+
     }
 }

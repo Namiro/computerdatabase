@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,9 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.AccessLevelEnum;
 import com.excilys.burleon.computerdatabase.repository.idao.IUserDao;
-import com.excilys.burleon.computerdatabase.service.exception.AuthenticationException;
-import com.excilys.burleon.computerdatabase.service.exception.DataValidationException;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.InvalidPasswordException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameAlreadyExistException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameNotFoundException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooShortPasswordException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooShortUsernameException;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
 
 /**
@@ -33,19 +35,18 @@ public class UserService extends AModelService<User> implements IUserService {
     private PasswordEncoder passwordEncoder;
 
     @Override
-    public void checkDataEntity(final User entity) throws ServiceException {
+    public void checkDataEntity(final User entity) throws TooShortPasswordException, TooShortUsernameException {
         IUserService.super.checkDataEntity(entity);
         if (entity.getUsername().length() < 3) {
-            throw new DataValidationException("The username must be longer then 3 characters");
+            throw new TooShortUsernameException("The username must be longer then 3 characters");
         }
         if (entity.getPassword().length() < 3) {
-            throw new DataValidationException("The password must be longer then 3 characters");
+            throw new TooShortPasswordException("The password must be longer then 3 characters");
         }
     }
 
     @Transactional(readOnly = true)
     private boolean exist(final User user) {
-
         if (((IUserDao) this.dao).findByUsername(user.getUsername()).isPresent()) {
             return true;
         } else {
@@ -55,9 +56,14 @@ public class UserService extends AModelService<User> implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<User> getByUsername(final String username) {
+    public Optional<User> getByUsername(final String username) throws UsernameNotFoundException {
         UserService.LOGGER.trace("getByUsername : username : " + username);
-        return ((IUserDao) this.dao).findByUsername(username);
+        final Optional<User> userOpt = this.getByUsername(username);
+        if (userOpt.isPresent()) {
+            return userOpt;
+        } else {
+            throw new UsernameNotFoundException("There is no user with the username : " + username);
+        }
     }
 
     @Override
@@ -74,7 +80,7 @@ public class UserService extends AModelService<User> implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User login(final User user) throws AuthenticationException {
+    public User login(final User user) throws InvalidPasswordException, UsernameNotFoundException {
         UserService.LOGGER.trace("login : user : " + user);
         final Optional<User> userOpt = ((IUserDao) this.dao).findByUsername(user.getUsername());
         if (userOpt.isPresent()) {
@@ -83,12 +89,12 @@ public class UserService extends AModelService<User> implements IUserService {
                 return user;
             } else {
                 UserService.LOGGER.warn("Password inccorect fior the username : " + user.getUsername());
-                throw new AuthenticationException("Password incorrect");
+                throw new InvalidPasswordException("Password incorrect");
             }
 
         } else {
             UserService.LOGGER.warn("No user with the username: " + user.getUsername());
-            throw new AuthenticationException("Username incorrect");
+            throw new UsernameNotFoundException("Username incorrect");
         }
     }
 
@@ -100,12 +106,13 @@ public class UserService extends AModelService<User> implements IUserService {
 
     @Override
     @Transactional
-    public User register(final User user, final String passwordRepeated) throws AuthenticationException {
+    public User register(final User user, final String passwordRepeated)
+            throws UsernameAlreadyExistException, InvalidPasswordException {
         if (this.exist(user)) {
-            throw new DataValidationException("This user already exist");
+            throw new UsernameAlreadyExistException("This user already exist");
         }
         if (!passwordRepeated.equals(user.getPassword())) {
-            throw new DataValidationException("The password repeated isn't identique");
+            throw new InvalidPasswordException("The password repeated isn't identique");
         }
 
         user.setPassword(this.passwordEncoder.encode(user.getPassword()));

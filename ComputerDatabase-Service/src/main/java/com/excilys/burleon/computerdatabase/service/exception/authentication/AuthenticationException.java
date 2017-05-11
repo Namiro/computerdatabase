@@ -1,4 +1,6 @@
-package com.excilys.burleon.computerdatabase.service.exception;
+package com.excilys.burleon.computerdatabase.service.exception.authentication;
+
+import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 
 /**
  * This class allow to trigger an exception for the services.
@@ -11,7 +13,7 @@ public class AuthenticationException extends ServiceException {
     /**
      *
      */
-    private static final long serialVersionUID = -8237870712450648471L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor.
@@ -21,7 +23,6 @@ public class AuthenticationException extends ServiceException {
     }
 
     /**
-     *
      * @param s
      *            Message to display
      */
@@ -30,23 +31,20 @@ public class AuthenticationException extends ServiceException {
     }
 
     /**
-     *
      * @param s
      *            Message to display
      * @param e
-     *            Previous excpetion
+     *            Previous exception
      */
     public AuthenticationException(final String s, final Throwable e) {
         super(s, e);
     }
 
     /**
-     *
      * @param e
-     *            Previous excpetion
+     *            Previous exception
      */
     public AuthenticationException(final Throwable e) {
         super(e);
     }
-
 }

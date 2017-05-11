@@ -20,7 +20,6 @@ public class PersistenceException extends RuntimeException {
     }
 
     /**
-     *
      * @param s
      *            Message to display
      */
@@ -29,20 +28,18 @@ public class PersistenceException extends RuntimeException {
     }
 
     /**
-     *
      * @param s
      *            Message to display
      * @param e
-     *            Previous excpetion
+     *            Previous exception
      */
     public PersistenceException(final String s, final Throwable e) {
         super(s, e);
     }
 
     /**
-     *
      * @param e
-     *            Previous excpetion
+     *            Previous exception
      */
     public PersistenceException(final Throwable e) {
         super(e);
