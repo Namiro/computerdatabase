@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.repository.exception.PersistenceException;
 import com.excilys.burleon.computerdatabase.repository.idao.IComputerDao;
-import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooLongCompanyNameException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooShortCompanyNameException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
@@ -28,7 +27,8 @@ public class CompanyService extends AModelService<Company> implements ICompanySe
     IComputerDao computerDao;
 
     @Override
-    public void checkDataEntity(final Company entity) throws ServiceException {
+    public void checkDataEntity(final Company entity)
+            throws TooShortCompanyNameException, TooLongCompanyNameException {
         ICompanyService.super.checkDataEntity(entity);
         if (entity.getName().length() < 1) {
             throw new TooShortCompanyNameException("The name of company must be longer (More then 1 caracter)");
