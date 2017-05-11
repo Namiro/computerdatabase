@@ -4,7 +4,12 @@ import java.io.IOException;
 
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public final class Paginator extends SimpleTagSupport {
+    static final Logger LOGGER = LoggerFactory.getLogger(Paginator.class);
+
     private String uri;
 
     private int currPage;
@@ -61,10 +66,12 @@ public final class Paginator extends SimpleTagSupport {
 
     @Override
     public void doTag() {
+        Paginator.LOGGER.debug("NB PAGE MAX : " + this.totalPages);
+        Paginator.LOGGER.debug("MAX LINK : " + this.maxLinks);
         final boolean lastPage = this.currPage == this.totalPages;
         int pgStart = Math.max(this.currPage - this.maxLinks / 2, 1);
         int pgEnd = pgStart + this.maxLinks;
-        if (pgEnd > this.totalPages + 1) {
+        if (pgEnd > this.totalPages + 2) {
             final int diff = pgEnd - this.totalPages;
             pgStart -= diff - 1;
             if (pgStart < 1) {
@@ -83,6 +90,7 @@ public final class Paginator extends SimpleTagSupport {
             }
 
             for (int i = pgStart; i < pgEnd; i++) {
+                Paginator.LOGGER.debug("i " + i);
                 if (i <= this.totalPages) {
                     this.getJspContext().getOut().write(this.constructLink(i));
                 }
