@@ -66,8 +66,6 @@ public final class Paginator extends SimpleTagSupport {
 
     @Override
     public void doTag() {
-        Paginator.LOGGER.debug("NB PAGE MAX : " + this.totalPages);
-        Paginator.LOGGER.debug("MAX LINK : " + this.maxLinks);
         final boolean lastPage = this.currPage == this.totalPages;
         int pgStart = Math.max(this.currPage - this.maxLinks / 2, 1);
         int pgEnd = pgStart + this.maxLinks;
@@ -90,7 +88,6 @@ public final class Paginator extends SimpleTagSupport {
             }
 
             for (int i = pgStart; i < pgEnd; i++) {
-                Paginator.LOGGER.debug("i " + i);
                 if (i <= this.totalPages) {
                     this.getJspContext().getOut().write(this.constructLink(i));
                 }
