@@ -18,7 +18,6 @@
         <form action="${VIEW_COMPUTER_MANAGE}" method="POST"
             role="form" data-toggle="validator">
             <fieldset>
-            	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <input name="${COMPUTER_ID}" hidden="true"
                     value="${requestScope[COMPUTER_ID]}"
                     id="${COMPUTER_ID}" />

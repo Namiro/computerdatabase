@@ -40,6 +40,7 @@ public class ApplicationInitializer implements WebApplicationInitializer {
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/" + View.VIEW_COMPUTER_LIST);
         servlet.addMapping("/" + View.VIEW_COMPUTER_MANAGE);
+
         ApplicationInitializer.LOGGER.trace("onStartup Loaded");
     }
 

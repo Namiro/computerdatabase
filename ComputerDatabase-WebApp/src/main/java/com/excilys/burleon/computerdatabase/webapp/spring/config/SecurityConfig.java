@@ -36,26 +36,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().ignoringAntMatchers("/computerlist")
-        .and()
-        	.authorizeRequests()
-        	.antMatchers("/").permitAll()
-        	.antMatchers("/"+View.VIEW_AUTHENTICATION).permitAll()
-        	.antMatchers("/css/**").permitAll()
-        	.antMatchers("/fonts/**").permitAll()
-            .antMatchers("/i18/**").permitAll()
-            .antMatchers("/js/**").permitAll()
-            .antMatchers("/" + View.VIEW_COMPUTER_LIST).permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .formLogin().loginPage("/" + View.VIEW_COMPUTER_LIST + "?" + Data.POPUP + "=" + Data.POPUP_LOGIN)
-            .usernameParameter(Data.USER_USERNAME).passwordParameter(Data.USER_PASSWORD)
-            .loginProcessingUrl("/" + View.VIEW_AUTHENTICATION)
-            .defaultSuccessUrl("/" + View.VIEW_COMPUTER_LIST + "?" + Data.LOGIN_SUCCESS + "=true").permitAll()
-            .failureUrl("/" + View.VIEW_COMPUTER_LIST + "?" + Data.POPUP + "=" + Data.POPUP_LOGIN + "&"
-            		+ Data.LOGIN_SUCCESS + "=false")
-            .and()
-            .logout().logoutUrl("/" + View.VIEW_LOGOUT).logoutSuccessUrl("/" + View.VIEW_COMPUTER_LIST).permitAll();
+        http.authorizeRequests().antMatchers("/css/**").permitAll().antMatchers("/fonts/**").permitAll()
+                .antMatchers("/i18/**").permitAll().antMatchers("/js/**").permitAll()
+                .antMatchers("/" + View.VIEW_COMPUTER_LIST).permitAll().anyRequest().authenticated().and()
+                .formLogin().loginPage("/" + View.VIEW_COMPUTER_LIST).usernameParameter(Data.USER_USERNAME)
+                .passwordParameter(Data.USER_PASSWORD).permitAll().and().logout().permitAll();
 
         // .authorizeRequests().antMatchers("/", "/" +
         // View.VIEW_COMPUTER_LIST)
@@ -65,10 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    public void configureGlobalSecurity(
-    		final AuthenticationManagerBuilder auth, 
-    		final DaoAuthenticationProvider prov) throws Exception {
+    public void configureGlobalSecurity(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.userService);
-        auth.authenticationProvider(prov);
+        auth.authenticationProvider(this.authenticationProvider());
+        auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
+        auth.inMemoryAuthentication().withUser("admin").password("admin").roles("ADMIN");
     }
 }
