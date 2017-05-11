@@ -18,7 +18,6 @@ public class TooShortUsernameException extends EntityValidationException {
      *
      */
     public TooShortUsernameException() {
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -26,7 +25,6 @@ public class TooShortUsernameException extends EntityValidationException {
      */
     public TooShortUsernameException(final String s) {
         super(s);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -35,7 +33,6 @@ public class TooShortUsernameException extends EntityValidationException {
      */
     public TooShortUsernameException(final String s, final Throwable e) {
         super(s, e);
-        // TODO Auto-generated constructor stub
     }
 
     /**
@@ -43,7 +40,6 @@ public class TooShortUsernameException extends EntityValidationException {
      */
     public TooShortUsernameException(final Throwable e) {
         super(e);
-        // TODO Auto-generated constructor stub
     }
 
 }
