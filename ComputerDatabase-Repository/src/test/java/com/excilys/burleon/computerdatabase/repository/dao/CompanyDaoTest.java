@@ -84,6 +84,7 @@ public class CompanyDaoTest {
      * 
      *  - The user wants to show existing companies
      * tested with findsAndReadsExistingCompaniesByPage.
+     * tested with findsAndReadsExistingCompaniesByPageWithFilter
      *  - One Id searched is not in the DB
      * tested with findsAndReadsExistingCompaniesWithFirstIdNotInDB
      * tested with findsAndReadsExistingCompaniesByPageGoingTooFar
@@ -98,6 +99,13 @@ public class CompanyDaoTest {
         assertEquals("Acorn computer",this.companyDao.findRange(Company.class, 0, 3, null, null).get(0).getName());
         assertEquals("ACVS", this.companyDao.findRange(Company.class, 0, 3, null, null).get(1).getName());
         assertEquals("Amiga Corporation", this.companyDao.findRange(Company.class, 0, 3, null, null).get(2).getName());
+    }
+    
+    @Test
+    public void findsAndReadsExistingCompaniesByPageWithFilter() throws Exception {
+        assertEquals(28, this.companyDao.findRange(Company.class, 0, 3, "Z", null).get(0).getId());
+        assertEquals("Zemmix",this.companyDao.findRange(Company.class, 0, 3, "Z", null).get(0).getName());
+        assertEquals(1, this.companyDao.findRange(Company.class, 0, 3, "Z", null).size());
     }
     
     @Test
@@ -164,11 +172,25 @@ public class CompanyDaoTest {
      * 
      *  - The user wants to count companies
      * tested with countCompanies
+     * tested with countCompaniesByPage
+     * 
+     *  - The user want to count companies with a filter word
+     * tested with countFilteredCompaniesByPage
      */
     
     @Test
     public void countCompanies() {
         assertEquals(42, this.companyDao.find(Company.class).size());
+    }
+    
+    @Test
+    public void countCompaniesByPage() {
+        assertEquals(42, this.companyDao.findRange(Company.class, 0, 100, null, null).size());
+    }
+    
+    @Test
+    public void countFilteredCompaniesByPage() {
+        assertEquals(1, this.companyDao.findRange(Company.class, 0, 100, "Apple", null).size());
     }
     
     /*
