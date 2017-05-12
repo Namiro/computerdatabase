@@ -58,7 +58,7 @@ public class UserService extends AModelService<User> implements IUserService {
     @Transactional(readOnly = true)
     public Optional<User> getByUsername(final String username) throws UsernameNotFoundException {
         UserService.LOGGER.trace("getByUsername : username : " + username);
-        final Optional<User> userOpt = this.getByUsername(username);
+        final Optional<User> userOpt = ((IUserDao) this.dao).findByUsername(username);
         if (userOpt.isPresent()) {
             return userOpt;
         } else {
