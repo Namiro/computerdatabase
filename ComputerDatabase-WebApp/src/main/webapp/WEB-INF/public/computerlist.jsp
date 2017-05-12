@@ -22,28 +22,30 @@
                     <input type="search" id="${SEARCH_WORD}"
                         name="${SEARCH_WORD}" class="form-control"
                         placeholder=<spring:message code="computerlist_placeholder"/>
-                        value="${requestScope[SEARCH_WORD]}" /> <input
-                        type="submit" name="${SUBMIT_SEARCH}"
+                        value="${requestScope[SEARCH_WORD]}" /> 
+                   <!-- name="${SUBMIT_SEARCH}" --> <!-- Removed name from below submit to avoid putting search=search in the url -->	
+                   <input
+                        type="submit"
                         id="${SUBMIT_SEARCH}"
                         value=<spring:message code="button_search"/>
-                        class="btn btn-primary" /> <input type="hidden"
+                        class="btn btn-primary" />
+                    <input type="hidden"
                         name="${ORDER_BY}"
-                        value="${requestScope[ORDER_BY]}" /> <input
+                        value="${requestScope[ORDER_BY]}" /> 
+                    <input type="hidden"
+                        name="${PAGINATION_CURRENT_PAGE}"
+                        value="1" />
+                    <input
                         type="hidden"
                         name="${PAGINATION_RECORDS_BY_PAGE}"
                         value="${requestScope[PAGINATION_RECORDS_BY_PAGE]}" />
-                    <input type="hidden"
-                        name="${PAGINATION_CURRENT_PAGE}"
-                        value="${requestScope[PAGINATION_CURRENT_PAGE]}" />
                 </form>
             </div>
             <div class="pull-right">
                 <a class="btn btn-success" id="addComputer"
-                    href="${VIEW_COMPUTER_MANAGE}"><spring:message
-                        code="computerlist_button_add" /></a> <a
+                    href="${VIEW_COMPUTER_MANAGE}"><spring:message code="computerlist_button_add" /></a> <a
                     class="btn btn-default" id="editComputer" href="#"
-                    onclick="$.fn.toggleEditMode();"><spring:message
-                        code="computerlist_button_edit" /></a>
+                    onclick="$.fn.toggleEditMode();"><spring:message code="computerlist_button_edit" /></a>
             </div>
         </div>
     </div>
@@ -68,36 +70,32 @@
                                 </a>
                             </span></th>
                             <th><a
-                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_1}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+								href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${ORDER_BY_1}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}"><spring:message
                                         code="computerlist_table_name" /></a></th>
                             <th><a
-                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_2}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+								href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${ORDER_BY_2}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}"><spring:message
                                         code="computerlist_table_introduced" /></a></th>
                             <th><a
-                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_3}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+								href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${ORDER_BY_3}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}"><spring:message
                                         code="computerlist_table_discontinued" /></a></th>
                             <th><a
-                                href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${ORDER_BY_4}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}"><spring:message
+								href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${ORDER_BY_4}&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}"><spring:message
                                         code="computerlist_table_company" /></a></th>
                         </tr>
                     </thead>
                     <tbody id="results">
-                        <c:forEach
-                            items="${requestScope[LIST_COMPUTER]}"
-                            var="computer" varStatus="vs">
+                    	<spring:message code="date_format" var="date_format" />
+                    	<c:forEach items="${requestScope[LIST_COMPUTER]}" var="computer" varStatus="vs">
                             <tr>
-                                <td class="editMode"><input
-                                    type="checkbox" name="cb" class="cb"
-                                    value='<c:out value="${computer.id}"/>'></td>
-                                <td><a
-                                    href="${VIEW_COMPUTER_MANAGE}?${COMPUTER_ID}=${computer.id}"><c:out
-                                            value="${computer.name}" /></a></td>
-                                <td><c:out
-                                        value='${computer.introduced}' />
-                                <td><c:out
-                                        value='${computer.discontinued}' />
-                                <td><c:out
-                                        value="${computer.company.name}" /></td>
+                                <td class="editMode">
+                                	<input type="checkbox" name="cb" class="cb" value='<c:out value="${computer.id}"/>'>
+                                </td>
+                                <td><a href="${VIEW_COMPUTER_MANAGE}?${COMPUTER_ID}=${computer.id}"><c:out value="${computer.name}" /></a></td>
+                                <td><fmt:parseDate value="${ computer.introduced }" pattern="yyyy-MM-dd" var="introduced" /> 
+									<fmt:formatDate pattern="${ date_format }" value="${ introduced }" /></td>
+                                <td><fmt:parseDate value="${ computer.discontinued }" pattern="yyyy-MM-dd" var="discontinued" /> 
+									<fmt:formatDate pattern="${ date_format }" value="${ discontinued }" /></td>  
+								<td><c:out value="${computer.company.name}" /></td>
                             </tr>
                         </c:forEach>
                     </tbody>
@@ -113,22 +111,22 @@
     </div>
     <div class="row container text-center">
         <mytags:pagination
-            uri="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}&${PAGINATION_CURRENT_PAGE}=##"
-            maxLinks="5"
+			uri="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${requestScope[ORDER_BY]}&${PAGINATION_CURRENT_PAGE}=##&${PAGINATION_RECORDS_BY_PAGE}=${requestScope[PAGINATION_RECORDS_BY_PAGE]}"
+			maxLinks="5"
             currPage="${requestScope[PAGINATION_CURRENT_PAGE]}"
             totalPages="${requestScope[PAGINATION_TOTAL_PAGE]}" />
 
         <div class="btn-group btn-group-sm pull-right" role="group">
             <ul class="pagination">
                 <li><a id="paginationRecordsByPage20"
-                    href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=20&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">20</a>
-                </li>
+					href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${requestScope[ORDER_BY]}&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=20">20</a>
+				</li>
                 <li><a id="paginationRecordsByPage50"
-                    href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=50&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">50</a>
-                </li>
+					href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${requestScope[ORDER_BY]}&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=50">50</a>
+				</li>
                 <li><a id="paginationRecordsByPage100"
-                    href="${VIEW_COMPUTER_LIST}?${ORDER_BY}=${requestScope[ORDER_BY]}&${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${PAGINATION_RECORDS_BY_PAGE}=100&${PAGINATION_CURRENT_PAGE}=${requestScope[PAGINATION_CURRENT_PAGE]}">100</a>
-                </li>
+					href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=${requestScope[SEARCH_WORD]}&${ORDER_BY}=${requestScope[ORDER_BY]}&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=100">100</a>
+				</li>
             </ul>
         </div>
     </div>

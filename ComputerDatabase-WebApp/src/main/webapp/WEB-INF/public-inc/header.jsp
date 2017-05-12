@@ -1,18 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="UTF-8"%>
-<%@ page
-    import="com.excilys.burleon.computerdatabase.webapp.constant.Session"%>
-<%@ page
-    import="com.excilys.burleon.computerdatabase.webapp.constant.Data"%>
-<%@ page
-    import="com.excilys.burleon.computerdatabase.webapp.constant.View"%>
+<%@ page import="com.excilys.burleon.computerdatabase.webapp.constant.Session"%>
+<%@ page import="com.excilys.burleon.computerdatabase.webapp.constant.Data"%>
+<%@ page import="com.excilys.burleon.computerdatabase.webapp.constant.View"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime"%>
-<%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags"
-    prefix="mytags"%>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-
+<%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags" prefix="mytags"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <%-- Content for all page. --%>
 <c:set var="MESSAGE_SUCCESS" value="<%=Data.MESSAGE_SUCCESS%>" />
@@ -37,19 +33,15 @@
 
 <%-- For this page. --%>
 <c:set var="SEARCH_WORD" value="<%=Data.SEARCH_WORD%>" />
-<c:set var="SEARCH_NUMBER_RESULTS"
-    value="<%=Data.SEARCH_NUMBER_RESULTS%>" />
+<c:set var="SEARCH_NUMBER_RESULTS" value="<%=Data.SEARCH_NUMBER_RESULTS%>" />
 <c:set var="ORDER_BY" value="<%=Data.ORDER_BY%>" />
 <c:set var="ORDER_BY_1" value="<%=Data.ORDER_BY_1%>" />
 <c:set var="ORDER_BY_2" value="<%=Data.ORDER_BY_2%>" />
 <c:set var="ORDER_BY_3" value="<%=Data.ORDER_BY_3%>" />
 <c:set var="ORDER_BY_4" value="<%=Data.ORDER_BY_4%>" />
-<c:set var="PAGINATION_CURRENT_PAGE"
-    value="<%=Data.PAGINATION_CURRENT_PAGE%>" />
-<c:set var="PAGINATION_TOTAL_PAGE"
-    value="<%=Data.PAGINATION_TOTAL_PAGE%>" />
-<c:set var="PAGINATION_RECORDS_BY_PAGE"
-    value="<%=Data.PAGINATION_RECORDS_BY_PAGE%>" />
+<c:set var="PAGINATION_CURRENT_PAGE" value="<%=Data.PAGINATION_CURRENT_PAGE%>" />
+<c:set var="PAGINATION_TOTAL_PAGE" value="<%=Data.PAGINATION_TOTAL_PAGE%>" />
+<c:set var="PAGINATION_RECORDS_BY_PAGE" value="<%=Data.PAGINATION_RECORDS_BY_PAGE%>" />
 
 <c:set var="USER_PASSWORD" value="<%=Data.USER_PASSWORD%>" />
 <c:set var="USER_PASSWORD2" value="<%=Data.USER_PASSWORD2%>" />
@@ -65,8 +57,43 @@
 <link href="css/main.css" rel="stylesheet" type="text/css" />
 
 <title><spring:message code="title" /></title>
+
 </head>
 <body>
+
+	 <header class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+		    <div class="navbar-header">
+				<a class="navbar-brand" href="${VIEW_COMPUTER_LIST}?${SEARCH_WORD}=&${ORDER_BY}=&${PAGINATION_CURRENT_PAGE}=1&${PAGINATION_RECORDS_BY_PAGE}=20"><spring:message code="title" /></a>
+			</div>
+			   			
+   			<div id="navbar" class="navbar-collapse collapse navbar-right">
+            	<ul class="nav navbar-nav">
+                	<li class="dropdown">
+                    	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <img id="imgNavSel" src="" alt="..." class="img-thumbnail icon-small"> <span id="lanNavSel"></span> <span class="caret"></span></a>
+                    	<ul class="dropdown-menu" role="menu">
+        			    	<li><a id="navFra" href="?local=fr" class="language"><img id="imgNavFra" name="imageee" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavFra"><spring:message code="language_french"/></span></a></li>
+        			    	<li><a id="navEng" href="?local=en" class="language"><img id="imgNavEng" name="imageee" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavEng"><spring:message code="language_english"/></span></a></li>
+        			    	<li><a id="navRom" href="?local=ro" class="language"><img id="imgNavRom" name="imageee" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_romanian"/></span></a></li>
+        	        	</ul> 
+        	       	</li>
+            </ul>
+        	</div> <!--/.navbar-collapse -->
+   			
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#" data-toggle="modal"
+                    data-target="#myModalSignup"><span
+                        class="glyphicon glyphicon-user"></span> <spring:message
+                            code="computerlist_button_signup" /></a></li>
+                <li><a href="#" data-toggle="modal"
+                    data-target="#myModalLogin"><span
+                        class="glyphicon glyphicon-log-in"></span> <spring:message
+                            code="computerlist_button_login" /></a></li>
+            </ul>
+    		
+		</div>
+	</header> 
+			
     <input name="${POPUP}" hidden="true" value="${requestScope[POPUP]}"
         id="${POPUP}" />
     <nav class="navbar navbar-default" role="navigation">
@@ -101,10 +128,8 @@
         <!-- /.navbar-collapse -->
     </nav>
 
-    <div style="background-color: #eee; padding: 30px;">
+    <div style="background-color: #eee; padding: 10px;">
         <div class="container">
-
-
 
             <%-- MODAL Sign up --%>
             <div class="modal fade" tabindex="-1" role="dialog"

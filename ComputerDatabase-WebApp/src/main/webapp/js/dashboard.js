@@ -24,7 +24,6 @@ $(function() {
 
 });
 
-
 // Function setCheckboxValues
 (function ( $ ) {
 
@@ -75,7 +74,7 @@ $(function() {
 //Onkeydown
 $(document).keydown(function(e) {
 
-    switch (e.keyCode) {
+	switch (e.keyCode) {
         //DEL key
         case 46:
             if($(".editMode").is(":visible") && $(".cb:checked").length != 0) {
@@ -91,3 +90,111 @@ $(document).keydown(function(e) {
     }
 });
 
+$(document).ready(function() {
+    $(".dropdown img.flag").addClass("flagvisibility");
+
+    $(".dropdown dt a").click(function() {
+        $(".dropdown dd ul").toggle();
+    });
+                
+    $(".dropdown dd ul li a").click(function() {
+        var text = $(this).html();
+        $(".dropdown dt a span").html(text);
+        $(".dropdown dd ul").hide();
+        $("#result").html("Selected value is: " + getSelectedValue("sample"));
+    });
+                
+    function getSelectedValue(id) {
+        return $("#" + id).find("dt a span.value").html();
+    }
+
+    $(document).bind('click', function(e) {
+        var $clicked = $(e.target);
+        if (! $clicked.parents().hasClass("dropdown"))
+            $(".dropdown dd ul").hide();
+    });
+
+    $("#flagSwitcher").click(function() {
+        $(".dropdown img.flag").toggleClass("flagvisibility");
+    });
+});
+
+$(document).ready(function(){
+	var fraImgLink = "img/French.gif";
+	var engImgLink = "img/English.gif";
+	var romImgLink = "img/Romania.png";
+
+	var imgBtnSel = $('#imgBtnSel');
+	var imgBtnFra = $('#imgBtnFra');
+	var imgBtnEng = $('#imgBtnEng');
+	var imgBtnRom = $('#imgBtnRom');
+
+	var imgNavSel = $('#imgNavSel');
+	var imgNavFra = $('#imgNavFra');
+	var imgNavEng = $('#imgNavEng');
+	var imgNavRom = $('#imgNavRom');
+
+	var spanNavSel = $('#lanNavSel');
+	var spanBtnSel = $('#lanBtnSel');
+
+	imgBtnFra.attr("src", fraImgLink);
+	imgBtnEng.attr("src", engImgLink);
+	imgBtnRom.attr("src", romImgLink);
+
+	document.getElementById("navFra").onclick = function() {
+	    localStorage.clear();
+	    localStorage.setItem('navFra', document.getElementById("navFra").value);
+	}
+
+	document.getElementById("navEng").onclick = function() {
+	    localStorage.clear();
+	    localStorage.setItem('navEng', document.getElementById("navEng").value);
+	}
+	
+	document.getElementById("navRom").onclick = function() {
+	    localStorage.clear();
+	    localStorage.setItem('navRom', document.getElementById("navRom").value);
+	}
+	
+	if (localStorage.getItem('navFra')) {
+		imgNavSel.attr("src", fraImgLink);
+		spanNavSel.text("FR");
+	} else if (localStorage.getItem('navEng')) {
+		imgNavSel.attr("src", engImgLink);
+		spanNavSel.text("EN");
+	} else if (localStorage.getItem('navRom')) {
+		imgNavSel.attr("src", romImgLink);
+		spanNavSel.text("RO");
+	} 
+	
+	imgNavFra.attr("src", fraImgLink);
+	imgNavEng.attr("src", engImgLink);
+	imgNavRom.attr("src", romImgLink);
+
+	$(".language").on("click", function( event ) {
+		var currentId = $(this).attr('id');
+		
+		if (currentId == "navEng") {
+			imgNavSel.attr("src", engImgLink);
+			spanNavSel.text("EN");
+		} else if (currentId == "navRom") {
+			imgNavSel.attr("src", romImgLink);
+			spanNavSel.text("RO");
+		} else if (currentId == "navFra") {
+			imgNavSel.attr("src", fraImgLink);
+			spanNavSel.text("FR");
+		}
+
+		if (currentId == "btnEng") {
+			imgBtnSel.attr("src", engImgLink);
+			spanBtnSel.text("EN");
+		} else if (currentId == "btnROM") {
+			imgBtnSel.attr("src", romImgLink);
+			spanBtnSel.text("RO");
+		} else if (currentId == "btnFra") {
+			imgBtnSel.attr("src", fraImgLink);
+			spanBtnSel.text("FR");
+		}
+		
+	});
+});
