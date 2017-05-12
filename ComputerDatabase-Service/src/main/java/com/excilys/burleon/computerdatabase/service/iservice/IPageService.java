@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.excilys.burleon.computerdatabase.core.model.IEntity;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.service.exception.InvalidNumberOfrecordsByPageException;
 
 /**
  * This service allow to manage the records with pages.
@@ -102,6 +103,9 @@ public interface IPageService<E extends IEntity> extends IService {
      *
      * @param recordsByPage
      *            The number of records by page
+     * 
+     * @exception InvalidNumberOfrecordsByPageException
+     *                If the number of record by page is less then 1
      */
-    void setRecordsByPage(int recordsByPage);
+    void setRecordsByPage(int recordsByPage) throws InvalidNumberOfrecordsByPageException;
 }
