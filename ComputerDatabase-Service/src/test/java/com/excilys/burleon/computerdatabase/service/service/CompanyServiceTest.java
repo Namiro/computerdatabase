@@ -25,8 +25,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.repository.idao.ICompanyDao;
-import com.excilys.burleon.computerdatabase.service.exception.DataValidationException;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.EntityValidationException;
 import com.excilys.burleon.computerdatabase.service.iservice.ICompanyService;
 import com.excilys.burleon.computerdatabase.service.spring.config.ServiceConfig;
 
@@ -63,14 +63,14 @@ public class CompanyServiceTest {
         final Company company = new Company.CompanyBuilder()
                 .name("rhgughrughguhdfguhfdiguhdfighfughdfguifghfgfhdgidfhgufidhgdfughfghfidghfduighfgudfhgdfuhgufhgdfuioghfioghuifdpghfdlgifdhguiodfghdfogfgdfgfi")
                 .build();
-        this.exception.expect(DataValidationException.class);
+        this.exception.expect(EntityValidationException.class);
         this.companyService.checkDataEntity(company);
     }
 
     @Test
     public void testCheckDataEntityNoName() throws ServiceException {
         final Company company = new Company.CompanyBuilder().name("").build();
-        this.exception.expect(DataValidationException.class);
+        this.exception.expect(EntityValidationException.class);
         this.companyService.checkDataEntity(company);
     }
 

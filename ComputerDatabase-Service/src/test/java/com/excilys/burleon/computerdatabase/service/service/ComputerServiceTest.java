@@ -28,7 +28,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.excilys.burleon.computerdatabase.core.model.Computer;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.repository.idao.IComputerDao;
-import com.excilys.burleon.computerdatabase.service.exception.DataValidationException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.EntityValidationException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.spring.config.ServiceConfig;
 
@@ -87,7 +87,7 @@ public class ComputerServiceTest {
                         + "dfgdfhTestNamedxklgdfuigjkgdfgdfhgdfhmgidfjhgdfklgdfiogdfigdfjgiodfljhiodfghfighdfgjdfu"
                         + "igjdfiogjdfgiofhgijfghdfighdfgdfh")
                 .introduced(LocalDateTime.now()).discontinued(LocalDateTime.now()).build();
-        this.exception.expect(DataValidationException.class);
+        this.exception.expect(EntityValidationException.class);
         this.computerService.checkDataEntity(computer);
     }
 
@@ -95,7 +95,7 @@ public class ComputerServiceTest {
     public void testCheckDataEntityNoName() {
         final Computer computer = new Computer.ComputerBuilder().name("").introduced(LocalDateTime.now())
                 .discontinued(LocalDateTime.now()).build();
-        this.exception.expect(DataValidationException.class);
+        this.exception.expect(EntityValidationException.class);
         this.computerService.checkDataEntity(computer);
     }
 

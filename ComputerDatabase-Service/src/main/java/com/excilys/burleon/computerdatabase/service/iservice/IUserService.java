@@ -5,7 +5,11 @@ import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import com.excilys.burleon.computerdatabase.core.model.User;
-import com.excilys.burleon.computerdatabase.service.exception.AuthenticationException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.InvalidPasswordException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameAlreadyExistException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameNotFoundException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooShortPasswordException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooShortUsernameException;
 
 /**
  *
@@ -20,8 +24,10 @@ public interface IUserService extends IModelService<User>, UserDetailsService {
      * @param username
      *            The username
      * @return The user that match the username
+     *
+     * @throws UsernameNotFoundException
      */
-    Optional<User> getByUsername(String username);
+    Optional<User> getByUsername(String username) throws UsernameNotFoundException;
 
     /**
      * To log in the user.
@@ -29,10 +35,11 @@ public interface IUserService extends IModelService<User>, UserDetailsService {
      * @param user
      *            The user
      * @return The user that match the username
-     * @throws AuthenticationException
-     *             If something fail during the login
+     *
+     * @throws InvalidPasswordException
+     * @throws UsernameNotFoundException
      */
-    User login(User user) throws AuthenticationException;
+    User login(User user) throws InvalidPasswordException, UsernameNotFoundException;
 
     /**
      * To log out the user.
@@ -50,8 +57,13 @@ public interface IUserService extends IModelService<User>, UserDetailsService {
      * @param passwordRepeated
      *            The passwordRepeated
      * @return The user registered
-     * @throws AuthenticationException
-     *             If there is a problem
+     *
+     * @throws UsernameAlreadyExistException
+     * @throws InvalidPasswordException
      */
-    User register(User user, String passwordRepeated) throws AuthenticationException;
+    User register(User user, String passwordRepeated)
+            throws UsernameAlreadyExistException, InvalidPasswordException;
+
+    @Override
+    public Optional<User> save(User entity) throws TooShortPasswordException, TooShortUsernameException;
 }

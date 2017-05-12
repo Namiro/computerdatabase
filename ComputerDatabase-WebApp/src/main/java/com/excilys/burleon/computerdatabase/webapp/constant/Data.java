@@ -45,6 +45,8 @@ public final class Data {
     public static final String POPUP = "popup";
     public static final String POPUP_SIGNUP = "popupsignup";
     public static final String POPUP_LOGIN = "popuplogin";
+    public static final String POPUP_MESSAGE_SUCCESS = "popupSuccessMessage";
+    public static final String POPUP_MESSAGE_ERROR = "popupErrorMessage";
 
     /* DIVERS */
     public static final String SEARCH_WORD = "searchWord";
@@ -60,4 +62,6 @@ public final class Data {
     public static final String PAGINATION_TOTAL_PAGE = "paginationTotalPage";
     public static final String PAGINATION_RECORDS_BY_PAGE = "paginationRecordsByPage";
 
+    /* LOGIN */
+    public static final String LOGIN_SUCCESS = "success";
 }
