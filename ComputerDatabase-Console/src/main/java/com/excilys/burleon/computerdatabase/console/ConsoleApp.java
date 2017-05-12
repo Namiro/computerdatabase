@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -41,6 +42,15 @@ public class ConsoleApp {
     public static void main(final String[] args) throws IOException {
         final ConsoleApp ConsoleApp = new ConsoleApp();
         ConsoleApp.start(args);
+    }
+
+    private void displayListCompany(final List<Company> companyList) {
+        companyList.forEach(company -> System.out.println(" " + company.id + "\t" + company.name));
+
+    }
+
+    private void displayListComputer(final List<Computer> computerList) {
+        computerList.forEach(computer -> System.out.println(" " + computer.id + "\t" + computer.name));
     }
 
     /**
@@ -135,11 +145,11 @@ public class ConsoleApp {
             sb.append("\t3. Show page x\n");
             sb.append("\t0. Pevious menu\n");
             if (ConsoleApp.choiceMainMenu == 1) {
-                System.out.println(RestClient.getEntities(Computer.class, ConsoleApp.NB_ELEMENT,
-                        ConsoleApp.computerPageNumber));
+                this.displayListComputer(
+                        RestClient.getComputers(ConsoleApp.NB_ELEMENT, ConsoleApp.computerPageNumber));
             } else if (ConsoleApp.choiceMainMenu == 2) {
-                System.out.println(RestClient.getEntities(Company.class, ConsoleApp.NB_ELEMENT,
-                        ConsoleApp.companyPageNumber));
+                this.displayListCompany(
+                        RestClient.getCompanies(ConsoleApp.NB_ELEMENT, ConsoleApp.companyPageNumber));
             }
 
             final int choice = this.displayMenyAndGetUserChoice(sb);
@@ -194,6 +204,7 @@ public class ConsoleApp {
             sb.append("\t0. Exit\n");
             ConsoleApp.choiceMainMenu = this.displayMenyAndGetUserChoice(sb);
 
+            Optional<Computer> computerOpt;
             switch (ConsoleApp.choiceMainMenu) {
                 case 1:
                     this.showListAndMenu();
@@ -202,28 +213,28 @@ public class ConsoleApp {
                     this.showListAndMenu();
                     break;
                 case 3:
-                    sb = new StringBuilder();
-                    sb.append("Computer ID :\n");
-                    Optional<Computer> computerOpt = RestClient.getEntity(Computer.class,
-                            this.displayMenyAndGetUserChoice(sb));
-                    if (computerOpt.isPresent()) {
+                    try {
                         sb = new StringBuilder();
-                        sb.append("Detail of : " + computerOpt.get().getId() + "\n");
-                        sb.append("Name : " + computerOpt.get().getName() + "\n");
-                        sb.append("Introduce date : " + computerOpt.get().getIntroduced() + "\n");
-                        sb.append("Discontinue date : " + computerOpt.get().getDiscontinued() + "\n");
-                        final Company company = computerOpt.get().getCompany();
+                        sb.append("Computer ID :\n");
+                        final Optional<Computer> computerOpt1 = RestClient.getEntity(Computer.class,
+                                this.displayMenyAndGetUserChoice(sb));
+                        sb = new StringBuilder();
+                        sb.append("Detail of : " + computerOpt1.get().getId() + "\n");
+                        sb.append("Name : " + computerOpt1.get().getName() + "\n");
+                        sb.append("Introduce date : " + computerOpt1.get().getIntroduced() + "\n");
+                        sb.append("Discontinue date : " + computerOpt1.get().getDiscontinued() + "\n");
+                        final Company company = computerOpt1.get().getCompany();
                         if (company != null) {
                             sb.append("Linked with the company : " + company.getName() + "\n\n");
                         }
                         System.out.println(sb);
-                    } else {
-                        System.out.println("This computer doesn't exist");
+                    } catch (final RestClientException e1) {
+                        System.out.println(
+                                "!!!  " + e1.getMessage().substring(e1.getMessage().indexOf(':') + 1) + "  !!!");
                     }
                     break;
                 case 4:
                     do {
-
                         isContinueSubMenu = false;
                         final Computer computer = new Computer();
                         System.out.print("Computer creation\n");
@@ -249,17 +260,18 @@ public class ConsoleApp {
                         try {
                             RestClient.createComputer(computer);
                         } catch (final RestClientException e) {
-                            System.out.println(e.getMessage());
+                            System.out.println(
+                                    "!!!  " + e.getMessage().substring(e.getMessage().indexOf(':') + 1) + "  !!!");
                             isContinueSubMenu = true;
                         }
                     } while (isContinueSubMenu);
+                    System.out.println("The computer has been create");
                     break;
                 case 5:
                     System.out.print("Computer update ID :");
-                    computerOpt = RestClient.getEntity(Computer.class, this.inputLong());
-                    if (computerOpt.isPresent()) {
+                    try {
+                        computerOpt = RestClient.getEntity(Computer.class, this.inputLong());
                         do {
-
                             isContinueSubMenu = false;
                             System.out.print("Name :");
                             computerOpt.get().setName(ConsoleApp.SCAN.nextLine());
@@ -284,46 +296,44 @@ public class ConsoleApp {
                             try {
                                 RestClient.updateComputer(computerOpt.get());
                             } catch (final RestClientException e) {
-                                System.out.println(e.getMessage());
+                                System.out.println("!!!  "
+                                        + e.getMessage().substring(e.getMessage().indexOf(':') + 1) + "  !!!");
                                 isContinueSubMenu = true;
                             }
-
                         } while (isContinueSubMenu);
-                    } else {
-                        sb = new StringBuilder();
-                        sb.append("The computer doens't exist\n");
-                        System.out.println(sb);
+                        System.out.println("The computer has been saved");
+                    } catch (final RestClientException e1) {
+                        System.out.println(
+                                "!!!  " + e1.getMessage().substring(e1.getMessage().indexOf(':') + 1) + "  !!!");
                     }
                     break;
                 case 6:
-                    sb = new StringBuilder();
-                    sb.append("Remove computer ID :\n");
-                    computerOpt = RestClient.getEntity(Computer.class, this.displayMenyAndGetUserChoice(sb));
-                    if (computerOpt.isPresent()) {
+                    try {
+                        sb = new StringBuilder();
+                        sb.append("Remove computer ID :\n");
+                        computerOpt = RestClient.getEntity(Computer.class, this.displayMenyAndGetUserChoice(sb));
                         RestClient.removeEntity(Computer.class, Long.valueOf(computerOpt.get().getId()));
                         sb = new StringBuilder();
                         sb.append("The computer has been deleted");
                         System.out.println(sb);
-                    } else {
-                        sb = new StringBuilder();
-                        sb.append("The computer doens't exist\n");
-                        System.out.println(sb);
+                    } catch (final RestClientException e1) {
+                        System.out.println(
+                                "!!!  " + e1.getMessage().substring(e1.getMessage().indexOf(':') + 1) + "  !!!");
                     }
                     break;
                 case 7:
-                    sb = new StringBuilder();
-                    sb.append("Remove company ID :\n");
-                    final Optional<Company> companyOpt = RestClient.getEntity(Company.class,
-                            this.displayMenyAndGetUserChoice(sb));
-                    if (companyOpt.isPresent()) {
+                    try {
+                        sb = new StringBuilder();
+                        sb.append("Remove company ID :\n");
+                        final Optional<Company> companyOpt = RestClient.getEntity(Company.class,
+                                this.displayMenyAndGetUserChoice(sb));
                         RestClient.removeEntity(Company.class, Long.valueOf(companyOpt.get().getId()));
                         sb = new StringBuilder();
                         sb.append("The company has been deleted");
                         System.out.println(sb);
-                    } else {
-                        sb = new StringBuilder();
-                        sb.append("The company doens't exist\n");
-                        System.out.println(sb);
+                    } catch (final RestClientException e1) {
+                        System.out.println(
+                                "!!!  " + e1.getMessage().substring(e1.getMessage().indexOf(':') + 1) + "  !!!");
                     }
                     break;
                 case 0:
