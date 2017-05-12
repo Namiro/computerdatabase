@@ -11,10 +11,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
+
 
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
-import com.excilys.burleon.computerdatabase.webapp.constant.Data;
-import com.excilys.burleon.computerdatabase.webapp.constant.View;
+
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +28,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+    
+
+    @Bean
+    public AuthenticationEntryPoint entryPoint()
+    {
+      BasicAuthenticationEntryPoint authenticationEntryPoint = new BasicAuthenticationEntryPoint();
+      authenticationEntryPoint.setRealmName("Computer Realm");
+      return authenticationEntryPoint;
+    }
+    
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -38,9 +50,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.csrf().disable()
+        .httpBasic()
+        	.authenticationEntryPoint(entryPoint())
+        	.and()
         	.authorizeRequests()
         	.antMatchers(HttpMethod.GET, "/**").permitAll()
             .anyRequest().authenticated();
+        
 
     }
 
@@ -51,4 +67,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(this.userService);
         auth.authenticationProvider(prov);
     }
+    
+
 }
