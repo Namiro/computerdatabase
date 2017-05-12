@@ -41,7 +41,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     @Override
     public long getMaxPageNumber(final Class<E> entityType) {
         PageService.LOGGER.trace("getMaxPageNumber");
-        return (this.modelService.getTotalRecords(entityType, this.filterWord) / this.recordsByPage) + 1;
+        return (int) Math.ceil((float) this.modelService.getTotalRecords(entityType, this.filterWord) / this.recordsByPage);
     }
 
     public IOrderEnum<E> getOrderBy() {

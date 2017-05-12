@@ -31,9 +31,9 @@
                         placeholder=<spring:message code="computermanage_name_placeholder"/>
                         name="${COMPUTER_NAME}"
                         value="${requestScope[COMPUTER_NAME]}"
-                        maxlength="550"
+                        maxlength="250"
                         data-error="You must enter simple
-                        character and max 500"
+                        character and max 250"
                         required> <span
                         class="glyphicon form-control-feedback"
                         aria-hidden="true"></span>

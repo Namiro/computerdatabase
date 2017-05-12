@@ -142,7 +142,14 @@ public class ComputerListController implements IController {
     public ProcessVariables getProcessVariables(final Map<String, String> params) {
         final ProcessVariables processVariables = new ProcessVariables();
         if (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            processVariables.recordsByPage = Integer.valueOf(params.get(Data.PAGINATION_RECORDS_BY_PAGE));
+        	try {
+        		processVariables.recordsByPage = Integer.valueOf(params.get(Data.PAGINATION_RECORDS_BY_PAGE));
+        	} catch(NumberFormatException e) {
+        		processVariables.recordsByPage = 20;
+        	}
+        	if (processVariables.recordsByPage <= 0 ) {
+        		processVariables.recordsByPage = 20;
+        	}
         }
         if (params.get(Data.SEARCH_WORD) != null) {
             processVariables.filterWord = params.get(Data.SEARCH_WORD);
@@ -150,8 +157,15 @@ public class ComputerListController implements IController {
         if (params.get(Data.SUBMIT_DELETE) != null) {
             processVariables.split = params.get(Data.SUBMIT_DELETE).split(",");
         }
-        processVariables.newCurrentPage = (params.get(Data.PAGINATION_CURRENT_PAGE) != null)
-                ? Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE)) : 1;
+        if (params.get(Data.PAGINATION_CURRENT_PAGE) != null) {
+        	try {
+        		processVariables.newCurrentPage = Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE));
+        	} catch (NumberFormatException e) {
+        		processVariables.newCurrentPage = 1;
+        	}
+        } else {
+        	processVariables.newCurrentPage = 1;
+        }
         if (params.get(Data.SUBMIT_SEARCH) != null) {
             processVariables.newCurrentPage = 1;
         }
@@ -189,8 +203,6 @@ public class ComputerListController implements IController {
             }
         }
 
-        processVariables.recordsByPage = (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null)
-                ? Integer.parseInt(params.get(Data.PAGINATION_RECORDS_BY_PAGE)) : processVariables.recordsByPage;
 
         ComputerListController.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
