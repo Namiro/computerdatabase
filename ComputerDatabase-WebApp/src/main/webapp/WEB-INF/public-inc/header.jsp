@@ -186,7 +186,7 @@
                                     class="btn btn-success"
                                     name="${SUBMIT_SIGNUP}"
                                     id="${SUBMIT_SIGNUP}"
-                                    value="<spring:message code=" computerlist_modal_button_signup " />"
+                                    value="<spring:message code="computerlist_modal_button_signup" />"
                                     style="float: right;" />
                             </div>
                         </div>
