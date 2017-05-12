@@ -192,7 +192,17 @@ public class ComputerRest {
 
         final Optional<Computer> computerOpt;
         try {
-            computerOpt = this.computerService.save(ComputerMapper.toComputer(computerDto));
+            final Computer computer = ComputerMapper.toComputer(computerDto);
+            if (computer.getCompany() != null && computer.getCompany().getId() > 0) {
+                final Optional<Company> companyOpt = this.companyService.get(Company.class,
+                        computer.getCompany().getId());
+                if (companyOpt.isPresent()) {
+                    computer.setCompany(companyOpt.get());
+                } else {
+                    return new ResponseEntity<>("The company doesn't exist", HttpStatus.BAD_REQUEST);
+                }
+            }
+            computerOpt = this.computerService.save(computer);
         } catch (final ServiceException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

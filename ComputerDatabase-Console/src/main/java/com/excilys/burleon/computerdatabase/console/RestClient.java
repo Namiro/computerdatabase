@@ -21,6 +21,7 @@ import com.excilys.burleon.computerdatabase.console.exception.RestClientExceptio
 import com.excilys.burleon.computerdatabase.console.exception.ServiceUnvailableException;
 import com.excilys.burleon.computerdatabase.console.exception.UnauthorizedActionException;
 import com.excilys.burleon.computerdatabase.console.exception.UnexpectedResultException;
+import com.excilys.burleon.computerdatabase.console.model.Company;
 import com.excilys.burleon.computerdatabase.console.model.Computer;
 
 public class RestClient {
@@ -49,16 +50,32 @@ public class RestClient {
         }
     }
 
-    public static <T> List<T> getEntities(final Class<T> T, final int nbRecord, final int pageNumber)
-            throws RestClientException {
+    public static List<Company> getCompanies(final int nbRecord, final int pageNumber) throws RestClientException {
         final WebTarget webTarget = RestClient.client.target(RestClient.API_URL)
-                .path(T.getSimpleName().toLowerCase()).queryParam("recordsByPage", nbRecord)
+                .path(Company.class.getSimpleName().toLowerCase()).queryParam("recordsByPage", nbRecord)
                 .queryParam("pageNumber", pageNumber);
         try {
             final Response response = webTarget.request(MediaType.APPLICATION_JSON).get();
-
             if (RestClient.isOkResponse(response)) {
-                return response.readEntity(new GenericType<List<T>>() {
+                return response.readEntity(new GenericType<List<Company>>() {
+                });
+            } else {
+                return new ArrayList<>();
+            }
+        } catch (final Exception e) {
+            throw new RestClientException(e);
+        }
+    }
+
+    public static List<Computer> getComputers(final int nbRecord, final int pageNumber)
+            throws RestClientException {
+        final WebTarget webTarget = RestClient.client.target(RestClient.API_URL)
+                .path(Computer.class.getSimpleName().toLowerCase()).queryParam("recordsByPage", nbRecord)
+                .queryParam("pageNumber", pageNumber);
+        try {
+            final Response response = webTarget.request(MediaType.APPLICATION_JSON).get();
+            if (RestClient.isOkResponse(response)) {
+                return response.readEntity(new GenericType<List<Computer>>() {
                 });
             } else {
                 return new ArrayList<>();
