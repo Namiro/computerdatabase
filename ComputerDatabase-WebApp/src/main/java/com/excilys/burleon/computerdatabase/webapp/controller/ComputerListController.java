@@ -8,6 +8,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +38,9 @@ import com.google.gson.Gson;
 @RequestMapping(value = { "/", "/" + View.VIEW_COMPUTER_LIST })
 public class ComputerListController implements IController {
 
+    @Autowired
+    MessageSource messageSource;
+        
     /**
      * Represent the working variable that we can receive or send with a
      * request.
@@ -65,6 +70,7 @@ public class ComputerListController implements IController {
 
     @Autowired
     private IUserService userService;
+    
 
     /**
      * Allow to delete the computer.
@@ -75,16 +81,15 @@ public class ComputerListController implements IController {
     private ProcessResult deleteComputersProcess(final String[] split) {
         try {
             for (final String idStr : split) {
-                final Optional<
-                        Computer> computerOpt = this.computerService.get(Computer.class, Long.parseLong(idStr));
+                final Optional<Computer> computerOpt = this.computerService.get(Computer.class, Long.parseLong(idStr));
                 if (computerOpt.isPresent()) {
                     this.computerService.remove(computerOpt.get());
                 }
             }
-            ComputerListController.LOGGER.info("Remove OK for : " + Arrays.toString(split));
-            return new ProcessResult(true, "Remove OK");
+            ComputerListController.LOGGER.info("The selected computer(s) were succesfully deleted : " + Arrays.toString(split));
+            return new ProcessResult(true, messageSource.getMessage("message_delete_error", null, LocaleContextHolder.getLocale()) + Arrays.toString(split));
         } catch (final ServiceException e) {
-            ComputerListController.LOGGER.warn("Impossible to delete the computers", e);
+            ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
             return new ProcessResult(false, e.getMessage());
         }
     }
@@ -203,7 +208,6 @@ public class ComputerListController implements IController {
             }
         }
 
-
         ComputerListController.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
     }
@@ -212,16 +216,15 @@ public class ComputerListController implements IController {
         try {
             final User user = this.userService.login(new User.UserBuilder().username(processVariables.username)
                     .password(processVariables.password).build());
-            return new ProcessResult(true, "Login successful", user);
+            return new ProcessResult(true, messageSource.getMessage("message_login_successful", null, LocaleContextHolder.getLocale()), user);
         } catch (final ServiceException e) {
             ComputerListController.LOGGER.info(e.getMessage());
-            return new ProcessResult(false, "Login fail. " + e.getMessage());
+            return new ProcessResult(false, messageSource.getMessage("message_login_fail", null, LocaleContextHolder.getLocale()) + e.getMessage());
         }
     }
 
     @Override
-    public void populateModel(final ModelMap model, final Object processVariables,
-            final ProcessResult processResult) {
+    public void populateModel(final ModelMap model, final Object processVariables, final ProcessResult processResult) {
         ComputerListController.LOGGER.trace("populateModel /ComputerList \t");
         IController.super.populateModel(model, processVariables, processResult);
 
@@ -253,10 +256,10 @@ public class ComputerListController implements IController {
         try {
             final User user = this.userService.register(new User.UserBuilder().username(processVariables.username)
                     .password(processVariables.password).build(), processVariables.passworrepeated);
-            return new ProcessResult(true, "Signup successful", user);
+            return new ProcessResult(true, messageSource.getMessage("message_signup_successful", null, LocaleContextHolder.getLocale()), user);
         } catch (final ServiceException e) {
             ComputerListController.LOGGER.info(e.getMessage());
-            return new ProcessResult(false, "Signup fail. " + e.getMessage());
+            return new ProcessResult(false, messageSource.getMessage("message_signup_fail", null, LocaleContextHolder.getLocale()) + e.getMessage());
         }
     }
 }

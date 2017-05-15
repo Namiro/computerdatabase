@@ -6,11 +6,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime"%>
-<%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags"
-    prefix="mytags"%>
-<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib prefix="sec"
-    uri="http://www.springframework.org/security/tags"%>
+<%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags" prefix="mytags"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <%-- Content for all page. --%>
 <c:set var="MESSAGE_SUCCESS" value="<%=Data.MESSAGE_SUCCESS%>" />
@@ -50,8 +48,7 @@
 <c:set var="USER_PASSWORD2" value="<%=Data.USER_PASSWORD2%>" />
 <c:set var="USER_USERNAME" value="<%=Data.USER_USERNAME%>" />
 <c:set var="POPUP" value="<%=Data.POPUP%>" />
-<c:set var="POPUP_MESSAGE_SUCCESS"
-    value="<%=Data.POPUP_MESSAGE_SUCCESS%>" />
+<c:set var="POPUP_MESSAGE_SUCCESS" value="<%=Data.POPUP_MESSAGE_SUCCESS%>" />
 <c:set var="POPUP_MESSAGE_ERROR" value="<%=Data.POPUP_MESSAGE_ERROR%>" />
 
 <!DOCTYPE html>
@@ -80,9 +77,9 @@
                 	<li class="dropdown">
                     	<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> <img id="imgNavSel" src="" alt="..." class="img-thumbnail icon-small"> <span id="lanNavSel"></span> <span class="caret"></span></a>
                     	<ul class="dropdown-menu" role="menu">
-        			    	<li><a id="navFra" href="?local=fr" class="language"><img id="imgNavFra" name="imageee" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavFra"><spring:message code="language_french"/></span></a></li>
-        			    	<li><a id="navEng" href="?local=en" class="language"><img id="imgNavEng" name="imageee" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavEng"><spring:message code="language_english"/></span></a></li>
-        			    	<li><a id="navRom" href="?local=ro" class="language"><img id="imgNavRom" name="imageee" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_romanian"/></span></a></li>
+        			    	<li><a id="navFra" href="?local=fr" class="language"><img id="imgNavFra" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavFra"><spring:message code="language_french"/></span></a></li>
+        			    	<li><a id="navEng" href="?local=en" class="language"><img id="imgNavEng" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavEng"><spring:message code="language_english"/></span></a></li>
+        			    	<li><a id="navRom" href="?local=ro" class="language"><img id="imgNavRom" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_romanian"/></span></a></li>
         	        	</ul> 
         	       	</li>
             </ul>
