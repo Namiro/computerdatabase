@@ -1,4 +1,3 @@
-
 </div>
 </div>
 <br />
@@ -16,9 +15,9 @@
 <script src="js/bootstrap.min.js"></script>
 <script src="js/dashboard.js"></script>
 <script src="js/sorttable.js"></script>
+    
 <!-- https://www.kryogenix.org/code/browser/sorttable -->
-<script
-    src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/1000hz-bootstrap-validator/0.11.9/validator.js"></script>
 
 <script src="//cdn.jsdelivr.net/webshim/1.14.5/polyfiller.js"></script>
 <script>

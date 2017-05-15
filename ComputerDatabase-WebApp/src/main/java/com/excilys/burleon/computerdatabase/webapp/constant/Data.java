@@ -35,7 +35,7 @@ public final class Data {
     public static final String MESSAGE_INFO = "infoMessage";
     public static final String MESSAGE_WARRNING = "warrningMessage";
     public static final String SUBMIT_CREATE = "sumbitCreate";
-    public static final String SUBMIT_SAVE = "submtiSave";
+    public static final String SUBMIT_SAVE = "submitSave";
     public static final String SUBMIT_DELETE = "submitDelete";
     public static final String SUBMIT_SEARCH = "submitSearch";
     public static final String SUBMIT_LOGIN = "submitLogin";
@@ -49,18 +49,18 @@ public final class Data {
     public static final String POPUP_MESSAGE_ERROR = "popupErrorMessage";
 
     /* DIVERS */
-    public static final String SEARCH_WORD = "searchWord";
+    public static final String SEARCH_WORD = "search";
     public static final String SEARCH_NUMBER_RESULTS = "searchNumberResults";
-    public static final String ORDER_BY = "orderBy";
-    public static final String ORDER_BY_1 = "orderBy1";
-    public static final String ORDER_BY_2 = "orderBy2";
-    public static final String ORDER_BY_3 = "orderBy3";
-    public static final String ORDER_BY_4 = "orderBy4";
+    public static final String ORDER_BY = "sort";
+    public static final String ORDER_BY_1 = "name";
+    public static final String ORDER_BY_2 = "introduced";
+    public static final String ORDER_BY_3 = "discontinued";
+    public static final String ORDER_BY_4 = "company";
 
     /* PAGINATION */
-    public static final String PAGINATION_CURRENT_PAGE = "paginationCurrentPage";
+    public static final String PAGINATION_CURRENT_PAGE = "page";
     public static final String PAGINATION_TOTAL_PAGE = "paginationTotalPage";
-    public static final String PAGINATION_RECORDS_BY_PAGE = "paginationRecordsByPage";
+    public static final String PAGINATION_RECORDS_BY_PAGE = "perpage";
 
     /* LOGIN */
     public static final String LOGIN_SUCCESS = "success";
