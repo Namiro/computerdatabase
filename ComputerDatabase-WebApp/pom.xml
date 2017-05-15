@@ -8,7 +8,7 @@
 		<artifactId>ComputerDatabase</artifactId>
 		<version>6.3.0-SNAPSHOT</version>
 	</parent>
-
+ 
 	<artifactId>ComputerDatabase-WebApp</artifactId>
 	<version>${version.computerdatabase.webapp}</version>
 	<name>ComputerDatabase-WebApp</name>

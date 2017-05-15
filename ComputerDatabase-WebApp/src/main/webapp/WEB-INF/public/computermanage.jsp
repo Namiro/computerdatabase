@@ -56,7 +56,7 @@
 
                 <div class="form-group has-feedback">
                     <label for="${COMPUTER_DISCONTINUE_DATE}"><spring:message
-                            code="computermanage_discontinued" /></label> <input
+                            code="computermanage_discontinued"/></label> <input
                         type="date" class="form-control"
                         id="${COMPUTER_DISCONTINUE_DATE}"
                         name="${COMPUTER_DISCONTINUE_DATE}"
