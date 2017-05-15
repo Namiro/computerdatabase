@@ -32,6 +32,7 @@
 <c:set var="VIEW_COMPUTER_LIST" value="<%=View.VIEW_COMPUTER_LIST%>" />
 <c:set var="VIEW_COMPUTER_MANAGE" value="<%=View.VIEW_COMPUTER_MANAGE%>" />
 <c:set var="VIEW_AUTHENTICATION" value="<%=View.VIEW_AUTHENTICATION%>" />
+<c:set var="VIEW_SIGN_UP" value="<%=View.VIEW_SIGN_UP%>" />
 
 <%-- The list. --%>
 <c:set var="LIST_COMPUTER" value="<%=Data.LIST_COMPUTER%>" />
@@ -133,7 +134,7 @@
                 aria-labelledby="gridSystemModalLabel"
                 id="myModalSignup">
                 <form class="form-horizontal" method="POST"
-                    action="${VIEW_COMPUTER_LIST}">
+                    action="${VIEW_SIGN_UP}">
                     <input type="hidden" name="${_csrf.parameterName}"
                         value="${_csrf.token}" />
                     <div class="modal-dialog" role="document">

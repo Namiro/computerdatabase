@@ -18,6 +18,7 @@ import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -85,5 +86,17 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         viewResolver.setPrefix("/WEB-INF/public/");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
+    }
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Static ressources 
+        registry
+            .addResourceHandler("/js/**", "/css/**", "/i18/**", "/fonts/**")
+        	.addResourceLocations("/js/", "/css/", "/i18/", "/fonts/");
+            
+ 
+            
+
     }
 }
