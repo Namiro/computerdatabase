@@ -102,7 +102,6 @@ public class CompanyDaoTest {
     }
     
     @Test
-
     public void findsAndReadsExistingCompaniesByPageWithFilter() throws Exception {
         assertEquals(28, this.companyDao.findRange(Company.class, 0, 3, "Z", null).get(0).getId());
         assertEquals("Zemmix",this.companyDao.findRange(Company.class, 0, 3, "Z", null).get(0).getName());
@@ -110,7 +109,6 @@ public class CompanyDaoTest {
     }
     
     @Test
-
     public void findsAndReadsExistingCompaniesWithFirstIdNotInDB() throws Exception {
         assertEquals(22, this.companyDao.findRange(Company.class, -255, 3, null, null).get(0).getId());
         assertEquals(29, this.companyDao.findRange(Company.class, -255, 3, null, null).get(1).getId());
@@ -143,7 +141,6 @@ public class CompanyDaoTest {
      * tested with createCompany
      *  - The user tries to create a bad company
      * tested with createCompanyWithBadId
-
      */
     
     @Test
@@ -182,12 +179,10 @@ public class CompanyDaoTest {
      */
     
     @Test
-
     public void countCompanies() {
         assertEquals(42, this.companyDao.find(Company.class).size());
     }
     
-
     @Test
     public void countCompaniesByPage() {
         assertEquals(42, this.companyDao.findRange(Company.class, 0, 100, null, null).size());
@@ -198,7 +193,6 @@ public class CompanyDaoTest {
         assertEquals(1, this.companyDao.findRange(Company.class, 0, 100, "Apple", null).size());
     }
     
-
     /*
      * Following tests are here to check wether we
      * can update a company.
@@ -223,5 +217,18 @@ public class CompanyDaoTest {
     public void updateUnexistingCompany() throws Exception {
         this.companyDao.update(new Company(60L, "test"));
         assertFalse(this.companyDao.findById(Company.class, 60).isPresent());
+    }
+    
+    /*
+     * Following tests is here to check wether we
+     * can get the company table name
+     * Here we shall test if:
+     * 
+     *  - The user wants to get the company table name
+     * tested with getCompanyTableName
+     */
+    @Test
+    public void getCompanyTableName() throws Exception {
+    assertEquals(this.companyDao.getTableName(Company.class),"company");
     }
 }

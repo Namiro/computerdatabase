@@ -308,5 +308,7 @@
 	<computer id="198" name="Macintosh IIsi" />
 	<computer id="199" name="Macintosh IIx" />
 	<computer id="200" name="PowerBook 500 series" />
-
+	
+	<user id="1" username="root" password="" accessLevel="ANONYMOUS"/>
+	<user id="2" username="notRoot" password="not" accessLevel="ADMIN" />
 </dataset>
