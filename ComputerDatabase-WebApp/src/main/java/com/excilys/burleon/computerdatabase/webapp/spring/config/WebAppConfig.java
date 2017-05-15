@@ -43,6 +43,14 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         registry.addInterceptor(interceptor);
     }
 
+    @Override
+    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
+        // Static ressources
+        registry.addResourceHandler("/js/**", "/css/**", "/i18/**", "/fonts/**", "/img/**")
+                .addResourceLocations("/js/", "/css/", "/i18/", "/fonts/", "/img/");
+
+    }
+
     /**
      * Application custom initialization code.
      * <p/>
@@ -86,17 +94,5 @@ public class WebAppConfig extends WebMvcConfigurerAdapter {
         viewResolver.setPrefix("/WEB-INF/public/");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
-    }
-    
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Static ressources 
-        registry
-            .addResourceHandler("/js/**", "/css/**", "/i18/**", "/fonts/**")
-        	.addResourceLocations("/js/", "/css/", "/i18/", "/fonts/");
-            
- 
-            
-
     }
 }
