@@ -1,22 +1,21 @@
-package com.excilys.burleon.computerdatabase.service.exception;
+package com.excilys.burleon.computerdatabase.console.exception;
 
 /**
- * This class allow to trigger an exception for the services.
+ * This class allow to trigger an exception for the rest client.
  *
  * @author Junior Burleon
  *
  */
-public class AuthenticationException extends ServiceException {
-
+public class MalformedEntityException extends RestClientException {
     /**
      *
      */
-    private static final long serialVersionUID = -8237870712450648471L;
+    private static final long serialVersionUID = -4026635148559085053L;
 
     /**
      * Default constructor.
      */
-    public AuthenticationException() {
+    public MalformedEntityException() {
         super();
     }
 
@@ -25,7 +24,7 @@ public class AuthenticationException extends ServiceException {
      * @param s
      *            Message to display
      */
-    public AuthenticationException(final String s) {
+    public MalformedEntityException(final String s) {
         super(s);
     }
 
@@ -36,7 +35,7 @@ public class AuthenticationException extends ServiceException {
      * @param e
      *            Previous excpetion
      */
-    public AuthenticationException(final String s, final Throwable e) {
+    public MalformedEntityException(final String s, final Throwable e) {
         super(s, e);
     }
 
@@ -45,7 +44,7 @@ public class AuthenticationException extends ServiceException {
      * @param e
      *            Previous excpetion
      */
-    public AuthenticationException(final Throwable e) {
+    public MalformedEntityException(final Throwable e) {
         super(e);
     }
 

@@ -1,4 +1,6 @@
-package com.excilys.burleon.computerdatabase.service.exception;
+package com.excilys.burleon.computerdatabase.service.exception.authentication;
+
+import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 
 /**
  * This class allow to trigger an exception for the services.
@@ -6,17 +8,17 @@ package com.excilys.burleon.computerdatabase.service.exception;
  * @author Junior Burleon
  *
  */
-public class RequiredServiceException extends ServiceException {
+public class AuthenticationException extends ServiceException {
 
     /**
-    *
-    */
+     *
+     */
     private static final long serialVersionUID = 1L;
 
     /**
      * Default constructor.
      */
-    public RequiredServiceException() {
+    public AuthenticationException() {
         super();
     }
 
@@ -24,7 +26,7 @@ public class RequiredServiceException extends ServiceException {
      * @param s
      *            Message to display
      */
-    public RequiredServiceException(final String s) {
+    public AuthenticationException(final String s) {
         super(s);
     }
 
@@ -34,7 +36,7 @@ public class RequiredServiceException extends ServiceException {
      * @param e
      *            Previous exception
      */
-    public RequiredServiceException(final String s, final Throwable e) {
+    public AuthenticationException(final String s, final Throwable e) {
         super(s, e);
     }
 
@@ -42,7 +44,7 @@ public class RequiredServiceException extends ServiceException {
      * @param e
      *            Previous exception
      */
-    public RequiredServiceException(final Throwable e) {
+    public AuthenticationException(final Throwable e) {
         super(e);
     }
 }

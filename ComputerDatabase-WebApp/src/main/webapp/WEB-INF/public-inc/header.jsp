@@ -6,9 +6,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://sargue.net/jsptags/time" prefix="javatime"%>
-<%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags" prefix="mytags"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="http://burleon.excilys.com/jsp/tlds/mytags"
+    prefix="mytags"%>
+<%@taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="sec"
+    uri="http://www.springframework.org/security/tags"%>
 
 <%-- Content for all page. --%>
 <c:set var="MESSAGE_SUCCESS" value="<%=Data.MESSAGE_SUCCESS%>" />
@@ -26,6 +28,7 @@
 <%-- Name of all servlets. --%>
 <c:set var="VIEW_COMPUTER_LIST" value="<%=View.VIEW_COMPUTER_LIST%>" />
 <c:set var="VIEW_COMPUTER_MANAGE" value="<%=View.VIEW_COMPUTER_MANAGE%>" />
+<c:set var="VIEW_AUTHENTICATION" value="<%=View.VIEW_AUTHENTICATION%>" />
 
 <%-- The list. --%>
 <c:set var="LIST_COMPUTER" value="<%=Data.LIST_COMPUTER%>" />
@@ -47,9 +50,13 @@
 <c:set var="USER_PASSWORD2" value="<%=Data.USER_PASSWORD2%>" />
 <c:set var="USER_USERNAME" value="<%=Data.USER_USERNAME%>" />
 <c:set var="POPUP" value="<%=Data.POPUP%>" />
+<c:set var="POPUP_MESSAGE_SUCCESS"
+    value="<%=Data.POPUP_MESSAGE_SUCCESS%>" />
+<c:set var="POPUP_MESSAGE_ERROR" value="<%=Data.POPUP_MESSAGE_ERROR%>" />
 
 <!DOCTYPE html>
 <html>
+
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -59,6 +66,7 @@
 <title><spring:message code="title" /></title>
 
 </head>
+
 <body>
 
 	 <header class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -115,16 +123,31 @@
         <div class="collapse navbar-collapse"
             id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#" data-toggle="modal"
-                    data-target="#myModalSignup"><span
-                        class="glyphicon glyphicon-user"></span> <spring:message
-                            code="computerlist_button_signup" /></a></li>
-                <li><a href="#" data-toggle="modal"
-                    data-target="#myModalLogin"><span
-                        class="glyphicon glyphicon-log-in"></span> <spring:message
-                            code="computerlist_button_login" /></a></li>
+                <sec:authorize access="!isAuthenticated()">
+                    <li><a href="#" data-toggle="modal"
+                        data-target="#myModalSignup"><span
+                            class="glyphicon glyphicon-user"></span> <spring:message
+                                code="computerlist_button_signup" /></a></li>
+                    <li><a href="#" data-toggle="modal"
+                        data-target="#myModalLogin"><span
+                            class="glyphicon glyphicon-log-in"></span> <spring:message
+                                code="computerlist_button_login" /></a></li>
+                </sec:authorize>
+                <sec:authorize access="isAuthenticated()">
+                    <li><a href="#"
+                        onclick="document.getElementById('logout-form').submit(); return false;"><span
+                            class="glyphicon glyphicon-log-out"></span>
+                            Logout</a> <!-- <button type="submit" value="Logout" class="nav btn btn-link"> 
+								<span
+							class="glyphicon glyphicon-log-out"> Logout</span>
+							</button> --></li>
+                </sec:authorize>
             </ul>
         </div>
+        <form id="logout-form" action="logout" method="post">
+            <input type="hidden" name="${_csrf.parameterName}"
+                value="${_csrf.token}" />
+        </form>
         <!-- /.navbar-collapse -->
     </nav>
 
@@ -137,6 +160,8 @@
                 id="myModalSignup">
                 <form class="form-horizontal" method="POST"
                     action="${VIEW_COMPUTER_LIST}">
+                    <input type="hidden" name="${_csrf.parameterName}"
+                        value="${_csrf.token}" />
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -149,9 +174,9 @@
                                     id="gridSystemModalLabel"><spring:message
                                         code="computerlist_modal_signup_title" /></span>
                                 <c:if
-                                    test="${not empty requestScope[MESSAGE_ERROR]}">
-                                    <label id="${MESSAGE_ERROR}"
-                                        class="alert alert-danger pull-right">${requestScope[MESSAGE_ERROR]}</label>
+                                    test="${not empty requestScope[POPUP_MESSAGE_ERROR]}">
+                                    <label id="${POPUP_MESSAGE_ERROR}"
+                                        class="alert alert-danger pull-right">${requestScope[POPUP_MESSAGE_ERROR]}</label>
                                 </c:if>
                             </div>
                             <div class="modal-body">
@@ -203,7 +228,9 @@
             <div class="modal fade" tabindex="-1" role="dialog"
                 aria-labelledby="gridSystemModalLabel" id="myModalLogin">
                 <form class="form-horizontal" method="POST"
-                    action="${VIEW_COMPUTER_LIST}">
+                    action="${VIEW_AUTHENTICATION}">
+                    <input type="hidden" name="${_csrf.parameterName}"
+                        value="${_csrf.token}" />
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -216,9 +243,9 @@
                                     id="gridSystemModalLabel"><spring:message
                                         code="computerlist_modal_login_title" /></span>
                                 <c:if
-                                    test="${not empty requestScope[MESSAGE_ERROR]}">
-                                    <label id="${MESSAGE_ERROR}"
-                                        class="alert alert-danger pull-right">${requestScope[MESSAGE_ERROR]}</label>
+                                    test="${not empty requestScope[POPUP_MESSAGE_ERROR]}">
+                                    <label id="${POPUP_MESSAGE_ERROR}"
+                                        class="alert alert-danger pull-right">${requestScope[POPUP_MESSAGE_ERROR]}</label>
                                 </c:if>
                             </div>
                             <div class="modal-body">

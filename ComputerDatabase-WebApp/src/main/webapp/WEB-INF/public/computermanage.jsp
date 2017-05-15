@@ -18,6 +18,7 @@
         <form action="${VIEW_COMPUTER_MANAGE}" method="POST"
             role="form" data-toggle="validator">
             <fieldset>
+            	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                 <input name="${COMPUTER_ID}" hidden="true"
                     value="${requestScope[COMPUTER_ID]}"
                     id="${COMPUTER_ID}" />
@@ -30,9 +31,9 @@
                         placeholder=<spring:message code="computermanage_name_placeholder"/>
                         name="${COMPUTER_NAME}"
                         value="${requestScope[COMPUTER_NAME]}"
-                        maxlength="550"
+                        maxlength="250"
                         data-error="You must enter simple
-                        character and max 500"
+                        character and max 250"
                         required> <span
                         class="glyphicon form-control-feedback"
                         aria-hidden="true"></span>

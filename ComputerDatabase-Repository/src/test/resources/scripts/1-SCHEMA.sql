@@ -20,5 +20,13 @@ drop schema if exists `computer-database-db-test`;
     constraint pk_computer primary key (id))
   ;
 
+  CREATE TABLE IF NOT EXISTS `user` (
+  `username` varchar(60) NOT NULL,
+  `password` varchar(200) NOT NULL,
+  `accessLevel` varchar(60) NOT NULL,
+`id` bigint(20) NOT NULL auto_increment,
+constraint pk_user primary key (id))
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
   alter table computer add constraint fk_computer_company_1 foreign key (company_id) references company (id) on delete restrict on update restrict;
   create index ix_computer_company_1 on computer (company_id);

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import com.excilys.burleon.computerdatabase.core.model.IEntity;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.IOrderEnum;
+import com.excilys.burleon.computerdatabase.service.exception.InvalidNumberOfrecordsByPageException;
 import com.excilys.burleon.computerdatabase.service.exception.RequiredServiceException;
-import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.iservice.IModelService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 
@@ -41,7 +41,7 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     @Override
     public long getMaxPageNumber(final Class<E> entityType) {
         PageService.LOGGER.trace("getMaxPageNumber");
-        return (this.modelService.getTotalRecords(entityType, this.filterWord) / this.recordsByPage) + 1;
+        return (int) Math.ceil((float) this.modelService.getTotalRecords(entityType, this.filterWord) / this.recordsByPage);
     }
 
     public IOrderEnum<E> getOrderBy() {
@@ -161,9 +161,9 @@ public class PageService<E extends IEntity> implements IPageService<E> {
     }
 
     @Override
-    public void setRecordsByPage(final int recordsByPage) {
+    public void setRecordsByPage(final int recordsByPage) throws InvalidNumberOfrecordsByPageException {
         if (recordsByPage < 1) {
-            throw new ServiceException("The number of record by page must be upper then 0");
+            throw new InvalidNumberOfrecordsByPageException("The number of record by page must be upper then 0");
         }
         this.recordsByPage = recordsByPage;
     }

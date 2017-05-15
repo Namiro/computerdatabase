@@ -1,12 +1,14 @@
 package com.excilys.burleon.computerdatabase.service.exception;
 
+import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+
 /**
  * This class allow to trigger an exception for the services.
  *
  * @author Junior Burleon
  *
  */
-public class RequiredServiceException extends ServiceException {
+public class InvalidNumberOfrecordsByPageException extends ServiceException {
 
     /**
     *
@@ -16,7 +18,7 @@ public class RequiredServiceException extends ServiceException {
     /**
      * Default constructor.
      */
-    public RequiredServiceException() {
+    public InvalidNumberOfrecordsByPageException() {
         super();
     }
 
@@ -24,7 +26,7 @@ public class RequiredServiceException extends ServiceException {
      * @param s
      *            Message to display
      */
-    public RequiredServiceException(final String s) {
+    public InvalidNumberOfrecordsByPageException(final String s) {
         super(s);
     }
 
@@ -34,7 +36,7 @@ public class RequiredServiceException extends ServiceException {
      * @param e
      *            Previous exception
      */
-    public RequiredServiceException(final String s, final Throwable e) {
+    public InvalidNumberOfrecordsByPageException(final String s, final Throwable e) {
         super(s, e);
     }
 
@@ -42,7 +44,7 @@ public class RequiredServiceException extends ServiceException {
      * @param e
      *            Previous exception
      */
-    public RequiredServiceException(final Throwable e) {
+    public InvalidNumberOfrecordsByPageException(final Throwable e) {
         super(e);
     }
 }

@@ -52,6 +52,7 @@ public class ComputerListController implements IController {
         public String password = "";
         public String passworrepeated = "";
         public String popup = "";
+        public String loginsuccess = "";
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
@@ -98,7 +99,7 @@ public class ComputerListController implements IController {
         this.pageService.setFilterWord(processVariables.filterWord);
         this.pageService.setOrderBy(processVariables.orderBy);
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
-
+        
         this.populateModel(model, processVariables);
         return View.VIEW_COMPUTER_LIST;
     }
@@ -141,7 +142,14 @@ public class ComputerListController implements IController {
     public ProcessVariables getProcessVariables(final Map<String, String> params) {
         final ProcessVariables processVariables = new ProcessVariables();
         if (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-            processVariables.recordsByPage = Integer.valueOf(params.get(Data.PAGINATION_RECORDS_BY_PAGE));
+        	try {
+        		processVariables.recordsByPage = Integer.valueOf(params.get(Data.PAGINATION_RECORDS_BY_PAGE));
+        	} catch(NumberFormatException e) {
+        		processVariables.recordsByPage = 20;
+        	}
+        	if (processVariables.recordsByPage <= 0 ) {
+        		processVariables.recordsByPage = 20;
+        	}
         }
         if (params.get(Data.SEARCH_WORD) != null) {
             processVariables.filterWord = params.get(Data.SEARCH_WORD);
@@ -149,8 +157,15 @@ public class ComputerListController implements IController {
         if (params.get(Data.SUBMIT_DELETE) != null) {
             processVariables.split = params.get(Data.SUBMIT_DELETE).split(",");
         }
-        processVariables.newCurrentPage = (params.get(Data.PAGINATION_CURRENT_PAGE) != null)
-                ? Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE)) : 1;
+        if (params.get(Data.PAGINATION_CURRENT_PAGE) != null) {
+        	try {
+        		processVariables.newCurrentPage = Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE));
+        	} catch (NumberFormatException e) {
+        		processVariables.newCurrentPage = 1;
+        	}
+        } else {
+        	processVariables.newCurrentPage = 1;
+        }
         if (params.get(Data.SUBMIT_SEARCH) != null) {
             processVariables.newCurrentPage = 1;
         }
@@ -162,6 +177,12 @@ public class ComputerListController implements IController {
         }
         if (params.get(Data.USER_PASSWORD2) != null) {
             processVariables.passworrepeated = params.get(Data.USER_PASSWORD2);
+        }
+        if (params.get(Data.POPUP) != null) {
+            processVariables.popup = params.get(Data.POPUP);
+        }
+        if (params.get(Data.LOGIN_SUCCESS) != null) {
+            processVariables.loginsuccess = params.get(Data.LOGIN_SUCCESS);
         }
         if (params.get(Data.ORDER_BY) != null) {
             switch (params.get(Data.ORDER_BY)) {
@@ -182,8 +203,6 @@ public class ComputerListController implements IController {
             }
         }
 
-        processVariables.recordsByPage = (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null)
-                ? Integer.parseInt(params.get(Data.PAGINATION_RECORDS_BY_PAGE)) : processVariables.recordsByPage;
 
         ComputerListController.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
@@ -221,6 +240,13 @@ public class ComputerListController implements IController {
         model.addAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
         model.addAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
         model.addAttribute(Data.POPUP, _processVariables.popup);
+        if(_processVariables.loginsuccess.equals("true") || _processVariables.loginsuccess.equals("false")) {
+            if (Boolean.parseBoolean(_processVariables.loginsuccess)) {
+                model.addAttribute(Data.MESSAGE_SUCCESS, "Login success.");
+            } else {
+                model.addAttribute(Data.POPUP_MESSAGE_ERROR, "Login fail.");
+            }
+        }
     }
 
     private ProcessResult signupProcess(final ProcessVariables processVariables) {
