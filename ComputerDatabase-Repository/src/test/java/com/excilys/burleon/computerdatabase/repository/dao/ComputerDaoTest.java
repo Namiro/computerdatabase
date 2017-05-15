@@ -6,7 +6,6 @@ package com.excilys.burleon.computerdatabase.repository.dao;
 import static org.junit.Assert.*;
 import javax.transaction.Transactional;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +14,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.core.model.Computer;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.repository.spring.config.RepositoryConfig;
@@ -90,16 +91,16 @@ public class ComputerDaoTest {
  
     @Test
     public void findRange() {
-        Assert.assertTrue(this.computerDao.findRange(Computer.class, 0, 5, "CM",
-                OrderComputerEnum.NAME).get(0).getId() == 14);
-        Assert.assertTrue(this.computerDao.findRange(Computer.class, 0, 5, "CM",
-                OrderComputerEnum.NAME).get(1).getId() == 3);
-        Assert.assertTrue(this.computerDao.findRange(Computer.class, 0, 5, "CM",
-                OrderComputerEnum.NAME).get(2).getId() == 2);
-        Assert.assertTrue(this.computerDao.findRange(Computer.class, 0, 5, "CM",
-                OrderComputerEnum.NAME).get(3).getId() == 5);
-        Assert.assertTrue(this.computerDao.findRange(Computer.class, 0, 5, "CM",
-                OrderComputerEnum.NAME).get(4).getId() == 4);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(0).getId(), 14);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(1).getId(), 3);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(2).getId(), 2);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(3).getId(), 5);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(4).getId(), 4);
     }
     /*
      * Following tests are here to check wether several
@@ -255,7 +256,7 @@ public class ComputerDaoTest {
      * can delete a computer.
      * Here we shall test if:
      * 
-     *  - The user wants to delete anb existing computer
+     *  - The user wants to delete an existing computer
      * tested with deleteComputer
      * 
      *  - The user wants to delete an unexisting computer
@@ -273,6 +274,46 @@ public class ComputerDaoTest {
     @Transactional
     public void deleteUnexistingComputer() {
         assertTrue(this.computerDao.delete(new Computer(2000, null, null, null, null)));
+    }
+    
+    /*
+     * Following test are here to check wether we
+     * can delete a computer by its company.
+     * Here we shall test if:
+     * 
+     *  - The user wants to delete an existing company
+     * tested with deleteCompany
+     * 
+     *  - The user wants to delete an unexisting company 
+     * tested with deleteUnexistingCompany
+     */
+    @Test
+    @Transactional
+    public void deleteCompany() {
+        assertEquals(200, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+        assertTrue(this.computerDao.deleteByCompany(new Company(1, "Apple Inc.")));
+        assertEquals(174, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+    }
+    
+    @Test
+    @Transactional
+    public void deleteUnexistingCompany() {
+        assertEquals(200, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+        assertTrue(this.computerDao.deleteByCompany(new Company(130, "unexistingCompany")));
+        assertEquals(200, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+    }
+    
+    /*
+     * Following tests is here to check wether we
+     * can get the computer table name
+     * Here we shall test if:
+     * 
+     *  - The user wants to get the computer table name
+     * tested with getComputerTableName
+     */
+    @Test
+    public void getComputerTableName() throws Exception {
+    assertEquals(this.computerDao.getTableName(Computer.class),"computer");
     }
 
 }

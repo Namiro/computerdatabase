@@ -218,4 +218,17 @@ public class CompanyDaoTest {
         this.companyDao.update(new Company(60L, "test"));
         assertFalse(this.companyDao.findById(Company.class, 60).isPresent());
     }
+    
+    /*
+     * Following tests is here to check wether we
+     * can get the company table name
+     * Here we shall test if:
+     * 
+     *  - The user wants to get the company table name
+     * tested with getCompanyTableName
+     */
+    @Test
+    public void getCompanyTableName() throws Exception {
+    assertEquals(this.companyDao.getTableName(Company.class),"company");
+    }
 }
