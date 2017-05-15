@@ -96,7 +96,7 @@
                             name="${SUBMIT_SAVE}"
                             value=<spring:message code="button_save"/> />
                         <input type="submit" class="btn btn-danger"
-                            style="float: right;" id="${SUBMIT_DELETE}"
+                            style="float: right; margin-right: 10px;" id="${SUBMIT_DELETE}"
                             name="${SUBMIT_DELETE}"
                             value=<spring:message code="button_delete"/> />
                     </c:when>

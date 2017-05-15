@@ -68,6 +68,21 @@ public class ComputerListController implements IController {
     @Autowired
     private IUserService userService;
 
+    @RequestMapping(method = RequestMethod.POST)
+    protected String delete(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerListController.LOGGER.trace("DELETE /ComputerList \t");
+
+        this.pageService.setModelService(this.computerService);
+        final ProcessVariables processVariables = this.getProcessVariables(params);
+        ProcessResult processResult = new ProcessResult();
+
+        processResult = this.deleteComputersProcess(processVariables.split);
+
+        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
+        this.populateModel(model, processVariables, processResult);
+        return View.VIEW_COMPUTER_LIST;
+    }
+
     /**
      * Allow to delete the computer.
      *
@@ -101,7 +116,7 @@ public class ComputerListController implements IController {
         this.pageService.setFilterWord(processVariables.filterWord);
         this.pageService.setOrderBy(processVariables.orderBy);
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
-        
+
         this.populateModel(model, processVariables);
         return View.VIEW_COMPUTER_LIST;
     }
@@ -114,31 +129,13 @@ public class ComputerListController implements IController {
         final ProcessVariables processVariables = this.getProcessVariables(params);
         ProcessResult processResult = new ProcessResult();
 
-
         processResult = this.signupProcess(processVariables);
         if (!processResult.isSuccess) {
             processVariables.popup = Data.POPUP_SIGNUP;
-            processVariables.error = processResult.message; 
+            processVariables.error = processResult.message;
             processResult.message = "";
 
         }
-
-        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
-        this.populateModel(model, processVariables, processResult);
-        return View.VIEW_COMPUTER_LIST;
-    }
-    
-    @RequestMapping(method = RequestMethod.POST)
-    protected String delete(final ModelMap model, @RequestParam final Map<String, String> params) {
-        ComputerListController.LOGGER.trace("DELETE /ComputerList \t");
-
-        this.pageService.setModelService(this.computerService);
-        final ProcessVariables processVariables = this.getProcessVariables(params);
-        ProcessResult processResult = new ProcessResult();
-
-
-        processResult = this.deleteComputersProcess(processVariables.split);
-        
 
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
         this.populateModel(model, processVariables, processResult);
@@ -149,14 +146,14 @@ public class ComputerListController implements IController {
     public ProcessVariables getProcessVariables(final Map<String, String> params) {
         final ProcessVariables processVariables = new ProcessVariables();
         if (params.get(Data.PAGINATION_RECORDS_BY_PAGE) != null) {
-        	try {
-        		processVariables.recordsByPage = Integer.valueOf(params.get(Data.PAGINATION_RECORDS_BY_PAGE));
-        	} catch(NumberFormatException e) {
-        		processVariables.recordsByPage = 20;
-        	}
-        	if (processVariables.recordsByPage <= 0 ) {
-        		processVariables.recordsByPage = 20;
-        	}
+            try {
+                processVariables.recordsByPage = Integer.valueOf(params.get(Data.PAGINATION_RECORDS_BY_PAGE));
+            } catch (final NumberFormatException e) {
+                processVariables.recordsByPage = 20;
+            }
+            if (processVariables.recordsByPage <= 0) {
+                processVariables.recordsByPage = 20;
+            }
         }
         if (params.get(Data.SEARCH_WORD) != null) {
             processVariables.filterWord = params.get(Data.SEARCH_WORD);
@@ -165,13 +162,13 @@ public class ComputerListController implements IController {
             processVariables.split = params.get(Data.SUBMIT_DELETE).split(",");
         }
         if (params.get(Data.PAGINATION_CURRENT_PAGE) != null) {
-        	try {
-        		processVariables.newCurrentPage = Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE));
-        	} catch (NumberFormatException e) {
-        		processVariables.newCurrentPage = 1;
-        	}
+            try {
+                processVariables.newCurrentPage = Integer.parseInt(params.get(Data.PAGINATION_CURRENT_PAGE));
+            } catch (final NumberFormatException e) {
+                processVariables.newCurrentPage = 1;
+            }
         } else {
-        	processVariables.newCurrentPage = 1;
+            processVariables.newCurrentPage = 1;
         }
         if (params.get(Data.SUBMIT_SEARCH) != null) {
             processVariables.newCurrentPage = 1;
@@ -210,11 +207,9 @@ public class ComputerListController implements IController {
             }
         }
 
-
         ComputerListController.LOGGER.trace("getProcessVariables : " + new Gson().toJson(processVariables));
         return processVariables;
     }
-
 
     @Override
     public void populateModel(final ModelMap model, final Object processVariables,
@@ -224,28 +219,35 @@ public class ComputerListController implements IController {
 
         final ProcessVariables _processVariables = (ProcessVariables) processVariables;
         model.addAttribute(Data.LIST_COMPUTER, ComputerMapper.toDto(_processVariables.listComputer));
-        model.addAttribute(Data.SEARCH_NUMBER_RESULTS, this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
-        switch(_processVariables.orderBy) {
-			default:
-        	case NAME : model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_1); break;
-        	case INTRODUCE_DATE : model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_2); break;
-        	case DISCONTINUE_DATE : model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_3); break;
-        	case COMPANY_NAME : model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_4); break;
+        model.addAttribute(Data.SEARCH_NUMBER_RESULTS,
+                this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
+        switch (_processVariables.orderBy) {
+            default:
+            case NAME:
+                model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_1);
+                break;
+            case INTRODUCE_DATE:
+                model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_2);
+                break;
+            case DISCONTINUE_DATE:
+                model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_3);
+                break;
+            case COMPANY_NAME:
+                model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_4);
+                break;
         }
         model.addAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
         model.addAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber(Computer.class));
         model.addAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
         model.addAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
         model.addAttribute(Data.POPUP, _processVariables.popup);
-        if(_processVariables.loginsuccess.equals("true") || _processVariables.loginsuccess.equals("false")) {
-            if (Boolean.parseBoolean(_processVariables.loginsuccess)) {
-                model.addAttribute(Data.MESSAGE_SUCCESS, "Login success.");
-            } else {
+        if (_processVariables.loginsuccess.equals("true") || _processVariables.loginsuccess.equals("false")) {
+            if (!Boolean.parseBoolean(_processVariables.loginsuccess)) {
                 model.addAttribute(Data.POPUP_MESSAGE_ERROR, "Login fail.");
             }
         }
-        if(!StringUtils.isEmpty(_processVariables.error)){
-        	model.addAttribute(Data.POPUP_MESSAGE_ERROR, _processVariables.error);
+        if (!StringUtils.isEmpty(_processVariables.error)) {
+            model.addAttribute(Data.POPUP_MESSAGE_ERROR, _processVariables.error);
         }
     }
 
