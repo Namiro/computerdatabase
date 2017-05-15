@@ -48,6 +48,13 @@ public final class Data {
     public static final String POPUP_MESSAGE_SUCCESS = "popupSuccessMessage";
     public static final String POPUP_MESSAGE_ERROR = "popupErrorMessage";
 
+    /* NOTIFICATION */
+    public static final String NOTIFICATION = "notification";
+    public static final String NOTIFICATION_MESSAGE_SUCCESS = "notificationSuccessMessage";
+    public static final String NOTIFICATION_MESSAGE_ERROR = "notificationErrorMessage";
+    public static final String NOTIFICATION_MESSAGE_WARNING = "notificationWarningMessage";
+    public static final String NOTIFICATION_MESSAGE_INFO = "notificationInfoMessage";
+
     /* DIVERS */
     public static final String SEARCH_WORD = "search";
     public static final String SEARCH_NUMBER_RESULTS = "searchNumberResults";

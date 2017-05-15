@@ -49,6 +49,7 @@ public class ComputerManageController implements IController {
     private class ProcessVariables {
         public ComputerDto computer;
         public ComputerDto computerReceived;
+        public boolean isBadId;
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
@@ -65,11 +66,14 @@ public class ComputerManageController implements IController {
     protected String doGet(final ModelMap model, @RequestParam final Map<String, String> params) {
         ComputerManageController.LOGGER.trace("GET /ComputerManage \t");
 
-        final ProcessVariables processVariables = this.getProcessVariables(params);       
-
-        this.populateModel(model, processVariables);
-
-        return View.VIEW_COMPUTER_MANAGE;
+        final ProcessVariables processVariables = this.getProcessVariables(params);
+        if (processVariables.isBadId) {
+            return "redirect:" + View.VIEW_COMPUTER_LIST + "?" + Data.NOTIFICATION_MESSAGE_WARNING + "="
+                    + "Impossible to get a computer with this id";
+        } else {
+            this.populateModel(model, processVariables);
+            return View.VIEW_COMPUTER_MANAGE;
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -90,7 +94,8 @@ public class ComputerManageController implements IController {
             processResult = this.removeComputersProcess(processVariables);
             this.populateModel(model, processVariables, processResult);
             if (processResult.isSuccess) {
-                return "redirect:"+View.VIEW_COMPUTER_LIST;
+                return "redirect:" + View.VIEW_COMPUTER_LIST + "?" + Data.NOTIFICATION_MESSAGE_SUCCESS + "="
+                        + "The computer has been deleted";
             } else {
                 return View.VIEW_COMPUTER_MANAGE;
             }
@@ -114,16 +119,16 @@ public class ComputerManageController implements IController {
 
         // If it is an updating or deleting
         if (StringUtils.isNotBlank(processVariables.computerReceived.getId())) {
-        	Optional<Computer> computerOpt =Optional.empty();
-        	try {
-        		computerOpt = this.computerService
-        				.get(Computer.class, Long.parseLong(processVariables.computerReceived.getId()));
-        	} catch (NumberFormatException e) {
-        	}
-            if(computerOpt.isPresent()) {
-            	processVariables.computer = ComputerMapper.toDto(computerOpt.get());
+            Optional<Computer> computerOpt = Optional.empty();
+            try {
+                computerOpt = this.computerService.get(Computer.class,
+                        Long.parseLong(processVariables.computerReceived.getId()));
+            } catch (final NumberFormatException e) {
+            }
+            if (computerOpt.isPresent()) {
+                processVariables.computer = ComputerMapper.toDto(computerOpt.get());
             } else {
-            	processVariables.computer = new ComputerDto();
+                processVariables.isBadId = true;
             }
         } else { // If it is a creating
             processVariables.computer = new ComputerDto();

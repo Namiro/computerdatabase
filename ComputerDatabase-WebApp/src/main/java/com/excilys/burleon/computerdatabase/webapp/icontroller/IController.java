@@ -48,7 +48,7 @@ public interface IController {
 
         if (processResult != null && !StringUtils.isEmpty(processResult.message)) {
             if (processResult.isSuccess) {
-                model.addAttribute(Data.MESSAGE_SUCCESS, processResult.message);
+                model.addAttribute(Data.NOTIFICATION_MESSAGE_SUCCESS, processResult.message);
             } else {
                 model.addAttribute(Data.MESSAGE_ERROR, processResult.message);
             }
