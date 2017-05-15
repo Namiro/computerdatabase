@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.excilys.burleon.computerdatabase.console.exception;
 
@@ -10,7 +10,12 @@ package com.excilys.burleon.computerdatabase.console.exception;
 public class UnauthorizedActionException extends RestClientException {
 
     /**
-     * 
+     *
+     */
+    private static final long serialVersionUID = -6409573896326623669L;
+
+    /**
+     *
      */
     public UnauthorizedActionException() {
         // TODO Auto-generated constructor stub
@@ -19,7 +24,7 @@ public class UnauthorizedActionException extends RestClientException {
     /**
      * @param s
      */
-    public UnauthorizedActionException(String s) {
+    public UnauthorizedActionException(final String s) {
         super(s);
         // TODO Auto-generated constructor stub
     }
@@ -28,7 +33,7 @@ public class UnauthorizedActionException extends RestClientException {
      * @param s
      * @param e
      */
-    public UnauthorizedActionException(String s, Throwable e) {
+    public UnauthorizedActionException(final String s, final Throwable e) {
         super(s, e);
         // TODO Auto-generated constructor stub
     }
@@ -36,7 +41,7 @@ public class UnauthorizedActionException extends RestClientException {
     /**
      * @param e
      */
-    public UnauthorizedActionException(Throwable e) {
+    public UnauthorizedActionException(final Throwable e) {
         super(e);
         // TODO Auto-generated constructor stub
     }
