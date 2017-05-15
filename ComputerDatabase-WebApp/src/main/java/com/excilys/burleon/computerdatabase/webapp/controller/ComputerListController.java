@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class ComputerListController implements IController {
         public String passworrepeated = "";
         public String popup = "";
         public String loginsuccess = "";
+        public String error = "";
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
@@ -104,34 +106,39 @@ public class ComputerListController implements IController {
         return View.VIEW_COMPUTER_LIST;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(path = "signup", method = RequestMethod.POST)
     protected String doPost(final ModelMap model, @RequestParam final Map<String, String> params) {
         ComputerListController.LOGGER.trace("POST /ComputerList \t");
 
         this.pageService.setModelService(this.computerService);
         final ProcessVariables processVariables = this.getProcessVariables(params);
         ProcessResult processResult = new ProcessResult();
-        // If it is a deleting
-        if (params.get(Data.SUBMIT_DELETE) != null) {
-            ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_DELETE");
-            processResult = this.deleteComputersProcess(processVariables.split);
+
+
+        processResult = this.signupProcess(processVariables);
+        if (!processResult.isSuccess) {
+            processVariables.popup = Data.POPUP_SIGNUP;
+            processVariables.error = processResult.message; 
+            processResult.message = "";
+
         }
-        // If it is a login
-        else if (params.get(Data.SUBMIT_LOGIN) != null) {
-            ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_LOGIN");
-            processResult = this.loginProcess(processVariables);
-            if (!processResult.isSuccess) {
-                processVariables.popup = Data.POPUP_LOGIN;
-            }
-        }
-        // If it is a sign up
-        else if (params.get(Data.SUBMIT_SIGNUP) != null) {
-            ComputerListController.LOGGER.trace("POST /ComputerList \t SUBMIT_SIGNUP");
-            processResult = this.signupProcess(processVariables);
-            if (!processResult.isSuccess) {
-                processVariables.popup = Data.POPUP_SIGNUP;
-            }
-        }
+
+        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
+        this.populateModel(model, processVariables, processResult);
+        return View.VIEW_COMPUTER_LIST;
+    }
+    
+    @RequestMapping(method = RequestMethod.POST)
+    protected String delete(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerListController.LOGGER.trace("DELETE /ComputerList \t");
+
+        this.pageService.setModelService(this.computerService);
+        final ProcessVariables processVariables = this.getProcessVariables(params);
+        ProcessResult processResult = new ProcessResult();
+
+
+        processResult = this.deleteComputersProcess(processVariables.split);
+        
 
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
         this.populateModel(model, processVariables, processResult);
@@ -208,16 +215,6 @@ public class ComputerListController implements IController {
         return processVariables;
     }
 
-    private ProcessResult loginProcess(final ProcessVariables processVariables) {
-        try {
-            final User user = this.userService.login(new User.UserBuilder().username(processVariables.username)
-                    .password(processVariables.password).build());
-            return new ProcessResult(true, "Login successful", user);
-        } catch (final ServiceException e) {
-            ComputerListController.LOGGER.info(e.getMessage());
-            return new ProcessResult(false, "Login fail. " + e.getMessage());
-        }
-    }
 
     @Override
     public void populateModel(final ModelMap model, final Object processVariables,
@@ -246,6 +243,9 @@ public class ComputerListController implements IController {
             } else {
                 model.addAttribute(Data.POPUP_MESSAGE_ERROR, "Login fail.");
             }
+        }
+        if(!StringUtils.isEmpty(_processVariables.error)){
+        	model.addAttribute(Data.POPUP_MESSAGE_ERROR, _processVariables.error);
         }
     }
 

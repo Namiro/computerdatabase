@@ -2,6 +2,7 @@ package com.excilys.burleon.computerdatabase.webapp.icontroller;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.ui.ModelMap;
 
 import com.excilys.burleon.computerdatabase.webapp.constant.Data;
@@ -45,7 +46,7 @@ public interface IController {
     default void populateModel(final ModelMap model, final Object processVariables,
             final ProcessResult processResult) {
 
-        if (processResult != null) {
+        if (processResult != null && !StringUtils.isEmpty(processResult.message)) {
             if (processResult.isSuccess) {
                 model.addAttribute(Data.MESSAGE_SUCCESS, processResult.message);
             } else {
