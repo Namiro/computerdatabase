@@ -3,14 +3,9 @@
  */
 package com.excilys.burleon.computerdatabase.repository.dao;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
+import static org.junit.Assert.*;
 import javax.transaction.Transactional;
-
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +15,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.core.model.Computer;
-import com.excilys.burleon.computerdatabase.core.model.enumeration.IOrderEnum;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.repository.spring.config.RepositoryConfig;
 import com.excilys.burleon.computerdatabase.repository.util.Utility;
@@ -45,37 +40,7 @@ public class ComputerDaoTest {
     @Autowired
     private ComputerDao computerDao;
 
-    /**
-     * Test to fin a range of company.
-     */
-    @Test
-    public void findRange() {
-        final int first = 0;
-        final int nbRecord = 5;
-        final String filterWord = "CM";
-        final IOrderEnum<Computer> order = OrderComputerEnum.NAME;
-
-        final List<Computer> computers = this.computerDao.findRange(Computer.class, first, nbRecord, filterWord,
-                order);
-
-        Assert.assertTrue(computers.get(0).getId() == 14);
-        Assert.assertTrue(computers.get(1).getId() == 3);
-        Assert.assertTrue(computers.get(2).getId() == 2);
-        Assert.assertTrue(computers.get(3).getId() == 5);
-        Assert.assertTrue(computers.get(4).getId() == 4);
-    }
-
-    /**
-     * Test to count the number of computer with a filter word.
-     */
-    @Test
-    public void getNbRecords() {
-        final String filterWord = "CM";
-
-        final long nbComputers = this.computerDao.getNbRecordsByName(Computer.class, filterWord);
-        Assert.assertTrue(nbComputers == 5);
-    }
-
+    
     /**
      * @throws java.lang.Exception
      *             Exception
@@ -84,55 +49,271 @@ public class ComputerDaoTest {
     public void setUp() throws Exception {
         Utility.loadAndResetDatabase();
     }
+    
+    /*
+     * Following tests are here to check wether one
+     * single computer can be found according to the client needs.
+     * Here we shall test if:
+     * 
+     *  - The user wants to show an existing computer
+     * tested with findsAndReadsExistingComputerWithAllParameters
+     * tested with findAndReadsExistingComputerWithOnlyMandatoryParameters
+     * tested with findRange
+     *  - The Id searched is not in the DB
+     * tested with findsAndReadsUnexistingComputer
+     */
 
+    @Test
+    public void findsAndReadsExistingComputerByIdWithOnlyMandatoryParameters()
+            throws Exception {
+        assertEquals(this.computerDao.findById(Computer.class, 200).get().getId(), 200);
+        assertEquals(this.computerDao.findById(Computer.class, 200).get().getName(), ("PowerBook 500 series"));
+        assertNull(this.computerDao.findById(Computer.class, 200).get().getCompany());
+        assertNull(this.computerDao.findById(Computer.class, 200).get().getIntroduced());
+        assertNull(this.computerDao.findById(Computer.class, 200).get().getDiscontinued());
+    }
+
+    @Test
+    public void findsAndReadsExistingComputerByIdWithAllParameters()
+            throws Exception {
+        assertEquals(this.computerDao.findById(Computer.class, 80).get().getId(), 80);
+        assertEquals(this.computerDao.findById(Computer.class, 80).get().getName(), "Macintosh SE/30");
+        assertEquals(this.computerDao.findById(Computer.class, 80).get().getCompany().getId(), 1);
+        assertEquals(this.computerDao.findById(Computer.class, 80).get().getCompany().getName(), "Apple Inc.");
+//        assertEquals(this.computerDao.findById(Computer.class, 80).get().getIntroduced(), LocalDateTime.of(1989, 01, 19,0,0));
+//        assertEquals(this.computerDao.findById(Computer.class, 80).get().getDiscontinued(), LocalDateTime.of(1991, 10, 21,0,0));
+    }
+
+    @Test
+    public void findsAndReadsUnexistingComputer() throws Exception {
+        assertFalse(this.computerDao.findById(Computer.class, 800).isPresent());
+    }
+ 
+    @Test
+    public void findRange() {
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(0).getId(), 14);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(1).getId(), 3);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(2).getId(), 2);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(3).getId(), 5);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 5, "CM",
+                OrderComputerEnum.NAME).get(4).getId(), 4);
+    }
+    /*
+     * Following tests are here to check wether several
+     * single computer can be found according to the client needs.
+     * Here we shall test if:
+     * 
+     *  - The user wants to show existing companies
+     * tested with findsAndReadsExistingComputersByPage
+     * tested with findsAndReadsExistingComputersByPageWithFilter
+     *  - One Id searched is not in the DB
+     * tested with findsAndReadsExistingComputersWithFirstIdNotInDB
+     * tested with findsAndReadsExistingComputersByPageGoingTooFar
+     * tested with findsAndReadsUnexistingComputers
+     */
+
+    @Test
+    public void findsAndReadsExistingComputersByPage()
+            throws Exception {
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).get(0).getId(), 152);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).get(1).getId(), 46);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).get(2).getId(), 57);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).get(0).getName(), "Acorn Archimedes");
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).get(1).getName(), "Acorn System 2");
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).get(2).getName(), "Altair 8800");
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).size(), 3);
+    }
+    
+    @Test
+    public void findsAndReadsExistingComputersByPageWithFilter()
+            throws Exception {
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 10, "Z", null).get(0).getId(), 101);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 10, "Z", null).get(1).getId(), 102);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 10, "Z", null).get(2).getId(), 99);
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 10, "Z", null).get(0).getName(), "Z1");
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 10, "Z", null).get(1).getName(), "Z2");
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 10, "Z", null).get(2).getName(), "Z3");
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 10, "Z", null).size(), 5);
+    }
+    
+    @Test
+    public void findsAndReadsExistingComputersByPageGoingTooFar()
+            throws Exception {
+        assertEquals(this.computerDao.findRange(Computer.class, 198, 3, null, null).get(0).getId(), 100);
+        assertEquals(this.computerDao.findRange(Computer.class, 198, 3, null, null).get(1).getId(), 149);
+        assertEquals(this.computerDao.findRange(Computer.class, 198, 3, null, null).get(0).getName(), "Z4");
+        assertEquals(this.computerDao.findRange(Computer.class, 198, 3, null, null).get(1).getName(), "ZX Spectrum");
+        assertEquals(this.computerDao.findRange(Computer.class, 198, 3, null, null).size(), 2);
+    }
+    
+    @Test
+    public void findsAndReadsExistingComputersWithFirstIdNotInDB()
+            throws Exception {
+        assertEquals(this.computerDao.findRange(Computer.class, -100, 3, null, null).get(0).getId(), 152);
+        assertEquals(this.computerDao.findRange(Computer.class, -100, 3, null, null).get(1).getId(), 46);
+        assertEquals(this.computerDao.findRange(Computer.class, -100, 3, null, null).get(2).getId(), 57);
+        assertEquals(this.computerDao.findRange(Computer.class, -100, 3, null, null).get(0).getName(), "Acorn Archimedes");
+        assertEquals(this.computerDao.findRange(Computer.class, -100, 3, null, null).get(1).getName(), "Acorn System 2");
+        assertEquals(this.computerDao.findRange(Computer.class, -100, 3, null, null).get(2).getName(), "Altair 8800");
+        assertEquals(this.computerDao.findRange(Computer.class, 0, 3, null, null).size(), 3);
+    }
+    
+    @Test
+    public void findsAndReadsUnexistingComputers()
+            throws Exception {
+        assertEquals(this.computerDao.findRange(Computer.class, 2000, 3, null, null).size(), 0);
+    }
+  
+    /*
+     * Following tests are here to check wether we
+     * can create a new computer.
+     * Here we shall test if:
+     * 
+     *  - The user wants to create a computer with legal parameters
+     * tested with createComputer
+     *  - The user tries to create a bad computer
+     * tested with createComputerWithBadId
+     */
+    
     @Test
     @Transactional
-    public void testCreate() {
-
-        final Optional<Computer> computer = this.computerDao
-                .create(new Computer.ComputerBuilder().name("TestServiceComputer").introduced(LocalDateTime.now())
-                        .discontinued(LocalDateTime.now()).build());
-        Assert.assertTrue(computer.get().getId() == this.computerDao
-                .findById(Computer.class, computer.get().getId()).get().getId());
+    public void createComputer() throws Exception {
+        assertEquals(200, this.computerDao.find(Computer.class).size());
+        this.computerDao.create(new Computer.ComputerBuilder().build());
+        assertEquals(201, this.computerDao.find(Computer.class).size());
     }
-
+    
     @Test
     @Transactional
-    public void testDelete() {
-        final Optional<Computer> computer = this.computerDao.findById(Computer.class, 7);
-        Assert.assertTrue(this.computerDao.delete(computer.get()));
+    public void createCompanyWithBadId() throws Exception {
+        try {
+            this.computerDao.create(new Computer(10L, "Apple", null, null, null));
+            fail("Should not be able to persist existing id");
+          }catch(javax.persistence.PersistenceException e){
+            assert(e.getMessage().contains("detached entity passed to persist"));
+          }
+        assertEquals(200, this.computerDao.find(Computer.class).size());
     }
 
+    /*
+     * Following test are here to check wether we
+     * can count the number of computers.
+     * Here we shall test if:
+     * 
+     *  - The user wants to count computers
+     * tested with countComputers
+     * tested with countComputersByPage
+     * 
+     *  - The user want to count computers with a filter word
+     * tested with countFilteredComputersByPage
+     */
+    
     @Test
-    public void testFind() {
-        Assert.assertTrue(this.computerDao.find(Computer.class).size() == 200);
+    public void countComputers() {
+        assertEquals(200, this.computerDao.find(Computer.class).size());
+        assertEquals(200, this.computerDao.getNbRecords(Computer.class));
+        assertEquals(200, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
     }
-
+    
     @Test
-    public void testFindWithBadId() {
-        final int id = -1;
-        final Optional<Computer> computer = this.computerDao.findById(Computer.class, id);
-        Assert.assertFalse(computer.isPresent());
+    public void countFilteredComputersByPage() {
+        assertEquals(6, this.computerDao.findRange(Computer.class, 0, 400, "Thinking", null).size());
+        assertEquals(6, this.computerDao.getNbRecordsByName(Computer.class, "Thinking"));
     }
-
-    @Test
-    public void testFindWithId() {
-        final int id = 10;
-        final Optional<Computer> computer = this.computerDao.findById(Computer.class, id);
-        Assert.assertTrue(computer.get().getId() == id && computer.get().getName().equals("Apple IIc Plus"));
-    }
-
+    
+    /*
+     * Following tests are here to check wether we
+     * can update a computer.
+     * Here we shall test if:
+     * 
+     *  - The user wants to update an existing computer
+     * tested with updateComputer
+     *  - The user tries to update a bad computer
+     * tested with updateUnexistingComputer
+     */
+    
     @Test
     @Transactional
-    public void testUpdate() {
-        final Optional<Computer> computer = this.computerDao.findById(Computer.class, 6);
-        Assert.assertTrue(computer.get().getId() == 6 && computer.get().getName().equals("MacBook Pro"));
-        computer.get().setName("testNameCool");
-        this.computerDao.update(computer.get());
-        final Optional<Computer> computerUpdated = this.computerDao.findById(Computer.class, 6);
-        Assert.assertTrue(computerUpdated.get().getName().equals("testNameCool"));
-        computerUpdated.get().setName("MacBook Pro");
-        this.computerDao.update(computerUpdated.get());
+    public void updateComputer() throws Exception {
+        this.computerDao.update(new Computer(10L, "test", null, null, null));
+        assertEquals(10, this.computerDao.findById(Computer.class, 10).get().getId());
+        assertEquals("test", this.computerDao.findById(Computer.class, 10).get().getName());
+    }
+    
+    @Test
+    @Transactional
+    public void updateUnexistingComputer() throws Exception {
+        this.computerDao.update(new Computer(2000L, "test", null, null, null));
+        assertFalse(this.computerDao.findById(Computer.class, 2000).isPresent());
+    }
+   
+    /*
+     * Following test are here to check wether we
+     * can delete a computer.
+     * Here we shall test if:
+     * 
+     *  - The user wants to delete an existing computer
+     * tested with deleteComputer
+     * 
+     *  - The user wants to delete an unexisting computer
+     * tested with deleteUnexistingComputer
+     */
+    
+    @Test
+    @Transactional
+    public void deleteComputer() {
+        assertTrue(this.computerDao.delete(new Computer(8, null, null, null, null)));
+        assertTrue(this.computerDao.delete(this.computerDao.findById(Computer.class, 7).get()));
+    }
+    
+    @Test
+    @Transactional
+    public void deleteUnexistingComputer() {
+        assertTrue(this.computerDao.delete(new Computer(2000, null, null, null, null)));
+    }
+    
+    /*
+     * Following test are here to check wether we
+     * can delete a computer by its company.
+     * Here we shall test if:
+     * 
+     *  - The user wants to delete an existing company
+     * tested with deleteCompany
+     * 
+     *  - The user wants to delete an unexisting company 
+     * tested with deleteUnexistingCompany
+     */
+    @Test
+    @Transactional
+    public void deleteCompany() {
+        assertEquals(200, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+        assertTrue(this.computerDao.deleteByCompany(new Company(1, "Apple Inc.")));
+        assertEquals(174, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+    }
+    
+    @Test
+    @Transactional
+    public void deleteUnexistingCompany() {
+        assertEquals(200, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+        assertTrue(this.computerDao.deleteByCompany(new Company(130, "unexistingCompany")));
+        assertEquals(200, this.computerDao.findRange(Computer.class, 0, 400, null, null).size());
+    }
+    
+    /*
+     * Following tests is here to check wether we
+     * can get the computer table name
+     * Here we shall test if:
+     * 
+     *  - The user wants to get the computer table name
+     * tested with getComputerTableName
+     */
+    @Test
+    public void getComputerTableName() throws Exception {
+    assertEquals(this.computerDao.getTableName(Computer.class),"computer");
     }
 
 }

@@ -68,5 +68,14 @@ public class ComputerDao extends ADao<Computer> implements IComputerDao {
         query.setParameter("search", filterWord + "%").setMaxResults(nbRecord).setFirstResult(first);
         return query.getResultList();
     }
+    
+    @Override
+    public long getNbRecordsByName(final Class<Computer> c, final String filterWord) {
+        LOGGER.trace("getNbRecords : c : " + c + "\tfilterWord : " + filterWord);
+        final Query query = this.entityManager
+                .createQuery("select count(*) from Computer as computer left join computer.company as company where computer.name like :search or company.name like :search");
+        query.setParameter("search", filterWord + "%");
+        return (long) query.getSingleResult();
+    }
 
 }
