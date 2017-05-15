@@ -87,3 +87,6 @@ buildNumber.properties
 .log
 
 .vscode
+ComputerDatabase-Repository/src/main/resources/datasource.properties
+ComputerDatabase-Repository/src/test/resources/datasource.properties
+ComputerDatabase-Repository/src/test/resources/hibernate.properties

@@ -15,5 +15,6 @@ public final class View {
     public static final String VIEW_COMPUTER_MANAGE = "computermanage";
     public static final String VIEW_COMPUTER_LIST = "computerlist";
     public static final String VIEW_AUTHENTICATION = "perform_login";
+    public static final String VIEW_SIGN_UP = "signup";
     public static final String VIEW_LOGOUT = "logout";
 }
