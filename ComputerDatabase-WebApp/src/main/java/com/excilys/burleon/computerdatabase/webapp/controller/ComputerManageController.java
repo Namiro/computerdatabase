@@ -152,27 +152,26 @@ public class ComputerManageController implements IController {
 	 * @return The process results
 	 */
 	private ProcessResult initializeComputersProcess(final ProcessVariables processVariables) {
-		try {
-			processVariables.computer.id = processVariables.computerReceived.id;
-			processVariables.computer.name = processVariables.computerReceived.name;
-			processVariables.computer.introduced = processVariables.computerReceived.introduced;
-			processVariables.computer.discontinued = processVariables.computerReceived.discontinued;
-			if (processVariables.computerReceived.company.id != null) {
-				final Optional<Company> companyOpt = this.companyService.get(Company.class,
-						Long.parseLong(processVariables.computerReceived.company.id));
-				if (companyOpt.isPresent()) {
-					final CompanyDto companyDto = CompanyMapper.toDto(companyOpt.get());
-					processVariables.computer.setCompany(companyDto);
+			try {
+				processVariables.computer.id = processVariables.computerReceived.id;
+				processVariables.computer.name = processVariables.computerReceived.name;
+				processVariables.computer.introduced = processVariables.computerReceived.introduced;
+				processVariables.computer.discontinued = processVariables.computerReceived.discontinued;
+				if (processVariables.computerReceived.company.id != null) {
+					final Optional<Company> companyOpt = this.companyService.get(Company.class,
+							Long.parseLong(processVariables.computerReceived.company.id));
+					if (companyOpt.isPresent()) {
+						final CompanyDto companyDto = CompanyMapper.toDto(companyOpt.get());
+						processVariables.computer.setCompany(companyDto);
+					}
 				}
+				ComputerManageController.LOGGER.trace("Construct OK for " + new Gson().toJson(processVariables.computerReceived));
+				return new ProcessResult(true, messageSource.getMessage("message_construct_ok", null, LocaleContextHolder.getLocale()));
+			} catch (NumberFormatException e) {
+				return new ProcessResult(true, messageSource.getMessage("message_number_format", null, LocaleContextHolder.getLocale()));
+			} catch (NoSuchMessageException e) {
+				return new ProcessResult(true, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
 			}
-			ComputerManageController.LOGGER
-					.trace("Construct OK for " + new Gson().toJson(processVariables.computerReceived));
-			return new ProcessResult(true,
-					messageSource.getMessage("message_construct_ok", null, LocaleContextHolder.getLocale()));
-		} catch (final ServiceException e) {
-			ComputerManageController.LOGGER.warn("Impossible to construct a computer with the user entries", e);
-			return new ProcessResult(false, e.getMessage());
-		}
 	}
 
 	@Override
@@ -216,8 +215,7 @@ public class ComputerManageController implements IController {
 			return new ProcessResult(this.computerService.remove(ComputerMapper.toComputer(processVariables.computer)),
 					messageSource.getMessage("message_remove_ok", null, LocaleContextHolder.getLocale()));
 		} catch (NoSuchMessageException e) {
-			return new ProcessResult(true,
-					messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(true, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
 		}
 	}
 
@@ -235,23 +233,17 @@ public class ComputerManageController implements IController {
 			computer = this.computerService.save(computer).get();
 			processVariables.computer = ComputerMapper.toDto(computer);
 			ComputerManageController.LOGGER.info("Save OK for " + processVariables.computer);
-			return new ProcessResult(true,
-					messageSource.getMessage("message_save_ok", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(true, messageSource.getMessage("message_save_ok", null, LocaleContextHolder.getLocale()));
 		} catch (TooLongComputerNameException e) {
-			return new ProcessResult(true,
-					messageSource.getMessage("message_save_too_long_name", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(true, messageSource.getMessage("message_save_too_long_name", null, LocaleContextHolder.getLocale()));
 		} catch (InvalidDateOrderException e) {
-			return new ProcessResult(true,
-					messageSource.getMessage("message_save_invalid_date_order", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(true, messageSource.getMessage("message_save_invalid_date_order", null, LocaleContextHolder.getLocale()));
 		} catch (InvalidDateException e) {
-			return new ProcessResult(true, messageSource.getMessage("message_save_invalid_date", null,
-					LocaleContextHolder.getLocale()));
+			return new ProcessResult(true, messageSource.getMessage("message_save_invalid_date", null,	LocaleContextHolder.getLocale()));
 		} catch (TooShortComputerNameException e) {
-			return new ProcessResult(true,
-					messageSource.getMessage("message_save_too_short_name", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(true, messageSource.getMessage("message_save_too_short_name", null, LocaleContextHolder.getLocale()));
 		} catch (NoSuchMessageException e) {
-			return new ProcessResult(true,
-					messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(true, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
 		}
 	}
 }
