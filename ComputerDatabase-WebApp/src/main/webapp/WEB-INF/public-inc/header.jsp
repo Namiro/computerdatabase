@@ -88,10 +88,18 @@
 <body>
     <input name="${POPUP}" hidden="true" value="${requestScope[POPUP]}"
         id="${POPUP}" />
-    <input name="${NOTIFICATION_MESSAGE_ERROR}" hidden="true" value="${requestScope[NOTIFICATION_MESSAGE_ERROR]}" id="${NOTIFICATION_MESSAGE_ERROR}" />
-    <input name="${NOTIFICATION_MESSAGE_INFO}" hidden="true" value="${requestScope[NOTIFICATION_MESSAGE_INFO]}" id="${NOTIFICATION_MESSAGE_INFO}" />
-    <input name="${NOTIFICATION_MESSAGE_SUCCESS}" hidden="true" value="${requestScope[NOTIFICATION_MESSAGE_SUCCESS]}" id="${NOTIFICATION_MESSAGE_SUCCESS}" />
-    <input name="${NOTIFICATION_MESSAGE_WARNING}" hidden="true" value="${requestScope[NOTIFICATION_MESSAGE_WARNING]}" id="${NOTIFICATION_MESSAGE_WARNING}" />
+    <input name="${NOTIFICATION_MESSAGE_ERROR}" hidden="true"
+        value="${requestScope[NOTIFICATION_MESSAGE_ERROR]}"
+        id="${NOTIFICATION_MESSAGE_ERROR}" />
+    <input name="${NOTIFICATION_MESSAGE_INFO}" hidden="true"
+        value="${requestScope[NOTIFICATION_MESSAGE_INFO]}"
+        id="${NOTIFICATION_MESSAGE_INFO}" />
+    <input name="${NOTIFICATION_MESSAGE_SUCCESS}" hidden="true"
+        value="${requestScope[NOTIFICATION_MESSAGE_SUCCESS]}"
+        id="${NOTIFICATION_MESSAGE_SUCCESS}" />
+    <input name="${NOTIFICATION_MESSAGE_WARNING}" hidden="true"
+        value="${requestScope[NOTIFICATION_MESSAGE_WARNING]}"
+        id="${NOTIFICATION_MESSAGE_WARNING}" />
 
     <header class="navbar navbar-inverse navbar-fixed-top"
         role="navigation">
@@ -113,7 +121,7 @@
         </div>
 
 
-        <ul class="nav navbar-nav navbar-right">
+        <ul class="nav navbar-nav navbar-right" style="margin-right: 10px;">
             <sec:authorize access="!isAuthenticated()">
                 <li><a href="#" data-toggle="modal"
                     data-target="#myModalSignup"><span
