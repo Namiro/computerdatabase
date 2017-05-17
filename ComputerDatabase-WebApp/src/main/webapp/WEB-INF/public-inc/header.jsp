@@ -144,8 +144,8 @@
             <li class="dropdown"><a href="#"
                 class="dropdown-toggle" data-toggle="dropdown"
                 role="button" aria-expanded="false"> <img
-                    id="imgNavSel" src="" alt="..."
-                    class="img-thumbnail icon-small"> <span
+                    id="imgNavSel" src="img/Noir.png" alt="..."
+                    class="icon-small"> <span
                     id="lanNavSel"></span> <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
                     <li><a id="navFra" href="?local=fr"
