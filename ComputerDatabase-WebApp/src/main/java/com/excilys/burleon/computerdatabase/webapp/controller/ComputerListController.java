@@ -148,8 +148,40 @@ public class ComputerListController implements IController {
             processVariables.popup = Data.POPUP_SIGNUP;
             processVariables.error = processResult.message;
             processResult.message = "";
-
         }
+
+		final ProcessVariables _processVariables = (ProcessVariables) processVariables;
+		model.addAttribute(Data.LIST_COMPUTER, ComputerMapper.toDto(_processVariables.listComputer));
+		model.addAttribute(Data.SEARCH_NUMBER_RESULTS,
+				this.computerService.getTotalRecords(Computer.class, _processVariables.filterWord));
+		switch (_processVariables.orderBy) {
+		default:
+		case NAME:
+			model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_1);
+			break;
+		case INTRODUCE_DATE:
+			model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_2);
+			break;
+		case DISCONTINUE_DATE:
+			model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_3);
+			break;
+		case COMPANY_NAME:
+			model.addAttribute(Data.ORDER_BY, Data.ORDER_BY_4);
+			break;
+		}
+		model.addAttribute(Data.PAGINATION_CURRENT_PAGE, this.pageService.getPageNumber());
+		model.addAttribute(Data.PAGINATION_TOTAL_PAGE, this.pageService.getMaxPageNumber(Computer.class));
+		model.addAttribute(Data.PAGINATION_RECORDS_BY_PAGE, _processVariables.recordsByPage);
+		model.addAttribute(Data.SEARCH_WORD, _processVariables.filterWord);
+		model.addAttribute(Data.POPUP, _processVariables.popup);
+		if (_processVariables.loginsuccess.equals("true") || _processVariables.loginsuccess.equals("false")) {
+			if (Boolean.parseBoolean(_processVariables.loginsuccess)) {
+				model.addAttribute(Data.MESSAGE_SUCCESS, messageSource.getMessage("message_login_successful", null, LocaleContextHolder.getLocale()));
+			} else {
+				model.addAttribute(Data.POPUP_MESSAGE_ERROR, messageSource.getMessage("message_login_fail", null, LocaleContextHolder.getLocale()));
+			}
+		}
+	}
 
         processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
         this.populateModel(model, processVariables, processResult);

@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.core.model.Computer;
-import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.InvalidDateException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.InvalidDateOrderException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooLongComputerNameException;
