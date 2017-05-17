@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.csrf().ignoringAntMatchers("/computerlist").and().authorizeRequests().antMatchers(HttpMethod.GET, "/")
+        http/*.csrf().ignoringAntMatchers("/computerlist").and()*/.authorizeRequests().antMatchers(HttpMethod.GET, "/")
                 .permitAll().antMatchers("/" + View.VIEW_AUTHENTICATION).permitAll().antMatchers("/css/**")
                 .permitAll().antMatchers("/fonts/**").permitAll().antMatchers("/i18/**").permitAll()
                 .antMatchers("/js/**").permitAll().antMatchers("/img/**").permitAll()

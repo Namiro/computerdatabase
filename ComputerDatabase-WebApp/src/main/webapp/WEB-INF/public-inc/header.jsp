@@ -138,10 +138,9 @@
                 <li><a href="#"
                     onclick="document.getElementById('logout-form').submit(); return false;"><span
                         class="glyphicon glyphicon-log-out"></span>
-                        <spring:message code="computerlist_button_logout" /> </a> <!-- <button type="submit" value="Logout" class="nav btn btn-link"> 
-                                <span
-                            class="glyphicon glyphicon-log-out"> Logout</span>
-                            </button> --></li>
+
+                        <spring:message code="computerlist_button_logout" /> </a></a></li>
+
             </sec:authorize>
             <li class="dropdown"><a href="#"
                 class="dropdown-toggle" data-toggle="dropdown"

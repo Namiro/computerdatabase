@@ -237,3 +237,9 @@ $(document).ready(function(){
 		
 	});
 });
+
+
+$('#menu-toggle').click( function(){
+    $(this).find('i').toggleClass('glyphicon glyphicon-trash').toggleClass('glyphicon glyphicon-chevron-left');
+    $.fn.toggleEditMode();
+});

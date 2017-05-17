@@ -66,16 +66,17 @@ public final class Paginator extends SimpleTagSupport {
 
     @Override
     public void doTag() {
-        final boolean lastPage = this.currPage == this.totalPages;
+        final boolean lastPage = this.currPage == this.totalPages || this.totalPages == 0;
+        LOGGER.debug("currPage = " + currPage +", totalPages = " + this.totalPages);
         int pgStart = Math.max(this.currPage - this.maxLinks / 2, 1);
         int pgEnd = pgStart + this.maxLinks;
-        if (pgEnd > this.totalPages + 2) {
+        if (pgEnd > this.totalPages + 1) {
             final int diff = pgEnd - this.totalPages;
             pgStart -= diff - 1;
             if (pgStart < 1) {
                 pgStart = 1;
             }
-            pgEnd = this.totalPages;
+            pgEnd = this.totalPages + 1;
         }
 
         try {
@@ -98,9 +99,9 @@ public final class Paginator extends SimpleTagSupport {
                         .write(this.constructLink(this.currPage + 1, ">", "paginatorNext paginatorLast"));
                 this.getJspContext().getOut()
                         .write(this.constructLink(this.totalPages, ">>", "paginatorNext paginatorLast"));
-            } else {
+            } /*else {
                 this.getJspContext().getOut().write(this.constructLink(this.totalPages));
-            }
+            }*/
 
             this.getJspContext().getOut().write("</ul>");
 
