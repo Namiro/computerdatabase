@@ -46,6 +46,7 @@ table.sortable th:not (.sorttable_sorted ):not (.sorttable_sorted_reverse
 	padding:0;
 }
 
+<<<<<<< HEAD
 .social:hover {
      -webkit-transform: scale(1.1);
      -moz-transform: scale(1.1);
@@ -88,3 +89,6 @@ Multicoloured Hover Variations
  #social-em:hover {
      color: #f39c12;
  }
+=======
+
+>>>>>>> Add of beauty
