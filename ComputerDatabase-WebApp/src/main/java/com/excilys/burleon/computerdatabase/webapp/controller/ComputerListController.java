@@ -108,15 +108,15 @@ public class ComputerListController implements IController {
             ComputerListController.LOGGER
                     .info("The selected computer(s) were succesfully deleted : " + Arrays.toString(split));
             return new ProcessResult(true,
-                    this.messageSource.getMessage("message_delete_error", null, LocaleContextHolder.getLocale()));
+                    this.messageSource.getMessage("message_delete", null, LocaleContextHolder.getLocale()));
         } catch (final NumberFormatException e) {
             ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
-            return new ProcessResult(true,
+            return new ProcessResult(false,
                     this.messageSource.getMessage("message_number_format", null, LocaleContextHolder.getLocale()));
         } catch (final NoSuchMessageException e) {
             ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
             return new ProcessResult(false, this.messageSource.getMessage("message_save_no_such_message", null,
-                    LocaleContextHolder.getLocale()) + e.getMessage());
+                    LocaleContextHolder.getLocale()));
         }
     }
 
@@ -257,7 +257,7 @@ public class ComputerListController implements IController {
         model.addAttribute(Data.POPUP, _processVariables.popup);
         if (_processVariables.loginsuccess.equals("true") || _processVariables.loginsuccess.equals("false")) {
             if (!Boolean.parseBoolean(_processVariables.loginsuccess)) {
-                model.addAttribute(Data.POPUP_MESSAGE_ERROR, "Login fail.");
+                model.addAttribute(Data.POPUP_MESSAGE_ERROR, this.messageSource.getMessage("message_login_fail", null, LocaleContextHolder.getLocale()));
             }
         }
         if (!StringUtils.isEmpty(_processVariables.error)) {

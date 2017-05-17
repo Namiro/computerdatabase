@@ -19,11 +19,11 @@
 <div class="container">
 	<hr>
 	<div class="text-center center-block">
-		<a href="https://www.facebook.com/GroupeExcilys/"><i id="social-fb" class="fa fa-facebook-square fa-3x social"></i></a>
-		<a href="https://twitter.com/excilys"><i id="social-tw"	class="fa fa-twitter-square fa-3x social"></i></a> 
-		<a href="https://foursquare.com/v/excilys/4fd8432de4b000122d68e4c1"><i id="social-4sq" class="fa fa-foursquare fa-3x social"></i></a>
-		<a href="https://plus.google.com/112772708169169527496"><i id="social-gp" class="fa fa-google-plus-square fa-3x social"></i></a>
-		<a href="mailto:croissants@excilys.com"><i id="social-em" class="fa fa-envelope-square fa-3x social"></i></a>
+		<a target="_blank" href="https://www.facebook.com/GroupeExcilys/"><i id="social-fb" class="fa fa-facebook-square fa-3x social"></i></a>
+		<a target="_blank" href="https://twitter.com/excilys"><i id="social-tw"	class="fa fa-twitter-square fa-3x social"></i></a> 
+		<a target="_blank" href="https://foursquare.com/v/excilys/4fd8432de4b000122d68e4c1"><i id="social-4sq" class="fa fa-foursquare fa-3x social"></i></a>
+		<a target="_blank" href="https://plus.google.com/112772708169169527496"><i id="social-gp" class="fa fa-google-plus-square fa-3x social"></i></a>
+		<a target="_blank" href="mailto:croissants@excilys.com"><i id="social-em" class="fa fa-envelope-square fa-3x social"></i></a>
 	</div>
 	<hr>
 </div>

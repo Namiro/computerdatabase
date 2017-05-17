@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.excilys.burleon.computerdatabase.core.model.Company;
 import com.excilys.burleon.computerdatabase.core.model.Computer;
-import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.InvalidDateException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.InvalidDateOrderException;
 import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooLongComputerNameException;
@@ -167,9 +166,9 @@ public class ComputerManageController implements IController {
 				ComputerManageController.LOGGER.trace("Construct OK for " + new Gson().toJson(processVariables.computerReceived));
 				return new ProcessResult(true, messageSource.getMessage("message_construct_ok", null, LocaleContextHolder.getLocale()));
 			} catch (NumberFormatException e) {
-				return new ProcessResult(true, messageSource.getMessage("message_number_format", null, LocaleContextHolder.getLocale()));
+				return new ProcessResult(false, messageSource.getMessage("message_number_format", null, LocaleContextHolder.getLocale()));
 			} catch (NoSuchMessageException e) {
-				return new ProcessResult(true, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
+				return new ProcessResult(false, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
 			}
 	}
 
@@ -214,7 +213,7 @@ public class ComputerManageController implements IController {
 			return new ProcessResult(this.computerService.remove(ComputerMapper.toComputer(processVariables.computer)),
 					messageSource.getMessage("message_remove_ok", null, LocaleContextHolder.getLocale()));
 		} catch (NoSuchMessageException e) {
-			return new ProcessResult(true, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(false, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
 		}
 	}
 
@@ -234,15 +233,15 @@ public class ComputerManageController implements IController {
 			ComputerManageController.LOGGER.info("Save OK for " + processVariables.computer);
 			return new ProcessResult(true, messageSource.getMessage("message_save_ok", null, LocaleContextHolder.getLocale()));
 		} catch (TooLongComputerNameException e) {
-			return new ProcessResult(true, messageSource.getMessage("message_save_too_long_name", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(false, messageSource.getMessage("message_save_too_long_name", null, LocaleContextHolder.getLocale()));
 		} catch (InvalidDateOrderException e) {
-			return new ProcessResult(true, messageSource.getMessage("message_save_invalid_date_order", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(false, messageSource.getMessage("message_save_invalid_date_order", null, LocaleContextHolder.getLocale()));
 		} catch (InvalidDateException e) {
-			return new ProcessResult(true, messageSource.getMessage("message_save_invalid_date", null,	LocaleContextHolder.getLocale()));
+			return new ProcessResult(false, messageSource.getMessage("message_save_invalid_date", null,	LocaleContextHolder.getLocale()));
 		} catch (TooShortComputerNameException e) {
-			return new ProcessResult(true, messageSource.getMessage("message_save_too_short_name", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(false, messageSource.getMessage("message_save_too_short_name", null, LocaleContextHolder.getLocale()));
 		} catch (NoSuchMessageException e) {
-			return new ProcessResult(true, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
+			return new ProcessResult(false, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale()));
 		}
 	}
 }

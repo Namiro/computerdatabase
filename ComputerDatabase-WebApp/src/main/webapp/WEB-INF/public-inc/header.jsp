@@ -138,7 +138,9 @@
                 <li><a href="#"
                     onclick="document.getElementById('logout-form').submit(); return false;"><span
                         class="glyphicon glyphicon-log-out"></span>
-                        Logout</a></li>
+
+                        <spring:message code="computerlist_button_logout" /> </a></a></li>
+
             </sec:authorize>
             <li class="dropdown"><a href="#"
                 class="dropdown-toggle" data-toggle="dropdown"
@@ -152,7 +154,7 @@
         			    	<li><a id="navRom" href="?local=ro" class="language"><img id="imgNavRom" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_romanian"/></span></a></li>
         	        		<li><a id="navPtg" href="?local=pt" class="language"><img id="imgNavPtg" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_portuguese"/></span></a></li>
         	        		<li><a id="navRus" href="?local=ru" class="language"><img id="imgNavRus" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_russian"/></span></a></li>
-                </ul></li>
+         	    </ul></li>
         </ul>
 
 

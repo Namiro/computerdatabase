@@ -115,7 +115,7 @@
 
             <c:otherwise>
                 <div class="alert alert-info">
-                    <p>There is no computer</p>
+                	<p><spring:message code="computerlist_no_computers" /></p>
                 </div>
             </c:otherwise>
         </c:choose>
