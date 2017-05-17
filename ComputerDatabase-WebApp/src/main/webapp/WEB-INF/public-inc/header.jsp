@@ -71,6 +71,9 @@
 <c:set var="USER_PASSWORD" value="<%=Data.USER_PASSWORD%>" />
 <c:set var="USER_PASSWORD2" value="<%=Data.USER_PASSWORD2%>" />
 <c:set var="USER_USERNAME" value="<%=Data.USER_USERNAME%>" />
+<c:set var="POPUP" value="<%=Data.POPUP%>" />
+<c:set var="POPUP_MESSAGE_SUCCESS" value="<%=Data.POPUP_MESSAGE_SUCCESS%>" />
+<c:set var="POPUP_MESSAGE_ERROR" value="<%=Data.POPUP_MESSAGE_ERROR%>" />
 
 <!DOCTYPE html>
 <html>
@@ -85,7 +88,6 @@
 
 </head>
 
-<body>
     <input name="${POPUP}" hidden="true" value="${requestScope[POPUP]}"
         id="${POPUP}" />
     <input name="${NOTIFICATION_MESSAGE_ERROR}" hidden="true"
@@ -148,24 +150,11 @@
                     class="icon-small"> <span
                     id="lanNavSel"></span> <span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a id="navFra" href="?local=fr"
-                        class="language"><img id="imgNavFra"
-                            name="imageee" src="" alt="..."
-                            class="img-thumbnail icon-small">  <span
-                            id="lanNavFra"><spring:message
-                                    code="language_french" /></span></a></li>
-                    <li><a id="navEng" href="?local=en"
-                        class="language"><img id="imgNavEng"
-                            name="imageee" src="" alt="..."
-                            class="img-thumbnail icon-small">  <span
-                            id="lanNavEng"><spring:message
-                                    code="language_english" /></span></a></li>
-                    <li><a id="navRom" href="?local=ro"
-                        class="language"><img id="imgNavRom"
-                            name="imageee" src="" alt="..."
-                            class="img-thumbnail icon-small">  <span
-                            id="lanNavRom"><spring:message
-                                    code="language_romanian" /></span></a></li>
+        			    	<li><a id="navFra" href="?local=fr" class="language"><img id="imgNavFra" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavFra"><spring:message code="language_french"/></span></a></li>
+        			    	<li><a id="navEng" href="?local=en" class="language"><img id="imgNavEng" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavEng"><spring:message code="language_english"/></span></a></li>
+        			    	<li><a id="navRom" href="?local=ro" class="language"><img id="imgNavRom" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_romanian"/></span></a></li>
+        	        		<li><a id="navPtg" href="?local=pt" class="language"><img id="imgNavPtg" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_portuguese"/></span></a></li>
+        	        		<li><a id="navRus" href="?local=ru" class="language"><img id="imgNavRus" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_russian"/></span></a></li>
                 </ul></li>
         </ul>
 

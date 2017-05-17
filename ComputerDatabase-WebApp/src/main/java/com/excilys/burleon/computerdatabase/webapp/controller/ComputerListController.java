@@ -9,6 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,9 @@ import com.excilys.burleon.computerdatabase.core.model.Computer;
 import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.InvalidPasswordException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameAlreadyExistException;
+import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameNotFoundException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
@@ -36,6 +42,9 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = { "/", "/" + View.VIEW_COMPUTER_LIST })
 public class ComputerListController implements IController {
+
+    @Autowired
+    MessageSource messageSource;
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -98,11 +107,18 @@ public class ComputerListController implements IController {
                     this.computerService.remove(computerOpt.get());
                 }
             }
-            ComputerListController.LOGGER.info("Remove OK for : " + Arrays.toString(split));
-            return new ProcessResult(true, "Remove OK");
-        } catch (final ServiceException e) {
-            ComputerListController.LOGGER.warn("Impossible to delete the computers", e);
-            return new ProcessResult(false, e.getMessage());
+            ComputerListController.LOGGER
+                    .info("The selected computer(s) were succesfully deleted : " + Arrays.toString(split));
+            return new ProcessResult(true,
+                    this.messageSource.getMessage("message_delete_error", null, LocaleContextHolder.getLocale()));
+        } catch (final NumberFormatException e) {
+            ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
+            return new ProcessResult(true,
+                    this.messageSource.getMessage("message_number_format", null, LocaleContextHolder.getLocale()));
+        } catch (final NoSuchMessageException e) {
+            ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
+            return new ProcessResult(false, this.messageSource.getMessage("message_save_no_such_message", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
         }
     }
 
@@ -136,11 +152,6 @@ public class ComputerListController implements IController {
             processResult.message = "";
 
         }
-
-        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
-        this.populateModel(model, processVariables, processResult);
-        return View.VIEW_COMPUTER_LIST;
-    }
 
     @Override
     public ProcessVariables getProcessVariables(final Map<String, String> params) {
@@ -255,10 +266,20 @@ public class ComputerListController implements IController {
         try {
             final User user = this.userService.register(new User.UserBuilder().username(processVariables.username)
                     .password(processVariables.password).build(), processVariables.passworrepeated);
-            return new ProcessResult(true, "Signup successful", user);
-        } catch (final ServiceException e) {
+            return new ProcessResult(true, this.messageSource.getMessage("message_signup_successful", null,
+                    LocaleContextHolder.getLocale()), user);
+        } catch (final UsernameAlreadyExistException e) {
             ComputerListController.LOGGER.info(e.getMessage());
-            return new ProcessResult(false, "Signup fail. " + e.getMessage());
+            return new ProcessResult(false, this.messageSource.getMessage("message_username_already_exist", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
+        } catch (final InvalidPasswordException e) {
+            ComputerListController.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, this.messageSource.getMessage("message_invalid_password", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
+        } catch (final NoSuchMessageException e) {
+            ComputerListController.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, this.messageSource.getMessage("message_save_no_such_message", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
         }
     }
 }
