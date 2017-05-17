@@ -47,7 +47,6 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping("/" + View.VIEW_COMPUTER_MANAGE)
 public class ComputerManageController implements IController {
-
 	@Autowired
 	MessageSource messageSource;
 
