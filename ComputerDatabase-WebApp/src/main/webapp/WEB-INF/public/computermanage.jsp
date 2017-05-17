@@ -32,8 +32,7 @@
                         name="${COMPUTER_NAME}"
                         value="${requestScope[COMPUTER_NAME]}"
                         maxlength="250"
-                        data-error="You must enter simple
-                        character and max 250"
+                        data-error="<spring:message code="message_name_error" />"
                         required> <span
                         class="glyphicon form-control-feedback"
                         aria-hidden="true"></span>
@@ -48,7 +47,7 @@
                         name="${COMPUTER_INTRODUCE_DATE}"
                         value="${requestScope[COMPUTER_INTRODUCE_DATE]}"
                         pattern="^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((1[6-9]|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((1[6-9]|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))|(((((1[26]|2[048])00)|[12]\d([2468][048]|[13579][26]|0[48]))-((((0[13578]|1[02])-(0[1-9]|[12]\d|3[01]))|((0[469]|11)-(0[1-9]|[12]\d|30)))|(02-(0[1-9]|[12]\d))))|((([12]\d([02468][1235679]|[13579][01345789]))|((1[1345789]|2[1235679])00))-((((0[13578]|1[02])-(0[1-9]|[12]\d|3[01]))|((0[469]|11)-(0[1-9]|[12]\d|30)))|(02-(0[1-9]|1\d|2[0-8]))))))$"
-                        data-error="You must enter a date with the format dd/MM/aaaa">
+                        data-error="<spring:message code="message_date_error" />"/>
                     <span class="glyphicon form-control-feedback"
                         aria-hidden="true"></span>
                     <div class="help-block with-errors"></div>
