@@ -21,10 +21,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.excilys.burleon.computerdatabase.core.model.Computer;
 import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.OrderComputerEnum;
-import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
 import com.excilys.burleon.computerdatabase.service.exception.authentication.InvalidPasswordException;
 import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameAlreadyExistException;
-import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameNotFoundException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
@@ -42,9 +40,6 @@ import com.google.gson.Gson;
 @Controller
 @RequestMapping(value = { "/", "/" + View.VIEW_COMPUTER_LIST })
 public class ComputerListController implements IController {
-
-    @Autowired
-    MessageSource messageSource;
 
     /**
      * Represent the working variable that we can receive or send with a
@@ -67,6 +62,9 @@ public class ComputerListController implements IController {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
+
+    @Autowired
+    MessageSource messageSource;
 
     @Autowired
     private IPageService<Computer> pageService;
@@ -152,6 +150,11 @@ public class ComputerListController implements IController {
             processResult.message = "";
 
         }
+
+        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
+        this.populateModel(model, processVariables, processResult);
+        return View.VIEW_COMPUTER_LIST;
+    }
 
     @Override
     public ProcessVariables getProcessVariables(final Map<String, String> params) {
