@@ -23,6 +23,7 @@ import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.core.model.enumeration.OrderComputerEnum;
 import com.excilys.burleon.computerdatabase.service.exception.authentication.InvalidPasswordException;
 import com.excilys.burleon.computerdatabase.service.exception.authentication.UsernameAlreadyExistException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooShortUsernameException;
 import com.excilys.burleon.computerdatabase.service.iservice.IComputerService;
 import com.excilys.burleon.computerdatabase.service.iservice.IPageService;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
@@ -97,6 +98,7 @@ public class ComputerListController implements IController {
      *            The list of computer ids that should be deleted
      */
     private ProcessResult deleteComputersProcess(final String[] split) {
+
         try {
             for (final String idStr : split) {
                 final Optional<
@@ -257,7 +259,8 @@ public class ComputerListController implements IController {
         model.addAttribute(Data.POPUP, _processVariables.popup);
         if (_processVariables.loginsuccess.equals("true") || _processVariables.loginsuccess.equals("false")) {
             if (!Boolean.parseBoolean(_processVariables.loginsuccess)) {
-                model.addAttribute(Data.POPUP_MESSAGE_ERROR, this.messageSource.getMessage("message_login_fail", null, LocaleContextHolder.getLocale()));
+                model.addAttribute(Data.POPUP_MESSAGE_ERROR, this.messageSource.getMessage("message_login_fail",
+                        null, LocaleContextHolder.getLocale()));
             }
         }
         if (!StringUtils.isEmpty(_processVariables.error)) {
@@ -274,15 +277,19 @@ public class ComputerListController implements IController {
         } catch (final UsernameAlreadyExistException e) {
             ComputerListController.LOGGER.info(e.getMessage());
             return new ProcessResult(false, this.messageSource.getMessage("message_username_already_exist", null,
-                    LocaleContextHolder.getLocale()) + e.getMessage());
+                    LocaleContextHolder.getLocale()));
         } catch (final InvalidPasswordException e) {
             ComputerListController.LOGGER.info(e.getMessage());
             return new ProcessResult(false, this.messageSource.getMessage("message_invalid_password", null,
-                    LocaleContextHolder.getLocale()) + e.getMessage());
+                    LocaleContextHolder.getLocale()));
+        } catch (final TooShortUsernameException e) {
+            ComputerListController.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, this.messageSource.getMessage("message_save_too_short_name", null,
+                    LocaleContextHolder.getLocale()));
         } catch (final NoSuchMessageException e) {
             ComputerListController.LOGGER.info(e.getMessage());
             return new ProcessResult(false, this.messageSource.getMessage("message_save_no_such_message", null,
-                    LocaleContextHolder.getLocale()) + e.getMessage());
+                    LocaleContextHolder.getLocale()));
         }
     }
 }

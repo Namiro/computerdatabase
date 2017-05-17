@@ -62,7 +62,7 @@ public interface IUserService extends IModelService<User>, UserDetailsService {
      * @throws InvalidPasswordException
      */
     User register(User user, String passwordRepeated)
-            throws UsernameAlreadyExistException, InvalidPasswordException;
+            throws UsernameAlreadyExistException, InvalidPasswordException, TooShortUsernameException;
 
     @Override
     public Optional<User> save(User entity) throws TooShortPasswordException, TooShortUsernameException;

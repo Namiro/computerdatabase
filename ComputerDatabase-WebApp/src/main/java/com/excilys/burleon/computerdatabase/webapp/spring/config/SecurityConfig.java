@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -28,7 +27,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     MessageSource messageSource;
 
@@ -42,20 +41,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http/*.csrf().ignoringAntMatchers("/computerlist").and()*/.authorizeRequests().antMatchers(HttpMethod.GET, "/")
+        http.csrf().ignoringAntMatchers("/computerlist").and().authorizeRequests().antMatchers(HttpMethod.GET, "/")
                 .permitAll().antMatchers("/" + View.VIEW_AUTHENTICATION).permitAll().antMatchers("/css/**")
                 .permitAll().antMatchers("/fonts/**").permitAll().antMatchers("/i18/**").permitAll()
                 .antMatchers("/js/**").permitAll().antMatchers("/img/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/" + View.VIEW_COMPUTER_LIST).permitAll()
+                .antMatchers(HttpMethod.POST, View.VIEW_COMPUTER_LIST).access("ADMIN")
                 .antMatchers("/" + View.VIEW_SIGN_UP).permitAll().anyRequest().authenticated().and().formLogin()
                 .loginPage("/" + View.VIEW_COMPUTER_LIST + "?" + Data.POPUP + "=" + Data.POPUP_LOGIN)
                 .usernameParameter(Data.USER_USERNAME).passwordParameter(Data.USER_PASSWORD)
                 .loginProcessingUrl("/" + View.VIEW_AUTHENTICATION)
-                .defaultSuccessUrl("/" + View.VIEW_COMPUTER_LIST  + "?" + Data.NOTIFICATION_MESSAGE_SUCCESS + "=")
+                .defaultSuccessUrl("/" + View.VIEW_COMPUTER_LIST + "?" + Data.NOTIFICATION_MESSAGE_SUCCESS + "=")
                 .failureUrl("/" + View.VIEW_COMPUTER_LIST + "?" + Data.POPUP + "=" + Data.POPUP_LOGIN + "&"
                         + Data.LOGIN_SUCCESS + "=false")
-                .and().logout().logoutUrl("/" + View.VIEW_LOGOUT).logoutSuccessUrl("/" + View.VIEW_COMPUTER_LIST
-                        + "?" + Data.NOTIFICATION_MESSAGE_SUCCESS + "=");
+                .and().logout().logoutUrl("/" + View.VIEW_LOGOUT)
+                .logoutSuccessUrl("/" + View.VIEW_COMPUTER_LIST + "?" + Data.NOTIFICATION_MESSAGE_SUCCESS + "=");
     }
 
     @Autowired
