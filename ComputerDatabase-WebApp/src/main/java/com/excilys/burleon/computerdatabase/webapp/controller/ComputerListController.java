@@ -43,8 +43,9 @@ import com.google.gson.Gson;
 @RequestMapping(value = { "/", "/" + View.VIEW_COMPUTER_LIST })
 public class ComputerListController implements IController {
 
-	@Autowired
-	MessageSource messageSource;
+    @Autowired
+    MessageSource messageSource;
+
     /**
      * Represent the working variable that we can receive or send with a
      * request.
@@ -65,78 +66,76 @@ public class ComputerListController implements IController {
         public String error = "";
     }
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComputerListController.class);
 
-	@Autowired
-	private IPageService<Computer> pageService;
+    @Autowired
+    private IPageService<Computer> pageService;
 
-	@Autowired
-	private IComputerService computerService;
+    @Autowired
+    private IComputerService computerService;
 
+    @Autowired
+    private IUserService userService;
 
-	@Autowired
-	private IUserService userService;
+    @RequestMapping(method = RequestMethod.POST)
+    protected String delete(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerListController.LOGGER.trace("DELETE /ComputerList \t");
 
-  @RequestMapping(method = RequestMethod.POST)
-  protected String delete(final ModelMap model, @RequestParam final Map<String, String> params) {
-      ComputerListController.LOGGER.trace("DELETE /ComputerList \t");
+        this.pageService.setModelService(this.computerService);
+        final ProcessVariables processVariables = this.getProcessVariables(params);
+        ProcessResult processResult = new ProcessResult();
 
-      this.pageService.setModelService(this.computerService);
-      final ProcessVariables processVariables = this.getProcessVariables(params);
-      ProcessResult processResult = new ProcessResult();
+        processResult = this.deleteComputersProcess(processVariables.split);
 
-      processResult = this.deleteComputersProcess(processVariables.split);
+        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
+        this.populateModel(model, processVariables, processResult);
+        return View.VIEW_COMPUTER_LIST;
+    }
 
-      processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
-      this.populateModel(model, processVariables, processResult);
-      return View.VIEW_COMPUTER_LIST;
-  }
+    /**
+     * Allow to delete the computer.
+     *
+     * @param split
+     *            The list of computer ids that should be deleted
+     */
+    private ProcessResult deleteComputersProcess(final String[] split) {
+        try {
+            for (final String idStr : split) {
+                final Optional<
+                        Computer> computerOpt = this.computerService.get(Computer.class, Long.parseLong(idStr));
+                if (computerOpt.isPresent()) {
+                    this.computerService.remove(computerOpt.get());
+                }
+            }
+            ComputerListController.LOGGER
+                    .info("The selected computer(s) were succesfully deleted : " + Arrays.toString(split));
+            return new ProcessResult(true,
+                    this.messageSource.getMessage("message_delete_error", null, LocaleContextHolder.getLocale()));
+        } catch (final NumberFormatException e) {
+            ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
+            return new ProcessResult(true,
+                    this.messageSource.getMessage("message_number_format", null, LocaleContextHolder.getLocale()));
+        } catch (final NoSuchMessageException e) {
+            ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
+            return new ProcessResult(false, this.messageSource.getMessage("message_save_no_such_message", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
+        }
+    }
 
-	/**
-	 * Allow to delete the computer.
-	 *
-	 * @param split
-	 *            The list of computer ids that should be deleted
-	 */
-	private ProcessResult deleteComputersProcess(final String[] split) {
-		try {
-			for (final String idStr : split) {
-				final Optional<Computer> computerOpt = this.computerService.get(Computer.class, Long.parseLong(idStr));
-				if (computerOpt.isPresent()) {
-					this.computerService.remove(computerOpt.get());
-				}
-			}
-			ComputerListController.LOGGER
-					.info("The selected computer(s) were succesfully deleted : " + Arrays.toString(split));
-			return new ProcessResult(true,
-					messageSource.getMessage("message_delete_error", null, LocaleContextHolder.getLocale()));
-		} catch (NumberFormatException e) {
-			ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
-			return new ProcessResult(true, messageSource.getMessage("message_number_format", null, LocaleContextHolder.getLocale()));
-		} catch (NoSuchMessageException e) {
-			ComputerListController.LOGGER.warn("Impossible to delete the computer(s)", e);
-			return new ProcessResult(false, messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale())
-							+ e.getMessage());
-		}
-	}
+    @RequestMapping(method = RequestMethod.GET)
+    protected String doGet(final ModelMap model, @RequestParam final Map<String, String> params) {
+        ComputerListController.LOGGER.trace("GET /ComputerList \t");
 
+        final ProcessVariables processVariables = this.getProcessVariables(params);
+        this.pageService.setModelService(this.computerService);
+        this.pageService.setRecordsByPage(processVariables.recordsByPage);
+        this.pageService.setFilterWord(processVariables.filterWord);
+        this.pageService.setOrderBy(processVariables.orderBy);
+        processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
 
-	@RequestMapping(method = RequestMethod.GET)
-	protected String doGet(final ModelMap model, @RequestParam final Map<String, String> params) {
-		ComputerListController.LOGGER.trace("GET /ComputerList \t");
-
-		final ProcessVariables processVariables = this.getProcessVariables(params);
-		this.pageService.setModelService(this.computerService);
-		this.pageService.setRecordsByPage(processVariables.recordsByPage);
-		this.pageService.setFilterWord(processVariables.filterWord);
-		this.pageService.setOrderBy(processVariables.orderBy);
-		processVariables.listComputer = this.pageService.page(Computer.class, processVariables.newCurrentPage);
-
-		this.populateModel(model, processVariables);
-		return View.VIEW_COMPUTER_LIST;
-	}
-
-
+        this.populateModel(model, processVariables);
+        return View.VIEW_COMPUTER_LIST;
+    }
 
     @RequestMapping(path = "signup", method = RequestMethod.POST)
     protected String doPost(final ModelMap model, @RequestParam final Map<String, String> params) {
@@ -263,27 +262,24 @@ public class ComputerListController implements IController {
         }
     }
 
-	private ProcessResult signupProcess(final ProcessVariables processVariables) {
-		try {
-			final User user = this.userService.register(new User.UserBuilder().username(processVariables.username)
-					.password(processVariables.password).build(), processVariables.passworrepeated);
-			return new ProcessResult(true,
-					messageSource.getMessage("message_signup_successful", null, LocaleContextHolder.getLocale()), user);
-		} catch (UsernameAlreadyExistException e) {
-			ComputerListController.LOGGER.info(e.getMessage());
-			return new ProcessResult(false,
-					messageSource.getMessage("message_username_already_exist", null, LocaleContextHolder.getLocale())
-							+ e.getMessage());
-		} catch (InvalidPasswordException e) {
-			ComputerListController.LOGGER.info(e.getMessage());
-			return new ProcessResult(false,
-					messageSource.getMessage("message_invalid_password", null, LocaleContextHolder.getLocale())
-							+ e.getMessage());
-		} catch (NoSuchMessageException e) {
-			ComputerListController.LOGGER.info(e.getMessage());
-			return new ProcessResult(false,
-					messageSource.getMessage("message_save_no_such_message", null, LocaleContextHolder.getLocale())
-							+ e.getMessage());
-		}
-	}
+    private ProcessResult signupProcess(final ProcessVariables processVariables) {
+        try {
+            final User user = this.userService.register(new User.UserBuilder().username(processVariables.username)
+                    .password(processVariables.password).build(), processVariables.passworrepeated);
+            return new ProcessResult(true, this.messageSource.getMessage("message_signup_successful", null,
+                    LocaleContextHolder.getLocale()), user);
+        } catch (final UsernameAlreadyExistException e) {
+            ComputerListController.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, this.messageSource.getMessage("message_username_already_exist", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
+        } catch (final InvalidPasswordException e) {
+            ComputerListController.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, this.messageSource.getMessage("message_invalid_password", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
+        } catch (final NoSuchMessageException e) {
+            ComputerListController.LOGGER.info(e.getMessage());
+            return new ProcessResult(false, this.messageSource.getMessage("message_save_no_such_message", null,
+                    LocaleContextHolder.getLocale()) + e.getMessage());
+        }
+    }
 }
