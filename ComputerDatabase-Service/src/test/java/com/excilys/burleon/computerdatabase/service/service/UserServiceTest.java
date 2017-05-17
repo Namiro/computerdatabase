@@ -1,9 +1,8 @@
 package com.excilys.burleon.computerdatabase.service.service;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.Optional;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,10 +19,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
+
 import com.excilys.burleon.computerdatabase.core.model.User;
 import com.excilys.burleon.computerdatabase.repository.idao.IUserDao;
-import com.excilys.burleon.computerdatabase.service.exception.DataValidationException;
 import com.excilys.burleon.computerdatabase.service.exception.ServiceException;
+import com.excilys.burleon.computerdatabase.service.exception.entityvalidation.TooShortUsernameException;
 import com.excilys.burleon.computerdatabase.service.iservice.IUserService;
 import com.excilys.burleon.computerdatabase.service.spring.config.ServiceConfig;
 
@@ -55,19 +55,22 @@ public class UserServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @Test
+    public void testCheckDataBadId() {
+        final User user = new User.UserBuilder().id(-4).build();
+        this.exception.expect(ServiceException.class);
+        this.userService.checkDataEntity(user);
+    }
+
     /*
-     * Following tests are here to check computer datas
-     * according to the client needs.
-     * Here we shall test if:
-     * 
-     *  - The user tries to enter a user a long name.
-     * tested with testCheckDataEntityNameSoLong
-     *  - The user tries to enter a user with no name
-     * tested with testCheckDataEntityNoName
-     *  - The user tries to enter a user with a bad id
-     * tested with testCheckDataBadId
-     *  - The user tries to enter a user with no entity
-     * tested with testCheckDataNoEntity
+     * Following tests are here to check computer datas according to the
+     * client needs. Here we shall test if:
+     *
+     * - The user tries to enter a user a long name. tested with
+     * testCheckDataEntityNameSoLong - The user tries to enter a user with no
+     * name tested with testCheckDataEntityNoName - The user tries to enter a
+     * user with a bad id tested with testCheckDataBadId - The user tries to
+     * enter a user with no entity tested with testCheckDataNoEntity
      */
     @Test
     public void testCheckDataEntityNameSoLong() {
@@ -79,40 +82,27 @@ public class UserServiceTest {
     @Test
     public void testCheckDataEntityNoName() throws ServiceException {
         final User user = new User.UserBuilder().username("").build();
-        this.exception.expect(DataValidationException.class);
+        this.exception.expect(TooShortUsernameException.class);
         this.userService.checkDataEntity(user);
     }
-    
+
     public void testCheckDataNoEntity() {
         final User user = null;
         this.exception.expect(ServiceException.class);
         this.userService.checkDataEntity(user);
     }
-    
-    @Test
-    public void testCheckDataBadId() { 
-    final User user = new User.UserBuilder().id(-4).build();
-    this.exception.expect(ServiceException.class);
-    this.userService.checkDataEntity(user);
-}
 
     /*
-     * Following tests are here to check wether we can get users
-     * according to the client needs.
-     * Here we shall test if:
-     * 
-     *  - The user tries to get several users
-     * tested with testGet
-     *  - The user tries to get a single users
-     * tested with testGetSingleUser
-     *  - The user tries to get an user page
-     * tested with testGetPage
-     *  - The user tries to get an user with a bad id
-     * tested with testGetWithBadId
-     *  - The user tries to get an user by id
-     * tested with testGetWithId
-     */ 
-    
+     * Following tests are here to check wether we can get users according to
+     * the client needs. Here we shall test if:
+     *
+     * - The user tries to get several users tested with testGet - The user
+     * tries to get a single users tested with testGetSingleUser - The user
+     * tries to get an user page tested with testGetPage - The user tries to
+     * get an user with a bad id tested with testGetWithBadId - The user tries
+     * to get an user by id tested with testGetWithId
+     */
+
     @Test
     public void testGet() {
         final ArrayList<User> users = new ArrayList<>();
@@ -124,16 +114,16 @@ public class UserServiceTest {
         Mockito.when(this.mockUserDao.find(User.class)).thenReturn(users);
         Assert.assertTrue(this.userService.get(User.class).size() == 3);
     }
-    
+
     @Test
     public void testGetSingleUser() {
-        Optional<User> user = Optional.of(new User.UserBuilder().id(34).username("test").password("").build());
+        final Optional<
+                User> user = Optional.of(new User.UserBuilder().id(34).username("test").password("").build());
         ReflectionTestUtils.setField(this.userService, "dao", this.mockUserDao);
         Mockito.when(this.mockUserDao.findById(User.class, 34)).thenReturn(user);
-        assertEquals(this.userService.get(User.class, 34).get().getId(),34);
-        assertEquals(this.userService.get(User.class, 34).get().getUsername(),"test");
+        Assert.assertEquals(this.userService.get(User.class, 34).get().getId(), 34);
+        Assert.assertEquals(this.userService.get(User.class, 34).get().getUsername(), "test");
     }
-
 
     @Test
     public void testGetWithBadId() {
@@ -163,8 +153,8 @@ public class UserServiceTest {
 
         Mockito.when(this.mockUserDao.create(user))
                 .thenReturn(Optional.of(new User.UserBuilder().id(2).username("user").password("test").build()));
-        Mockito.when(this.mockUserDao.update(user))
-                .thenReturn(Optional.of(new User.UserBuilder().id(2).username("useredited").password("test").build()));
+        Mockito.when(this.mockUserDao.update(user)).thenReturn(
+                Optional.of(new User.UserBuilder().id(2).username("useredited").password("test").build()));
 
         Optional<User> userOpt = this.userService.save(user);
         Assert.assertTrue(userOpt.isPresent());
