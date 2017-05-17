@@ -23,7 +23,8 @@
                         <input type="search" id="${SEARCH_WORD}"
                             name="${SEARCH_WORD}" class="form-control"
                             placeholder=<spring:message code="computerlist_placeholder"/>
-                            value="${requestScope[SEARCH_WORD]}" style="width: 245px;"/>
+                            value="${requestScope[SEARCH_WORD]}"
+                            style="width: 245px;" />
                         <div class="input-group-btn">
                             <button class="btn btn-primary"
                                 type="submit" id="${SUBMIT_SEARCH}">
@@ -37,9 +38,8 @@
                 <a class="btn btn-success" id="addComputer"
                     href="${VIEW_COMPUTER_MANAGE}"><spring:message
                         code="computerlist_button_add" /></a> <a
-                    class="btn btn-default" id="editComputer" href="#"
-                    onclick="$.fn.toggleEditMode();"><spring:message
-                        code="computerlist_button_edit" /></a>
+                    id="menu-toggle" href="#" class="btn btn-default"><i
+                    class="glyphicon glyphicon-trash"></i></a>
             </div>
         </div>
     </div>
