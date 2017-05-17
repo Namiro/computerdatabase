@@ -80,6 +80,9 @@
         			    	<li><a id="navFra" href="?local=fr" class="language"><img id="imgNavFra" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavFra"><spring:message code="language_french"/></span></a></li>
         			    	<li><a id="navEng" href="?local=en" class="language"><img id="imgNavEng" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavEng"><spring:message code="language_english"/></span></a></li>
         			    	<li><a id="navRom" href="?local=ro" class="language"><img id="imgNavRom" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_romanian"/></span></a></li>
+        	        		<li><a id="navPtg" href="?local=pt" class="language"><img id="imgNavPtg" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_portuguese"/></span></a></li>
+        	        		<li><a id="navRus" href="?local=ru" class="language"><img id="imgNavRus" src="" alt="..." class="img-thumbnail icon-small">  <span id="lanNavRom"><spring:message code="language_russian"/></span></a></li>
+        	        		
         	        	</ul> 
         	       	</li>
             </ul>

@@ -123,16 +123,22 @@ $(document).ready(function(){
 	var fraImgLink = "img/French.gif";
 	var engImgLink = "img/English.gif";
 	var romImgLink = "img/Romania.png";
+	var rusImgLink = "img/Russia.jpg";
+	var ptgImgLink = "img/Portugal.png";
 
 	var imgBtnSel = $('#imgBtnSel');
 	var imgBtnFra = $('#imgBtnFra');
 	var imgBtnEng = $('#imgBtnEng');
 	var imgBtnRom = $('#imgBtnRom');
+	var imgBtnRus = $('#imgBtnRus');
+	var imgBtnPtg = $('#imgBtnPtg');
 
 	var imgNavSel = $('#imgNavSel');
 	var imgNavFra = $('#imgNavFra');
 	var imgNavEng = $('#imgNavEng');
 	var imgNavRom = $('#imgNavRom');
+	var imgNavRus = $('#imgNavRus');
+	var imgNavPtg = $('#imgNavPtg');
 
 	var spanNavSel = $('#lanNavSel');
 	var spanBtnSel = $('#lanBtnSel');
@@ -140,6 +146,8 @@ $(document).ready(function(){
 	imgBtnFra.attr("src", fraImgLink);
 	imgBtnEng.attr("src", engImgLink);
 	imgBtnRom.attr("src", romImgLink);
+	imgBtnRus.attr("src", rusImgLink);
+	imgBtnPtg.attr("src", ptgImgLink);
 
 	document.getElementById("navFra").onclick = function() {
 	    localStorage.clear();
@@ -156,6 +164,16 @@ $(document).ready(function(){
 	    localStorage.setItem('navRom', document.getElementById("navRom").value);
 	}
 	
+	document.getElementById("navRus").onclick = function() {
+	    localStorage.clear();
+	    localStorage.setItem('navRus', document.getElementById("navRus").value);
+	}
+	
+	document.getElementById("navPtg").onclick = function() {
+	    localStorage.clear();
+	    localStorage.setItem('navPtg', document.getElementById("navPtg").value);
+	}
+	
 	if (localStorage.getItem('navFra')) {
 		imgNavSel.attr("src", fraImgLink);
 		spanNavSel.text("FR");
@@ -165,11 +183,19 @@ $(document).ready(function(){
 	} else if (localStorage.getItem('navRom')) {
 		imgNavSel.attr("src", romImgLink);
 		spanNavSel.text("RO");
+	} else if (localStorage.getItem('navRus')) {
+		imgNavSel.attr("src", rusImgLink);
+		spanNavSel.text("RU");
+	} else if (localStorage.getItem('navPtg')) {
+		imgNavSel.attr("src", ptgImgLink);
+		spanNavSel.text("PT");
 	} 
 	
 	imgNavFra.attr("src", fraImgLink);
 	imgNavEng.attr("src", engImgLink);
 	imgNavRom.attr("src", romImgLink);
+	imgNavRus.attr("src", rusImgLink);
+	imgNavPtg.attr("src", ptgImgLink);
 
 	$(".language").on("click", function( event ) {
 		var currentId = $(this).attr('id');
@@ -183,6 +209,12 @@ $(document).ready(function(){
 		} else if (currentId == "navFra") {
 			imgNavSel.attr("src", fraImgLink);
 			spanNavSel.text("FR");
+		} else if (currentId == "navRus") {
+			imgNavSel.attr("src", fraImgLink);
+			spanNavSel.text("RU");
+		} else if (currentId == "navPtg") {
+			imgNavSel.attr("src", fraImgLink);
+			spanNavSel.text("PT");
 		}
 
 		if (currentId == "btnEng") {
@@ -194,7 +226,14 @@ $(document).ready(function(){
 		} else if (currentId == "btnFra") {
 			imgBtnSel.attr("src", fraImgLink);
 			spanBtnSel.text("FR");
+		} else if (currentId == "btnRus") {
+			imgBtnSel.attr("src", fraImgLink);
+			spanBtnSel.text("RU");
+		} else if (currentId == "btnPtg") {
+			imgBtnSel.attr("src", fraImgLink);
+			spanBtnSel.text("PT");
 		}
+		
 		
 	});
 });
